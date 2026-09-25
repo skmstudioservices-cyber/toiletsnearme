@@ -3,64 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Toilets Near Me — Find Public &amp; Paid Toilets in India (Quick Guide)</title>
-<meta name="description" content="How to quickly find clean public toilets near you in India — Google Maps tricks, pay-and-use toilets, Swachh Bharat facilities, apps and traveller tips.">
+<title>Toilets Near Me — Live Map of Public Toilets in Indian Cities</title>
+<meta name="description" content="Interactive map of public toilets across Indian cities — Delhi, Mumbai, Bengaluru, Hyderabad and more. Free/paid, 24-hour and accessible toilets with details.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://toiletsnearme.pages.dev/">
-<meta property="og:title" content="Toilets Near Me — Find Public &amp; Paid Toilets in India (Quick Guide)">
-<meta property="og:description" content="How to quickly find clean public toilets near you in India — Google Maps tricks, pay-and-use toilets, Swachh Bharat facilities, apps and traveller tips.">
+<meta property="og:title" content="Toilets Near Me — Live Map of Public Toilets in Indian Cities">
+<meta property="og:description" content="Interactive map of public toilets across Indian cities — Delhi, Mumbai, Bengaluru, Hyderabad and more. Free/paid, 24-hour and accessible toilets with details.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://toiletsnearme.pages.dev/">
 <!--GSC-VERIFY-->
 <!--MONETAG-->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='#0d9488'/><text x='50' y='68' font-size='46' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>T</text></svg>">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I find a public toilet near me right now?", "acceptedAnswer": {"@type": "Answer", "text": "Open Google Maps and search 'public toilet near me' or 'restroom near me'. You'll see the nearest options with hours and photos. Petrol pumps, metro stations and malls are reliable fallbacks."}}, {"@type": "Question", "name": "Are public toilets in India free?", "acceptedAnswer": {"@type": "Answer", "text": "Many community toilets are free or cost a token amount. Pay-and-use toilets (like Sulabh facilities) typically charge ₹5–₹10 and are usually cleaner."}}, {"@type": "Question", "name": "Which apps show public toilets?", "acceptedAnswer": {"@type": "Answer", "text": "Google Maps is the most complete in India. Simply search 'public toilet' or 'restroom' — no special app is needed."}}, {"@type": "Question", "name": "Are there separate toilets for women?", "acceptedAnswer": {"@type": "Answer", "text": "Yes — most public and pay-and-use toilets have separate women's sections, often marked 'Mahila', and many have female attendants."}}]}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Toilets Near Me — Find Public & Paid Toilets in India (Quick Guide)", "url": "https://toiletsnearme.pages.dev/"}</script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--ac:#0d9488;--acsoft:#0d9488SOFT}
-body{font-family:ui-sans-serif,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;color:#1e293b;background:#f8fafc;line-height:1.65}
+:root{--ac:#0d9488;--acsoft:#0d9488S}
+body{font-family:ui-sans-serif,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;color:#1e293b;background:#f8fafc;line-height:1.6}
 a{color:var(--ac)}
-.wrap{max-width:860px;margin:0 auto;padding:0 20px}
-header{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px 0}
+.wrap{max-width:1100px;margin:0 auto;padding:0 18px}
+header{background:#0f172a;color:#fff;padding:14px 0}
 header .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.logo{width:40px;height:40px;border-radius:11px;background:var(--ac);display:grid;place-items:center;font-weight:800;font-size:1.2rem;color:#fff;flex:none}
+.logo{width:40px;height:40px;border-radius:11px;background:var(--ac);display:grid;place-items:center;font-weight:800;color:#fff}
 header b{font-size:1.05rem}
 header small{display:block;color:#94a3b8;font-size:.72rem}
-.hero{padding:44px 0 30px;background:linear-gradient(180deg,#0f172a,#f8fafc);color:#fff;text-align:left}
-.hero .wrap{color:inherit}
-.hero h1{font-size:clamp(1.6rem,4vw,2.3rem);line-height:1.25;letter-spacing:-.02em;max-width:640px}
-.hero p{color:#cbd5e1;margin-top:12px;max-width:620px;font-size:1.02rem}
-.cta{display:inline-block;background:var(--ac);color:#fff!important;font-weight:700;padding:13px 22px;border-radius:11px;margin-top:22px;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.25);transition:.2s}
-.cta:hover{transform:translateY(-2px)}
-main{padding:30px 0 10px}
-.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px 22px;margin:16px 0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.card h2{font-size:1.15rem;margin-bottom:10px;color:#0f172a;display:flex;gap:8px;align-items:center}
-.card h3{font-size:.98rem;margin:16px 0 6px;color:#0f172a}
-.card p{margin:8px 0;color:#334155;font-size:.95rem}
-.card ul,.card ol{margin:8px 0 8px 22px;color:#334155;font-size:.95rem}
+.hero{background:linear-gradient(180deg,#0f172a,#0f172a);color:#fff;padding:28px 0 18px}
+.hero h1{font-size:clamp(1.5rem,3.6vw,2.1rem);letter-spacing:-.02em}
+.hero p{color:#cbd5e1;margin-top:8px;max-width:640px;font-size:.98rem}
+.search{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+.search input{flex:1;min-width:220px;padding:11px 14px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;font-size:.95rem;font-family:inherit}
+.search input:focus{outline:1px solid var(--ac)}
+.search button{padding:11px 16px;border-radius:10px;border:none;background:var(--ac);color:#fff;font-weight:700;cursor:pointer;font-size:.9rem}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.chip{padding:7px 14px;border-radius:99px;border:1px solid #334155;background:#1e293b;color:#cbd5e1;font-size:.82rem;cursor:pointer;font-weight:600}
+.chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.mapbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 0}
+#count{font-weight:700;font-size:.95rem}
+.fbtn{padding:5px 12px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;font-size:.78rem;font-weight:600;cursor:pointer;color:#475569}
+.fbtn.on{background:var(--acsoft);border-color:var(--ac);color:#0f172a}
+#map{height:70vh;min-height:420px;border-radius:14px;border:1px solid #e2e8f0;z-index:1}
+.legend{font-size:.75rem;color:#64748b;margin-top:8px}
+main{padding:26px 0 10px}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px 22px;margin:16px 0}
+.card h2{font-size:1.12rem;margin-bottom:10px}
+.card h3{font-size:.97rem;margin:14px 0 6px}
+.card p{margin:8px 0;color:#334155;font-size:.94rem}
+.card ul,.card ol{margin:8px 0 8px 22px;color:#334155;font-size:.94rem}
 .card li{margin:5px 0}
 .tips{background:var(--acsoft);border:1px solid var(--ac)}
 .official a{display:block;padding:9px 0;border-bottom:1px dashed #e2e8f0;font-weight:600}
 .official a:last-child{border:none}
 details{border:1px solid #e2e8f0;border-radius:10px;margin:8px 0;background:#fff}
-summary{padding:12px 14px;font-weight:600;cursor:pointer;color:#0f172a;font-size:.93rem}
+summary{padding:12px 14px;font-weight:600;cursor:pointer;font-size:.93rem}
 details p{padding:0 14px 12px;color:#334155;font-size:.92rem}
-.warn{background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px 14px;font-size:.88rem;color:#7f1d1d}
-footer{margin-top:36px;padding:22px 0;border-top:1px solid #e2e8f0;color:#64748b;font-size:.78rem;text-align:center}
+footer{margin-top:34px;padding:20px 0;border-top:1px solid #e2e8f0;color:#64748b;font-size:.78rem;text-align:center}
 footer a{color:#64748b}
-.ads{min-height:0}
-@media(max-width:600px){.hero{padding:34px 0 24px}}
+.leaflet-popup-content{font-size:.84rem;line-height:1.5}
+.pp b{display:block;margin-bottom:2px}
+.pp .row{color:#475569}
+@media(max-width:700px){#map{height:60vh}}
 </style>
 </head>
 <body>
-<header><div class="wrap"><div class="logo">T</div><div><b>Toilets Near Me</b><small>SKM Studio Network · India</small></div></div></header>
+<header><div class="wrap"><div class="logo">T</div><div><b>Toilets Near Me</b><small>SKM Studio Network · live OSM data</small></div></div></header>
 <div class="hero"><div class="wrap">
-<h1>Find a clean toilet near you — in under 30 seconds</h1>
-<p>A practical, no-fluff guide to locating public toilets, Sulabh-style pay-and-use facilities and safe restrooms across Indian cities and highways.</p>
-<a class="cta" href="https://www.google.com/maps/search/public+toilets+near+me" target="_blank" rel="noopener">📍 Open near me in Google Maps</a>
+<h1>Public toilets near you — live map</h1>
+<p>Tap a city, zoom in, and find every mapped public toilet with opening hours, fees and accessibility info. Data from OpenStreetMap, refreshed monthly.</p>
+<div class="search"><input id="q" placeholder="Search by name / area / operator…"><button id="locbtn">📍 Near me</button></div>
+<div class="chips" id="chips"></div>
 </div></div>
-<main class="wrap">
+<div class="wrap">
+<div class="mapbar"><span id="count">Pick a city…</span><span style="flex:1"></span><span id="filters"></span></div>
+<div id="map"></div>
+<div class="legend">● green = free/open info · hover/tap a marker for details · data © OpenStreetMap contributors (ODbL)</div>
+<main>
 <div class="card tips"><h2>⚡ Quick tips</h2><ul><li><b>Search Google Maps for "public toilet near me"</b> — it shows distance, opening hours and sometimes photos and reviews.</li>
   <li>Pay-and-use facilities typically charge a small fee (often ₹5–₹10) and are usually cleaner.</li>
   <li>Petrol pumps on highways, metro stations, bus stands and malls are the most reliable free-to-use options.</li>
@@ -81,10 +96,65 @@ footer a{color:#64748b}
 
 <div class="card official"><h2>🏛 Official links & sources</h2><a href="https://www.google.com/maps/search/public+toilets+near+me" target="_blank" rel="noopener">↗ Google Maps — public toilets</a><a href="https://swachhbharatmission.ddws.gov.in/" target="_blank" rel="noopener">↗ Swachh Bharat Mission (swachhbharatmission.ddws.gov.in)</a><a href="https://sulabhtoilets.org/" target="_blank" rel="noopener">↗ Sulabh International (sulabhtoilets.org)</a></div>
 <div class="card"><h2>❓ Frequently asked questions</h2><details><summary>How do I find a public toilet near me right now?</summary><p>Open Google Maps and search 'public toilet near me' or 'restroom near me'. You'll see the nearest options with hours and photos. Petrol pumps, metro stations and malls are reliable fallbacks.</p></details><details><summary>Are public toilets in India free?</summary><p>Many community toilets are free or cost a token amount. Pay-and-use toilets (like Sulabh facilities) typically charge ₹5–₹10 and are usually cleaner.</p></details><details><summary>Which apps show public toilets?</summary><p>Google Maps is the most complete in India. Simply search 'public toilet' or 'restroom' — no special app is needed.</p></details><details><summary>Are there separate toilets for women?</summary><p>Yes — most public and pay-and-use toilets have separate women's sections, often marked 'Mahila', and many have female attendants.</p></details></div>
-
+<div class="card"><h2>📊 About this data</h2>
+<p>This map is powered by <b>OpenStreetMap</b> — the free, community-maintained map of the world. Our pipeline refreshes the toilet data for major Indian cities <b>monthly</b>. Spotted something missing or wrong? Edit it at <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener">openstreetmap.org</a> — your fix will appear here after the next refresh.</p></div>
 </main>
-<div class="wrap ads"><!-- monetag slot --></div>
-<footer>Toilets Near Me — an SKM Studio Network site · <a href="https://toiletsnearme.pages.dev/">https://toiletsnearme.pages.dev</a> · Made for India 🇮🇳<br>
-Information is general guidance, not a substitute for official sources. Emergency? Call <b>112</b>.</footer>
+</div>
+<footer>Toilets Near Me — an SKM Studio Network site · <a href="https://toiletsnearme.pages.dev/">https://toiletsnearme.pages.dev</a> · Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL)<br>
+General information only · Emergency? Call <b>112</b></footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const CFG={"cities": {"delhi": {"name": "Delhi NCR", "lat": 28.61, "lon": 77.21}, "mumbai": {"name": "Mumbai", "lat": 19.08, "lon": 72.88}, "bengaluru": {"name": "Bengaluru", "lat": 12.97, "lon": 77.59}, "hyderabad": {"name": "Hyderabad", "lat": 17.39, "lon": 78.49}, "chennai": {"name": "Chennai", "lat": 13.08, "lon": 80.27}, "kolkata": {"name": "Kolkata", "lat": 22.57, "lon": 88.36}, "pune": {"name": "Pune", "lat": 18.52, "lon": 73.86}, "ahmedabad": {"name": "Ahmedabad", "lat": 23.03, "lon": 72.58}, "jaipur": {"name": "Jaipur", "lat": 26.91, "lon": 75.79}, "lucknow": {"name": "Lucknow", "lat": 26.85, "lon": 80.95}, "surat": {"name": "Surat", "lat": 21.17, "lon": 72.83}, "indore": {"name": "Indore", "lat": 22.72, "lon": 75.86}}, "filters": [{"k": "h24", "l": "24 hours", "t": "p['opening_hours']=='24/7'"}, {"k": "free", "l": "Free", "t": "p['fee']=='no'"}, {"k": "acc", "l": "Wheelchair \u267f", "t": "p['wheelchair']=='yes'||p['wheelchair']=='limited'"}, {"k": "baby", "l": "Baby change", "t": "p['changing_table']=='yes'"}], "popup": [{"k": "operator", "l": "Operator"}, {"k": "opening_hours", "l": "Hours"}, {"k": "fee", "l": "Fee", "b": 1}, {"k": "access", "l": "Access"}, {"k": "wheelchair", "l": "Wheelchair", "b": 1}, {"k": "changing_table", "l": "Baby change", "b": 1}], "poiname": "toilet", "ac": "#0d9488", "date": "loading\u2026", "data": null};
+const L_=window.L;let map,mk=[],cur=null,flts={},q="";
+const TF={};CFG.filters.forEach(f=>TF[f.k]=new Function("p","return ("+f.t+")"));
+function init(){
+ map=L_.map("map").setView([22.8,79],5);
+ L_.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+ document.getElementById("chips").innerHTML=Object.entries(CFG.cities).map(([s,c])=>'<span class="chip" data-c="'+s+'">'+c.name+'</span>').join("");
+ document.querySelectorAll(".chip").forEach(ch=>ch.onclick=()=>setCity(ch.dataset.c));
+ document.getElementById("filters").innerHTML=CFG.filters.map(f=>'<button class="fbtn" data-f="'+f.k+'">'+f.l+'</button>').join("");
+ document.querySelectorAll(".fbtn").forEach(b=>b.onclick=()=>{flts[b.dataset.f]=!flts[b.dataset.f];b.classList.toggle("on");render()});
+ document.getElementById("q").addEventListener("input",e=>{q=e.target.value.toLowerCase();render()});
+ document.getElementById("locbtn").onclick=()=>{
+  if(!navigator.geolocation)return alert("Geolocation not supported");
+  navigator.geolocation.getCurrentPosition(p=>{
+   let bs=null,bd=1e9;
+   for(const[s,c]of Object.entries(CFG.cities)){const d=Math.hypot(p.coords.latitude-c.lat,p.coords.longitude-c.lon);if(d<bd){bd=d;bs=s}}
+   if(bs){setCity(bs);map.setView([p.coords.latitude,p.coords.longitude],14)}
+  },()=>alert("Location permission denied"));
+ };
+ if(!Object.keys(CFG.cities).length)document.getElementById("count").textContent="City data coming soon (first refresh running)";
+}
+async function setCity(s){
+ if(!s||!CFG.cities[s])return;
+ cur=s;document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",c.dataset.c===s));
+ map.setView([CFG.cities[s].lat,CFG.cities[s].lon],11);
+ mk.forEach(m=>map.removeLayer(m));mk=[];
+ const r=await fetch("data/"+s+".json");const fc=await r.json();
+ CFG.data=fc.features;
+ render();
+}
+function pp(p){
+ let h='<div class="pp">';
+ h+='<b>'+(p.name||p.operator||p.brand||CFG.poiname)+'</b>';
+ (CFG.popup||[]).forEach(f=>{if(p[f.k])h+='<div class="row">'+f.l+': '+(f.b?{yes:"✅",no:"❌",limited:"🟡"}[p[f.k]]||p[f.k]:p[f.k])+'</div>'});
+ h+='</div>';return h;
+}
+function render(){
+ if(!CFG.data)return;
+ let n=0;
+ mk.forEach(m=>map.removeLayer(m));mk=[];
+ CFG.data.forEach(f=>{
+  const p=f.properties;
+  if(q&&!(JSON.stringify(p).toLowerCase().includes(q)))return;
+  for(const[k,v]of Object.entries(flts))if(v&&!TF[k](p))return;
+  n++;
+  const m=L_.circleMarker(f.geometry.coordinates.slice().reverse(),{radius:7,weight:1.5,color:"#0f172a",fillColor:p.fee==="no"?"#34d399":(p.fee==="yes"?"#f59e0b":CFG.ac),fillOpacity:.95});
+  m.bindPopup(pp(p));m.addTo(map);mk.push(m);
+ });
+ document.getElementById("count").textContent=n.toLocaleString("en-IN")+" "+CFG.poiname+"s on map · "+(CFG.cities[cur]?CFG.cities[cur].name:"")+" · data "+(CFG.date||"")+" © OpenStreetMap";
+}
+init();
+</script>
 </body>
 </html>
