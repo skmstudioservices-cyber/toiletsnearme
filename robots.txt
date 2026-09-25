@@ -162,3 +162,4 @@ Disallow: /
 
 User-agent: Scrapy
 Disallow: /
+Sitemap: https://toiletsnearme.pages.dev/sitemap.xml
