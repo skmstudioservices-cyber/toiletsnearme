@@ -4,7 +4,7 @@ import json, math, os, sys, time, urllib.request, urllib.parse
 
 CITIES = {"delhi": ["Delhi NCR", 28.61, 77.21, 0.38], "mumbai": ["Mumbai", 19.08, 72.88, 0.32], "bengaluru": ["Bengaluru", 12.97, 77.59, 0.3], "hyderabad": ["Hyderabad", 17.39, 78.49, 0.3], "chennai": ["Chennai", 13.08, 80.27, 0.28], "kolkata": ["Kolkata", 22.57, 88.36, 0.3], "pune": ["Pune", 18.52, 73.86, 0.26], "ahmedabad": ["Ahmedabad", 23.03, 72.58, 0.26], "jaipur": ["Jaipur", 26.91, 75.79, 0.24], "lucknow": ["Lucknow", 26.85, 80.95, 0.24], "surat": ["Surat", 21.17, 72.83, 0.22], "indore": ["Indore", 22.72, 75.86, 0.22]}
 QUERY = "[\"amenity\"=\"toilets\"]"
-MIN_TOTAL = __MIN__
+MIN_TOTAL = 300
 
 def bbox(lat, lon, r):
     return (lat - r, lon - r, lat + r, lon + r)
