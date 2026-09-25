@@ -16,11 +16,27 @@ for slug, (name, lat, lon, r) in CITIES.items():
         parts.append('%s%s(%s,%s,%s,%s);' % (typ, QUERY, s, w, n, e))
 q = "[out:json][timeout:180];(" + "".join(parts) + ");out center tags;"
 
-url = "https://overpass-api.de/api/interpreter"
-req = urllib.request.Request(url, data=urllib.parse.urlencode({"data": q}).encode(),
-                             headers={"User-Agent": "SKM-OSM-pipeline/1.0 (github)"})
+ENDPOINTS = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
+]
 print("querying overpass...")
-data = json.loads(urllib.request.urlopen(req, timeout=200).read().decode())
+data = None
+for attempt in range(9):
+    ep = ENDPOINTS[attempt % len(ENDPOINTS)]
+    try:
+        req = urllib.request.Request(ep, data=urllib.parse.urlencode({"data": q}).encode(),
+                                     headers={"User-Agent": "SKM-OSM-pipeline/1.0 (github)"})
+        data = json.loads(urllib.request.urlopen(req, timeout=240).read().decode())
+        print("ok via", ep)
+        break
+    except Exception as e:
+        print("attempt", attempt, ep, "failed:", str(e)[:140])
+        time.sleep(20 * (attempt + 1))
+if data is None:
+    print("ALL endpoints failed")
+    sys.exit(1)
 els = data.get("elements", [])
 print("total elements:", len(els))
 
