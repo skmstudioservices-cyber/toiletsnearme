@@ -21,11 +21,28 @@
       +'<div style="display:flex;gap:8px;align-items:flex-start">'
       +'<button id="fbkmic" style="flex:none;width:44px;height:44px;border-radius:50%;border:none;background:#ef4444;color:#fff;font-size:1.15rem;cursor:pointer" title="Answer with voice">\uD83C\uDFA4</button>'
       +'<textarea id="fbktxt" rows="3" placeholder="\u2026or type it here" style="flex:1;padding:10px;border-radius:10px;border:1px solid #cbd5e1;font:inherit;font-size:.9rem;resize:vertical"></textarea></div>'
+      +'<div id="fbkqk" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"></div>'
       +'<div id="fbkst" style="font-size:.75rem;color:#64748b;margin-top:6px;min-height:1em"></div>'
       +'<button id="fbkok" style="margin-top:8px;width:100%;padding:10px;border-radius:10px;border:none;background:#0f172a;color:#fff;font-weight:700;cursor:pointer;font-size:.9rem">Send feedback</button>'
       +'<div style="font-size:.68rem;color:#94a3b8;margin-top:8px;text-align:center">Only your answer, page and browser info \u2014 see the <a href=\'/privacy/\' style=\'color:inherit;text-decoration:underline\' target=\'_blank\'>privacy policy</a>.</div>';
     ov.appendChild(card);document.body.appendChild(ov);
     function close(){ov.remove();}
+
+    var QUICK=["\u2705 Found one on this map","\u274c Nothing usable near me","\u2139\ufe0f Details were wrong","\u2795 Add more places"];
+    var qk=document.getElementById('fbkqk');
+    if(qk)QUICK.forEach(function(label){
+      var b=document.createElement('button');b.type='button';b.textContent=label;
+      b.style.cssText='padding:8px 12px;border-radius:999px;border:2px solid #cbd5e1;background:#fff;font-weight:700;font-size:.8rem;cursor:pointer;font-family:inherit;color:#0f172a';
+      b.onmouseover=function(){b.style.borderColor='#16a34a';};
+      b.onmouseout=function(){b.style.borderColor='#cbd5e1';};
+      b.onclick=function(){
+        log({url:url,path:page,referrer:referrer,delay_seconds:delay,shown_at:new Date().toISOString(),responded:true,response_type:'quick',transcript:label,session_id:sid,user_agent:navigator.userAgent.slice(0,200)});
+        card.innerHTML='<div style="text-align:center;padding:8px 0"><div style="font-size:1.6rem">\ud83d\udc4d</div><b>Thank you!</b><p style="color:#64748b;font-size:.85rem;margin-top:4px">Your feedback shapes what we build next.</p></div>';
+        setTimeout(close,1600);
+      };
+      qk.appendChild(b);
+    });
+
     document.getElementById('fbkno').onclick=close;
     ov.addEventListener('click',function(e){if(e.target===ov)close();});
     var rtype='text', rec=null, SR=window.SpeechRecognition||window.webkitSpeechRecognition;
