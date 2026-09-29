@@ -185,24 +185,47 @@ function parseOrigin(v,cb){
 }
 
 /* ---------- search ---------- */
+function resolveQuery(v,cb){
+  v=(v||"").trim();
+  var m=v.match(/^(-?\d{1,2}\.\d+)[ ,]+(-?\d{1,3}\.\d+)$/);
+  if(m)return cb([{label:"\ud83d\udccd "+v,lat:+m[1],lon:+m[2]}]);
+  var d=v.replace(/\s/g,"");
+  if(/^[FfCc98Jj327Kk456LlMmPpTt]{10}$/.test(d)){
+    var g=fromDigiPin(d);
+    if(g)return cb([{label:"\ud83d\uded1 DIGIPIN "+d.toUpperCase()+" (4m precision)",lat:g.lat,lon:g.lon}]);
+  }
+  if(/^\d{6}$/.test(v))return geocode(v,cb,true);
+  if(v.length>=3)return geocode(v,cb,false);
+  cb([]);
+}
 function bindSearch(inp){
-  inp.placeholder="Search any place, pincode or name\u2026";
+  inp.placeholder="Search any place, pincode, DIGIPIN or lat,lon\u2026";
+  inp.setAttribute("autocomplete","off");
   inp.addEventListener("input",function(e){
     q=e.target.value.toLowerCase();render();
     clearTimeout(geoTimer);
     var v=e.target.value.trim();
-    if(v.length<3||/^-?\d/.test(v)||/^[FfCc98Jj327Kk456LlMmPpTt]{10}$/.test(v.replace(/\s/g,""))){closeResults();return;}
+    if(!v){closeResults();return;}
     geoTimer=setTimeout(function(){
-      geocode(v,function(list){
+      resolveQuery(v,function(list){
         if(!list.length)return;
         showResults(list,function(it){
-          map.flyTo([it.lat,it.lon],14,{duration:1});
+          map.flyTo([it.lat,it.lon],Math.max(map.getZoom(),13),{duration:1});
           if(searchMk)map.removeLayer(searchMk);
           searchMk=L_.circleMarker([it.lat,it.lon],{radius:9,color:"#0f172a",weight:3,fillColor:ac,fillOpacity:1})
             .addTo(map).bindPopup("<b>"+esc(it.label)+"</b><br><span class='cpl' onclick='MA.clearPin()'>clear \u2715</span>").openPopup();
         },inp);
       });
     },550);
+  });
+  inp.addEventListener("keydown",function(e){
+    if(e.key==="Enter"){
+      clearTimeout(geoTimer);closeResults();
+      resolveQuery(inp.value.trim(),function(list){
+        if(!list.length){toast("Nothing found \u2014 try a place, pincode, DIGIPIN or lat,lon");return;}
+        map.flyTo([list[0].lat,list[0].lon],Math.max(map.getZoom(),13),{duration:1});
+      });
+    }
   });
 }
 var qEl=document.getElementById(EMBED?"kwq":"q");
@@ -228,26 +251,80 @@ if(!routeinfo){
 MA.routeTo=function(lat,lon){
   originWrap.style.display="flex";
   if(routeinfo){routeinfo.style.display="inline-block";routeinfo.textContent="Pick your starting point \u2193";}
+
   dest=[lat,lon];
   try{originWrap.scrollIntoView({behavior:"smooth",block:"nearest"});}catch(e){}
   toast("Enter your starting point below");
   document.getElementById("origin").focus();
 };
 function setRouteInfo(html){if(routeinfo){routeinfo.style.display="inline-block";routeinfo.innerHTML=html;}}
-function drawRoute(fLat,fLon){
+function drawRoute(fLat,fLon,quiet){
   if(!dest){toast("Tap a "+C.poiname+" pin first");return;}
-  toast("Finding route\u2026");
+  if(!quiet)toast("Finding route\u2026");
   fetch("https://router.project-osrm.org/route/v1/driving/"+fLon+","+fLat+";"+dest[1]+","+dest[0]+"?overview=full&geometries=geojson")
    .then(function(r){return r.json();}).then(function(d){
      if(routeL)map.removeLayer(routeL);
      if(!d.routes||!d.routes[0]){drawLine(fLat,fLon);return;}
+     var hadGeom=!!nav.geom;
      routeL=L_.geoJSON(d.routes[0].geometry,{style:{color:ac,weight:5,opacity:.85}}).addTo(map);
-     map.fitBounds(routeL.getBounds(),{padding:[30,30]});
+     if(!quiet||!nav.active||!hadGeom)map.fitBounds(routeL.getBounds(),{padding:[30,30]});
+     nav.geom=d.routes[0].geometry.coordinates;
+     nav.from=[fLat,fLon];
      var km=(d.routes[0].distance/1000).toFixed(1),min=Math.round(d.routes[0].duration/60);
-     setRouteInfo("\ud83e\udded "+km+" km \u00b7 ~"+min+" min drive <span class='cpl' onclick='MA.clearRoute()'>clear \u2715</span>");
-     toast("Route drawn on map \u2713");
-   }).catch(function(){drawLine(fLat,fLon);});
+     setRouteInfo("\ud83e\udded "+km+" km \u00b7 ~"+min+" min "+(nav.active?"left":"drive")+" <span class='cpl' onclick='MA.stopNav()'>\u25a0 stop live</span> <span class='cpl' onclick='MA.clearRoute()'>\u2715</span>");
+     if(!quiet)toast("Route drawn on map \u2713 \u2014 tap \u25b6 Start live to follow");
+   }).catch(function(){if(!quiet)drawLine(fLat,fLon);});
 }
+/* ---------- live follow navigation ---------- */
+var nav={active:false,watch:null,umk:null,acirc:null,geom:null,from:null,lastCalc:0};
+function hav(a,b,c,d){var R=6371000,t=Math.PI/180,dl=(c-a)*t,dn=(d-b)*t;
+  var x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a*t)*Math.cos(c*t)*Math.sin(dn/2)*Math.sin(dn/2);
+  return 2*R*Math.asin(Math.sqrt(x));}
+function distToRoute(la,lo){
+  if(!nav.geom)return 1e9;
+  var best=1e9;
+  for(var i=0;i<nav.geom.length;i+=2){
+    var d=hav(la,lo,nav.geom[i][1],nav.geom[i][0]);
+    if(d<best)best=d;
+  }
+  return best;
+}
+function startNav(){
+  if(!dest){toast("Pick a destination pin first");return;}
+  if(!navigator.geolocation){toast("Geolocation not supported");return;}
+  MA.stopNav();
+  nav.active=true;
+  toast("Live navigation on \u2014 follow the line");
+  setRouteInfo("\ud83d\udccd locating you\u2026 <span class='cpl' onclick='MA.stopNav()'>\u25a0 stop</span>");
+  nav.watch=navigator.geolocation.watchPosition(function(p){
+    var la=p.coords.latitude,lo=p.coords.longitude,acc=p.coords.accuracy;
+    if(!nav.umk){
+      nav.umk=L_.circleMarker([la,lo],{radius:9,color:"#fff",weight:3,fillColor:"#2563eb",fillOpacity:1,zIndexOffset:1000}).addTo(map)
+        .bindTooltip("You",{permanent:true,direction:"top",offset:[0,-10]});
+      nav.acirc=L_.circle([la,lo],{radius:acc||50,color:"#2563eb",weight:1,fillColor:"#2563eb",fillOpacity:.12}).addTo(map);
+      map.setView([la,lo],Math.max(map.getZoom(),15));
+    }else{
+      nav.umk.setLatLng([la,lo]);
+      nav.acirc.setLatLng([la,lo]).setRadius(acc||50);
+      if(!map.getBounds().pad(-.25).contains([la,lo]))map.panTo([la,lo]);
+    }
+    var dTo=hav(la,lo,dest[0],dest[1]);
+    if(dTo<60){toast("\ud83c\udf89 You have arrived!");MA.stopNav();return;}
+    var off=distToRoute(la,lo),now=Date.now();
+    var moved=nav.from?hav(la,lo,nav.from[0],nav.from[1]):1e9;
+    if(off>200){toast("Re-routing\u2026");drawRoute(la,lo,true);nav.lastCalc=now;return;}
+    if((now-nav.lastCalc>25000&&moved>100)||!nav.geom){drawRoute(la,lo,true);nav.lastCalc=now;}
+  },function(){toast("Location unavailable \u2014 check permission");MA.stopNav();},
+  {enableHighAccuracy:true,maximumAge:3000,timeout:15000});
+}
+MA.stopNav=function(){
+  if(nav.watch!==null){navigator.geolocation.clearWatch(nav.watch);nav.watch=null;}
+  if(nav.umk){map.removeLayer(nav.umk);nav.umk=null;}
+  if(nav.acirc){map.removeLayer(nav.acirc);nav.acirc=null;}
+  if(nav.active){nav.active=false;toast("Live navigation off");}
+  nav.geom=null;
+};
+MA.startNav=startNav;
 MA.clearRoute=function(){if(routeL){map.removeLayer(routeL);routeL=null;}if(routeinfo){routeinfo.innerHTML="";routeinfo.style.display="none";}};
 function drawLine(a,b){
   if(routeL)map.removeLayer(routeL);
@@ -268,6 +345,14 @@ document.getElementById("originme").onclick=function(){
   navigator.geolocation.getCurrentPosition(function(p){drawRoute(p.coords.latitude,p.coords.longitude);},
     function(){toast("Location not allowed \u2014 type your start point instead");});
 };
+(function(){
+  var b=document.createElement("button");
+  b.type="button";b.id="navbtn";
+  b.textContent="\u25b6 Start live (follow me)";
+  b.style.cssText="padding:10px 14px;border-radius:10px;border:2px solid "+ac+";background:#fff;color:#0f172a;font-weight:800;cursor:pointer;font-size:.85rem";
+  b.onclick=function(){startNav();};
+  originWrap.insertBefore(b,originWrap.lastChild);
+})();
 
 /* ---------- non-embed extras ---------- */
 if(!EMBED){
