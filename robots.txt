@@ -8,7 +8,7 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-# --- AI / LLM bots blocked (request-quota protection, 25 Sep 2026) ---
+# AI/LLM bots blocked
 User-agent: GPTBot
 Disallow: /
 
