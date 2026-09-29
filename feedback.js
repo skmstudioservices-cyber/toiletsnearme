@@ -23,7 +23,7 @@
       +'<textarea id="fbktxt" rows="3" placeholder="\u2026or type it here" style="flex:1;padding:10px;border-radius:10px;border:1px solid #cbd5e1;font:inherit;font-size:.9rem;resize:vertical"></textarea></div>'
       +'<div id="fbkst" style="font-size:.75rem;color:#64748b;margin-top:6px;min-height:1em"></div>'
       +'<button id="fbkok" style="margin-top:8px;width:100%;padding:10px;border-radius:10px;border:none;background:#0f172a;color:#fff;font-weight:700;cursor:pointer;font-size:.9rem">Send feedback</button>'
-      +'<div style="font-size:.68rem;color:#94a3b8;margin-top:8px;text-align:center">Voice or text, anonymous \u2014 used only to improve this site.</div>';
+      +'<div style="font-size:.68rem;color:#94a3b8;margin-top:8px;text-align:center">Only your answer, page and browser info \u2014 see the <a href=\'/privacy/\' style=\'color:inherit;text-decoration:underline\' target=\'_blank\'>privacy policy</a>.</div>';
     ov.appendChild(card);document.body.appendChild(ov);
     function close(){ov.remove();}
     document.getElementById('fbkno').onclick=close;
