@@ -1,0 +1,19 @@
+# Toilets Near Me
+
+Live maps and guides for finding public toilets in India (15 cities), by SKM Studio Network.
+
+## Main pages
+- / — live map, all cities
+- - /pay-and-use-toilets-near-me/ — Pay and use toilets near me
+- /free-public-toilets-near-me/ — Free public toilets near me
+- /public-toilets-near-me-open-now/ — Public toilets near me open now
+- /sulabh-toilets-near-me/ — Sulabh toilets near me
+- /public-toilets-at-malls/ — Public toilets at malls
+- /toilets-at-railway-stations/ — Toilets at railway stations
+- /wheelchair-accessible-toilets-near-me/ — Wheelchair accessible toilets near me
+- /toilets-at-petrol-pumps/ — Toilets at petrol pumps
+
+## City pages
+Delhi, Mumbai, Bengaluru, Hyderabad, Chennai, Kolkata, Pune, Ahmedabad, Jaipur, Lucknow, Surat, Indore, Chandigarh, Bhopal, Nagpur
+
+Data: OpenStreetMap (ODbL), refreshed monthly. Contact: skmstudio.services@gmail.com
