@@ -1,16 +1,16 @@
 (function(){
-  var SB_URL="https://timnrnmmmmuqmcnuaend.supabase.co", SB_KEY="sb_publishable_HDo7lgQV4FBbLmfmSmTVmA_mT7NJIJ8";
+  var SB_URL="https://timnrnmmmmuqmcnuaend.supabase.co", SB_KEY="sb_publishable_HDo7lgQV4FBbLmfmSmTVmA_mT7NJIJ8", SB_TABLE="popup_feedback_toilets";
   var SITE=(document.currentScript&&document.currentScript.dataset.site)||location.hostname;
   var MIN=30,MAX=300;
   try{var last=+localStorage.getItem('fbk_shown_at')||0;if(Date.now()-last<86400000)return;}catch(e){}
   var sid=null;try{sid=sessionStorage.getItem('fbk_sid');if(!sid){sid=(crypto.randomUUID?crypto.randomUUID():'s'+Date.now()+Math.random().toString(36).slice(2));sessionStorage.setItem('fbk_sid',sid);}}catch(e){sid='err';}
   var delay=Math.floor(Math.random()*(MAX-MIN+1))+MIN;
-  function log(row){try{fetch(SB_URL+'/rest/v1/popup_feedback',{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=minimal'},body:JSON.stringify(row)}).catch(function(){});}catch(e){}}
-  var page=location.pathname;
+  function log(row){try{fetch(SB_URL+'/rest/v1/'+SB_TABLE,{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=minimal'},body:JSON.stringify(row)}).catch(function(){});}catch(e){}}
+  var page=location.pathname, url=location.href, referrer=document.referrer||'';
   function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
   setTimeout(function(){
     try{localStorage.setItem('fbk_shown_at',Date.now());}catch(e){}
-    log({site:SITE,page:page,delay_seconds:delay,shown_at:new Date().toISOString(),responded:false,response_type:null,transcript:null,session_id:sid,user_agent:navigator.userAgent.slice(0,200)});
+    log({url:url,path:page,referrer:referrer,delay_seconds:delay,shown_at:new Date().toISOString(),responded:false,response_type:null,transcript:null,session_id:sid,user_agent:navigator.userAgent.slice(0,200)});
     if(document.getElementById('fbkx'))return;
     var ov=document.createElement('div');ov.id='fbkx';
     ov.style.cssText='position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:9999;display:flex;align-items:flex-end;justify-content:center;padding:16px';
@@ -45,7 +45,7 @@
     document.getElementById('fbkok').onclick=function(){
       var v=document.getElementById('fbktxt').value.trim();
       if(!v){document.getElementById('fbkst').textContent='Type or speak something first \u2014 or skip with \u2715';return;}
-      log({site:SITE,page:page,delay_seconds:delay,shown_at:new Date().toISOString(),responded:true,response_type:rtype,transcript:v.slice(0,500),session_id:sid,user_agent:navigator.userAgent.slice(0,200)});
+      log({url:url,path:page,referrer:referrer,delay_seconds:delay,shown_at:new Date().toISOString(),responded:true,response_type:rtype,transcript:v.slice(0,500),session_id:sid,user_agent:navigator.userAgent.slice(0,200)});
       card.innerHTML='<div style="text-align:center;padding:8px 0"><div style="font-size:1.6rem">\uD83D\uDC4D</div><b>Thank you!</b><p style="color:#64748b;font-size:.85rem;margin-top:4px">Your feedback shapes what we build next.</p></div>';
       setTimeout(close,1600);
     };
