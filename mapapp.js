@@ -87,6 +87,8 @@ function loadAll(){
       done++;
       if(done===keys.length){
         if(count)count.textContent=all.length.toLocaleString("en-IN")+" "+C.poiname+"s across "+keys.length+" cities \u00b7 \u00a9 OpenStreetMap";
+        var cc=document.getElementById("citycount");
+        if(cc&&C.startCity){var cn=0;all.forEach(function(f){if(f._city===C.startCity)cn++;});cc.textContent=cn.toLocaleString("en-IN");}
         render();
       }
     });
