@@ -1,0 +1,45 @@
+name: Browser verify
+on:
+  workflow_dispatch:
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: npm i playwright@1.47.2 && npx playwright install --with-deps chromium
+      - name: checks
+        run: |
+          cat > check.mjs <<'JSEOF'
+          import { chromium } from 'playwright';
+          const B = 'https://toiletsnearme.pages.dev';
+          const CB = Date.now();
+          const browser = await chromium.launch();
+          const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+          for (const [name, url] of [['home', B + '/?cb=' + CB], ['delhi', B + '/delhi/?cb=' + CB]]) {
+            const page = await ctx.newPage();
+            const errs = [];
+            page.on('pageerror', e => errs.push('PAGEERROR ' + String(e).slice(0, 140)));
+            await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
+            await page.waitForTimeout(6000);
+            const pins = await page.locator('.leaflet-marker-icon, .marker-cluster, .leaflet-interactive').count();
+            let countTxt = null;
+            try { countTxt = await page.locator('#count, #kwcount').first().textContent({ timeout: 3000 }); } catch (e) {}
+            const corner = await page.locator('#tlCC .tlB').count();
+            const tabs = await page.locator('#tlTabs .tlTab, #tlTabs .tlAdd').count();
+            const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+            await page.screenshot({ path: 'shot-' + name + '.png' });
+            console.log('--- ' + name + ' ---');
+            console.log('pins:' + pins + ' | count:' + countTxt);
+            console.log('cornerButtons:' + corner + ' | bottomBar:' + tabs + ' | hOverflow:' + overflow + ' | errors:' + JSON.stringify(errs.slice(0, 3)));
+            await page.close();
+          }
+          await browser.close();
+          JSEOF
+          node check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shots
+          path: shot-*.png
