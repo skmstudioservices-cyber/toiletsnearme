@@ -1,0 +1,58 @@
+name: IndexNow ping
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping IndexNow (Bing / Yandex)
+        run: |
+          cat > ping.py <<'PY'
+          import json, re, urllib.request, urllib.error
+
+          B = "https://toiletsnearme.pages.dev"
+          KEY = "0fdc8e2808c0ddf1713ff9bd0719710a"
+
+          def get(u):
+              req = urllib.request.Request(u, headers={"User-Agent": "indexnow-ping/1.0"})
+              return urllib.request.urlopen(req, timeout=30).read().decode("utf-8", "ignore")
+
+          def locs(xml):
+              return re.findall(r"<loc>([^<]+)</loc>", xml)
+
+          urls = set()
+          for sm in ("/sitemap.xml", "/sitemap-index.xml"):
+              try:
+                  x = get(B + sm)
+              except Exception:
+                  continue
+              found = locs(x)
+              if found and found[0].endswith(".xml"):
+                  for s in found[:20]:
+                      try:
+                          for u in locs(get(s)):
+                              urls.add(u.strip())
+                      except Exception:
+                          pass
+              for u in found:
+                  if not u.endswith(".xml"):
+                      urls.add(u.strip())
+              if urls:
+                  break
+          if not urls:
+              urls = {B + "/"}
+          urls = sorted(urls)[:200]
+          print("urls_found:", len(urls))
+
+          data = json.dumps({"host": "toiletsnearme.pages.dev", "key": KEY,
+                              "keyLocation": B + "/" + KEY + ".txt", "urlList": urls}).encode()
+          req = urllib.request.Request("https://api.indexnow.org/indexnow", data=data,
+              headers={"Content-Type": "application/json; charset=utf-8"})
+          try:
+              print("indexnow_status:", urllib.request.urlopen(req, timeout=30).status)
+          except urllib.error.HTTPError as e:
+              print("indexnow_status:", e.code)
+          PY
+          python3 ping.py
