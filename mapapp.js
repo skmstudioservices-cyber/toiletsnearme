@@ -74,7 +74,18 @@ function ICONFN(c){
   return L_.divIcon({html:'<div><span>'+n.toLocaleString("en-IN")+"</span></div>",
     className:"marker-cluster marker-cluster-"+s,iconSize:L_.point(40,40)});
 }
-function mkCluster(){return L_.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:55,spiderfyOnMaxZoom:true,iconCreateFunction:ICONFN});}
+/* markercluster plugin was never loaded (CSS only) -> L.markerClusterGroup was undefined.
+   Load it; if it fails, fall back to a plain layerGroup so pins ALWAYS render. */
+if(!(window.L&&window.L.markerClusterGroup)){
+  (function(){var s=document.createElement("script");
+    s.src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js";s.async=true;
+    s.onload=function(){try{if(typeof render==="function"&&all.length)render();}catch(e){}};
+    document.head.appendChild(s);})();
+}
+function mkCluster(){
+  if(!L_.markerClusterGroup)return L_.layerGroup();
+  return L_.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:55,spiderfyOnMaxZoom:true,iconCreateFunction:ICONFN});
+}
 cluster=mkCluster();
 
 /* ---------- load ALL cities ---------- */
@@ -241,12 +252,12 @@ originWrap.innerHTML='<input id="origin" placeholder="From: place name, DIGIPIN,
   '<button id="originme" style="padding:10px 12px;border-radius:10px;border:1px solid #cbd5e1;background:#fff;font-weight:700;cursor:pointer;font-size:.85rem">\ud83d\udccd My location</button>'+
   '<span style="font-size:.72rem;color:#94a3b8">routes \u00b7 OSRM \u00b7 search \u00b7 Nominatim (OSM)</span>';
 var mapbar=(EMBED?mapEl.parentNode:mapEl.parentNode.querySelector(".mapbar"))||mapEl.parentNode;
-mapbar.insertBefore(originWrap,mapEl);
+try{ mapEl.parentNode.insertBefore(originWrap,mapEl); }catch(e){ mapbar.appendChild(originWrap); }
 routeinfo=document.getElementById("routeinfo");
 if(!routeinfo){
   routeinfo=document.createElement("span");routeinfo.id="routeinfo";
   routeinfo.style.cssText="display:none;font-size:.85rem;font-weight:700;color:#0f172a;background:"+(C.acsoft||"#ccfbf1")+";border:1px solid "+ac+";padding:6px 12px;border-radius:8px";
-  mapbar.insertBefore(routeinfo,originWrap);
+  try{ originWrap.parentNode.insertBefore(routeinfo,originWrap); }catch(e){ originWrap.parentNode.appendChild(routeinfo); }
 }
 MA.routeTo=function(lat,lon){
   originWrap.style.display="flex";
