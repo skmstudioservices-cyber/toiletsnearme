@@ -15,76 +15,52 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-D74LPRXWDW');</script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='#0d9488'/><text x='50' y='68' font-size='46' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>T</text></svg>">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--ac:#0d9488;--acsoft:#ccfbf1}
-body{font-family:ui-sans-serif,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;color:#1e293b;background:#f8fafc;line-height:1.65}
-a{color:var(--ac)}
-.wrap{max-width:900px;margin:0 auto;padding:0 18px}
-header{background:#0f172a;color:#fff;padding:14px 0}
-header .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.logo{width:40px;height:40px;border-radius:11px;background:var(--ac);display:grid;place-items:center;font-weight:800;color:#fff}
-header b{font-size:1.05rem}
-header small{display:block;color:#94a3b8;font-size:.72rem}
-nav.crumbs{font-size:.8rem;color:#64748b;padding:10px 0}
-main{padding:8px 0 10px}
-h1{font-size:clamp(1.4rem,3.4vw,2rem);letter-spacing:-.02em;margin:6px 0 4px}
-.lead{color:#475569;font-size:1rem;margin:10px 0 4px}
-.ans{background:var(--acsoft);border:1px solid var(--ac);border-radius:12px;padding:14px 16px;margin:16px 0}
-.ans b:first-child{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:#0f172a;margin-bottom:4px}
-.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px 22px;margin:16px 0}
-.card h2{font-size:1.12rem;margin-bottom:10px}
-.card h3{font-size:.97rem;margin:14px 0 6px}
-.card p{margin:8px 0;color:#334155;font-size:.95rem}
-.card ul,.card ol{margin:8px 0 8px 22px;color:#334155;font-size:.95rem}
-.card li{margin:6px 0}
-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.9rem}
-th,td{border:1px solid #e2e8f0;padding:8px 10px;text-align:left;vertical-align:top}
-th{background:#f1f5f9}
-#kwmap{height:380px;border-radius:12px;border:1px solid #e2e8f0;z-index:1;background:#e2e8f0}
-.mapstat{font-weight:700;color:#0f172a;font-size:.92rem}
-.kchips{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
-.kwc{padding:7px 13px;border-radius:99px;border:2px solid var(--ac);background:#fff;color:#0f172a;font-weight:700;cursor:pointer;font-size:.8rem;font-family:inherit}
-.kwc.on{background:var(--ac);color:#fff}
-.mapbtns{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
-.nearbtn{padding:12px 20px;border-radius:12px;border:none;background:#0f172a;color:#fff;font-weight:800;cursor:pointer;font-size:.92rem;font-family:inherit}
-.mapcta{flex:1;min-width:220px;display:block;text-align:center;background:var(--ac);color:#fff;font-weight:800;font-size:1.02rem;padding:14px 20px;border-radius:12px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.18)}
-.mapcta:hover{filter:brightness(1.09);color:#fff}
-@media(max-width:700px){#kwmap{height:300px}}
-details{border:1px solid #e2e8f0;border-radius:10px;margin:8px 0;background:#fff}
-summary{padding:12px 14px;font-weight:600;cursor:pointer;font-size:.93rem}
-details p{padding:0 14px 12px;color:#334155;font-size:.92rem}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-.chip{background:var(--acsoft);border:1px solid var(--ac);color:#0f172a;padding:6px 13px;border-radius:99px;font-size:.82rem;font-weight:600;text-decoration:none;display:inline-block}
-.chip:hover{background:var(--ac);color:#fff}
-.cities{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.cities a{display:block;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px;font-weight:600;text-decoration:none;color:#1e293b}
-.cities a:hover{border-color:var(--ac);color:var(--ac)}
-footer{margin-top:34px;padding:20px 0;border-top:1px solid #e2e8f0;color:#64748b;font-size:.78rem;text-align:center}
-footer a{color:#64748b}
-.updated{font-size:.8rem;color:#64748b;margin-top:2px}
-</style>
+<link rel="stylesheet" href="/theme.css">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0F172A">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type": "Question", "name": "Where can I find a wheelchair accessible toilet near me?", "acceptedAnswer": {"@type": "Answer", "text": "Malls, airports, metro stations, hospitals and newer pay-and-use complexes are the most reliable; look for the wheelchair symbol on directory boards."}}, {"@type": "Question", "name": "Are accessible toilets free in India?", "acceptedAnswer": {"@type": "Answer", "text": "Where the facility is free (malls, hospitals, most stations), the accessible stall is free too; pay-and-use complexes do not charge extra for accessible cubicles."}}, {"@type": "Question", "name": "What does the RPwD Act say about toilets?", "acceptedAnswer": {"@type": "Answer", "text": "The Rights of Persons with Disabilities Act 2016 requires public buildings to provide accessible facilities, including restrooms, with the Accessible India Campaign driving compliance."}}, {"@type": "Question", "name": "What features make a toilet accessible?", "acceptedAnswer": {"@type": "Answer", "text": "Wide doors, turning space for a wheelchair, grab bars, a lower seat and basin, and ideally an emergency call button."}}, {"@type": "Question", "name": "Do railway stations have accessible toilets?", "acceptedAnswer": {"@type": "Answer", "text": "Major stations have at least one accessible toilet, typically near the main entrance or waiting hall — station staff can direct you."}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://toiletsnearme.pages.dev/"},{"@type":"ListItem","position":2,"name":"Wheelchair accessible toilets near me","item":"https://toiletsnearme.pages.dev/wheelchair-accessible-toilets-near-me/"}]}</script>
 </head>
 <body>
-<header><div class="wrap"><div class="logo">T</div><div><b>Toilets Near Me</b><small>SKM Studio Network &middot; live OSM data &middot; DIGIPIN directions</small></div></div></header>
+<!-- BLOCK:HEADER -->
+<header id="block-header"><div class="wrap"><div class="logo">T</div><div><b>Toilets Near Me</b><small>SKM Studio Network &middot; live OSM data &middot; DIGIPIN directions</small></div></div></header>
+<!-- /BLOCK:HEADER -->
 <div class="wrap">
 <nav class="crumbs"><a href="/">Home</a> &rsaquo; Wheelchair accessible toilets near me</nav>
-<main>
+<!-- BLOCK:CONTENT -->
+<main id="block-content">
 <h1>Wheelchair accessible toilets near me — where they are and what to expect</h1>
 <p class="updated">Page last updated 29 September 2026</p>
 <p class="lead">India's accessible-restroom coverage is improving fast in new buildings — knowing where to look makes all the difference.</p>
 <div class="ans"><b>Quick answer</b>The most dependable wheelchair-accessible toilets: <b>malls, airports, metro stations and newer pay-and-use complexes</b>. Look for the wheelchair symbol on directories; Indian law (the <b>Rights of Persons with Disabilities Act, 2016</b>) requires accessible toilets in public buildings. Our <a href="/">live map</a> shows toilet data where accessibility is recorded.</div>
-<div class="card" style="border:2px solid var(--ac)"><h2>🗺 Wheelchair accessible toilets near me — live map</h2><p class="mapstat" id="kwcount">Loading live map…</p><div id="kwmap"></div><div id="kwchips" class="kchips"></div><div class="mapbtns"><button id="kwnear" class="nearbtn" style="display:none">📍 Use my location</button><a class="mapcta" href="/">Open the full map &mdash; DIGIPIN directions &rarr;</a></div><p style="font-size:.75rem;color:#64748b;margin-top:8px">Tap any pin for details · data &copy; OpenStreetMap contributors (ODbL)</p></div>
-<div class="card"><h2>Where accessible toilets concentrate</h2><ul style="list-style:disc"><li><b>Malls and multiplexes:</b> accessible stalls on every restroom floor — the most consistent option.</li><li><b>Airports and metro stations:</b> designed to modern accessibility standards.</li><li><b>Newer pay-and-use complexes:</b> many include at least one accessible cubicle.</li><li><b>Hospitals:</b> accessible restrooms near OPD and emergency entrances.</li></ul></div><div class="card"><h2>What makes a toilet accessible</h2><p>A wheelchair-accessible toilet needs: a wide door, enough turning space, grab bars beside the seat, a lower seat and washbasin, and an emergency call facility where possible. A wheelchair symbol on the door is the signal to look for.</p></div><div class="card"><h2>Your legal rights</h2><p>The RPwD Act 2016 mandates accessibility in public buildings, including restrooms. Accessible India Campaign audits push compliance — complaints about a specific building can be raised with the local disability commissioner.</p></div>
-<div class="card"><h2>❓ Wheelchair accessible toilets near me &mdash; FAQ</h2><details><summary>Where can I find a wheelchair accessible toilet near me?</summary><p>Malls, airports, metro stations, hospitals and newer pay-and-use complexes are the most reliable; look for the wheelchair symbol on directory boards.</p></details><details><summary>Are accessible toilets free in India?</summary><p>Where the facility is free (malls, hospitals, most stations), the accessible stall is free too; pay-and-use complexes do not charge extra for accessible cubicles.</p></details><details><summary>What does the RPwD Act say about toilets?</summary><p>The Rights of Persons with Disabilities Act 2016 requires public buildings to provide accessible facilities, including restrooms, with the Accessible India Campaign driving compliance.</p></details><details><summary>What features make a toilet accessible?</summary><p>Wide doors, turning space for a wheelchair, grab bars, a lower seat and basin, and ideally an emergency call button.</p></details><details><summary>Do railway stations have accessible toilets?</summary><p>Major stations have at least one accessible toilet, typically near the main entrance or waiting hall — station staff can direct you.</p></details></div>
-<div class="card"><h2>🔗 Related guides</h2><div class="chips"><a class="chip" href="/">🗺 Live map</a><a class="chip" href="/public-toilets-at-malls/">Toilets at malls</a><a class="chip" href="/toilets-at-railway-stations/">Railway toilets</a><a class="chip" href="/pay-and-use-toilets-near-me/">Pay & use toilets</a></div></div>
-<div class="card"><h2>📍 Toilets Near Me by city</h2><div class="cities"><a href="/delhi/">Delhi</a><a href="/mumbai/">Mumbai</a><a href="/bengaluru/">Bengaluru</a><a href="/hyderabad/">Hyderabad</a><a href="/chennai/">Chennai</a><a href="/kolkata/">Kolkata</a><a href="/pune/">Pune</a><a href="/ahmedabad/">Ahmedabad</a><a href="/jaipur/">Jaipur</a><a href="/lucknow/">Lucknow</a><a href="/surat/">Surat</a><a href="/indore/">Indore</a><a href="/chandigarh/">Chandigarh</a><a href="/bhopal/">Bhopal</a><a href="/nagpur/">Nagpur</a></div></div>
+<!-- BLOCK:CARD-wheelchair-accessible-toilets-near-me-live-map -->
+<div id="block-wheelchair-accessible-toilets-near-me-live-map" class="card" style="border:2px solid var(--ac)"><h2>🗺 Wheelchair accessible toilets near me — live map</h2><p class="mapstat" id="kwcount">Loading live map…</p><div id="kwmap"></div><div id="kwchips" class="kchips"></div><div class="mapbtns"><button id="kwnear" class="nearbtn" style="display:none">📍 Use my location</button><a class="mapcta" href="/">Open the full map &mdash; DIGIPIN directions &rarr;</a></div><p style="font-size:.75rem;color:#64748b;margin-top:8px">Tap any pin for details · data &copy; OpenStreetMap contributors (ODbL)</p></div>
+<!-- /BLOCK:CARD-wheelchair-accessible-toilets-near-me-live-map -->
+<!-- BLOCK:CARD-where-accessible-toilets-concentrate -->
+<div id="block-where-accessible-toilets-concentrate" class="card"><h2>Where accessible toilets concentrate</h2><ul style="list-style:disc"><li><b>Malls and multiplexes:</b> accessible stalls on every restroom floor — the most consistent option.</li><li><b>Airports and metro stations:</b> designed to modern accessibility standards.</li><li><b>Newer pay-and-use complexes:</b> many include at least one accessible cubicle.</li><li><b>Hospitals:</b> accessible restrooms near OPD and emergency entrances.</li></ul></div>
+<!-- /BLOCK:CARD-where-accessible-toilets-concentrate --><!-- BLOCK:CARD-what-makes-a-toilet-accessible -->
+<div id="block-what-makes-a-toilet-accessible" class="card"><h2>What makes a toilet accessible</h2><p>A wheelchair-accessible toilet needs: a wide door, enough turning space, grab bars beside the seat, a lower seat and washbasin, and an emergency call facility where possible. A wheelchair symbol on the door is the signal to look for.</p></div>
+<!-- /BLOCK:CARD-what-makes-a-toilet-accessible --><!-- BLOCK:CARD-your-legal-rights -->
+<div id="block-your-legal-rights" class="card"><h2>Your legal rights</h2><p>The RPwD Act 2016 mandates accessibility in public buildings, including restrooms. Accessible India Campaign audits push compliance — complaints about a specific building can be raised with the local disability commissioner.</p></div>
+<!-- /BLOCK:CARD-your-legal-rights -->
+<!-- BLOCK:CARD-wheelchair-accessible-toilets-near-me-mdash-faq -->
+<div id="block-wheelchair-accessible-toilets-near-me-mdash-faq" class="card"><h2>❓ Wheelchair accessible toilets near me &mdash; FAQ</h2><details><summary>Where can I find a wheelchair accessible toilet near me?</summary><p>Malls, airports, metro stations, hospitals and newer pay-and-use complexes are the most reliable; look for the wheelchair symbol on directory boards.</p></details><details><summary>Are accessible toilets free in India?</summary><p>Where the facility is free (malls, hospitals, most stations), the accessible stall is free too; pay-and-use complexes do not charge extra for accessible cubicles.</p></details><details><summary>What does the RPwD Act say about toilets?</summary><p>The Rights of Persons with Disabilities Act 2016 requires public buildings to provide accessible facilities, including restrooms, with the Accessible India Campaign driving compliance.</p></details><details><summary>What features make a toilet accessible?</summary><p>Wide doors, turning space for a wheelchair, grab bars, a lower seat and basin, and ideally an emergency call button.</p></details><details><summary>Do railway stations have accessible toilets?</summary><p>Major stations have at least one accessible toilet, typically near the main entrance or waiting hall — station staff can direct you.</p></details></div>
+<!-- /BLOCK:CARD-wheelchair-accessible-toilets-near-me-mdash-faq -->
+<!-- BLOCK:CARD-related-guides -->
+<div id="block-related-guides" class="card"><h2>🔗 Related guides</h2><div class="chips"><a class="chip" href="/">🗺 Live map</a><a class="chip" href="/public-toilets-at-malls/">Toilets at malls</a><a class="chip" href="/toilets-at-railway-stations/">Railway toilets</a><a class="chip" href="/pay-and-use-toilets-near-me/">Pay & use toilets</a></div></div>
+<!-- /BLOCK:CARD-related-guides -->
+<!-- BLOCK:CARD-toilets-near-me-by-city -->
+<div id="block-toilets-near-me-by-city" class="card"><h2>📍 Toilets Near Me by city</h2><div class="cities"><a href="/delhi/">Delhi</a><a href="/mumbai/">Mumbai</a><a href="/bengaluru/">Bengaluru</a><a href="/hyderabad/">Hyderabad</a><a href="/chennai/">Chennai</a><a href="/kolkata/">Kolkata</a><a href="/pune/">Pune</a><a href="/ahmedabad/">Ahmedabad</a><a href="/jaipur/">Jaipur</a><a href="/lucknow/">Lucknow</a><a href="/surat/">Surat</a><a href="/indore/">Indore</a><a href="/chandigarh/">Chandigarh</a><a href="/bhopal/">Bhopal</a><a href="/nagpur/">Nagpur</a></div></div>
+<!-- /BLOCK:CARD-toilets-near-me-by-city -->
 </main>
+<!-- /BLOCK:CONTENT -->
 </div>
-<footer>Toilets Near Me &mdash; an SKM Studio Network site &middot; <a href="https://toiletsnearme.pages.dev/">https://toiletsnearme.pages.dev</a> &middot; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL)<br>
+<!-- BLOCK:FOOTER -->
+<footer id="block-footer">Toilets Near Me &mdash; an SKM Studio Network site &middot; <a href="https://toiletsnearme.pages.dev/">https://toiletsnearme.pages.dev</a> &middot; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL)<br>
 General information only &middot; Emergency? Call <b>112</b> · <a href="/privacy/">Privacy</a> · <a href="/about/">About</a></footer>
+<!-- /BLOCK:FOOTER -->
 <script>window.KWMAP_CFG={"ac": "#0d9488", "poiname": "public toilet", "def": "delhi", "popup": [{"k": "operator", "l": "Operator"}, {"k": "opening_hours", "l": "Hours"}, {"k": "fee", "l": "Free", "b": 1}, {"k": "access", "l": "Access"}, {"k": "wheelchair", "l": "Wheelchair", "b": 1}, {"k": "changing_table", "l": "Baby change", "b": 1}], "cities": {"delhi": {"name": "Delhi", "lat": 28.61, "lon": 77.21}, "mumbai": {"name": "Mumbai", "lat": 19.08, "lon": 72.88}, "bengaluru": {"name": "Bengaluru", "lat": 12.97, "lon": 77.59}, "hyderabad": {"name": "Hyderabad", "lat": 17.39, "lon": 78.49}, "chennai": {"name": "Chennai", "lat": 13.08, "lon": 80.27}, "kolkata": {"name": "Kolkata", "lat": 22.57, "lon": 88.36}, "pune": {"name": "Pune", "lat": 18.52, "lon": 73.86}, "ahmedabad": {"name": "Ahmedabad", "lat": 23.03, "lon": 72.58}, "jaipur": {"name": "Jaipur", "lat": 26.91, "lon": 75.79}, "lucknow": {"name": "Lucknow", "lat": 26.85, "lon": 80.95}, "surat": {"name": "Surat", "lat": 21.17, "lon": 72.83}, "indore": {"name": "Indore", "lat": 22.72, "lon": 75.86}, "chandigarh": {"name": "Chandigarh", "lat": 30.73, "lon": 76.78}, "bhopal": {"name": "Bhopal", "lat": 23.26, "lon": 77.41}, "nagpur": {"name": "Nagpur", "lat": 21.15, "lon": 79.09}}};</script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="/mapapp.js"></script>
