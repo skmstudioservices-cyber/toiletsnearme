@@ -456,12 +456,12 @@ function suggest(lat,lon){
   if(!document.getElementById("tlStyle")){
     var st=el("style");st.id="tlStyle";
     st.textContent=".tlCC{position:fixed;right:14px;bottom:74px;z-index:1200;display:flex;flex-direction:column;gap:7px;align-items:flex-end}"
-    +".tlB{display:flex;align-items:center;gap:7px;padding:7px 11px;border-radius:22px;border:1px solid #cbd5e1;background:#fff;color:#0f172a;font:inherit;font-size:1rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18)}"
-    +".tlB .lb{font-size:.7rem;font-weight:800}.tlTog{background:#0f172a;color:#fff;border-color:transparent}"
+    +".tlB{display:flex;align-items:center;gap:7px;width:150px;justify-content:space-between;padding:7px 11px;border-radius:22px;border:1px solid #cbd5e1;background:#fff;color:#0f172a;font:inherit;font-size:1rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18)}"
+    +".tlB .lb{font-size:.7rem;font-weight:800;flex:1;text-align:left}.tlTog{background:#0f172a;color:#fff;border-color:transparent}"
     +".tlCC:not(.open) .tlB:not(.tlTog){display:none}"
     +".tlTabs{position:fixed;left:0;right:0;bottom:0;z-index:1150;display:none;align-items:center;justify-content:space-around;background:#fff;border-top:1px solid #e2e8f0;box-shadow:0 -2px 12px rgba(0,0,0,.1);padding:6px 4px}"
     +".tlTab{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;text-decoration:none;color:#64748b;font:inherit}"
-    +".tlTab .ic{font-size:1.3rem;line-height:1}.tlTab .lb{font-size:.64rem;font-weight:800}"
+    +".tlTab .ic{font-size:1.3rem;line-height:1}.tlTab .lb{display:none}"
     +".tlAdd{flex:none;width:54px;height:54px;margin-top:-18px;border-radius:50%;border:4px solid #fff;background:"+ac+";color:#fff;font-size:1.4rem;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.28)}"
     +"@media(max-width:700px){.tlTabs{display:flex}}"
     +".tlmapdark .leaflet-tile{filter:invert(1) hue-rotate(180deg) brightness(.95) contrast(.88) saturate(.7)}";
@@ -480,8 +480,8 @@ function suggest(lat,lon){
   if(!document.getElementById("tlCC")){
     var cl=el("div","tlCC open");cl.id="tlCC";
     if(ls(LS_CORNER,"open")==="closed")cl.className="tlCC";
-    function b(id,ic,lb,fn){var x=el("button","tlB","<span>"+ic+"</span><span class='lb'>"+lb+"</span>");x.id=id;x.type="button";x.title=lb;x.onclick=fn;return x;}
-    cl.appendChild(b("tlColour","\ud83c\udf19","Colour",cycle));
+    function b(id,ic,lb,fn){var x=el("button","tlB","<span class='lb'>"+lb+"</span><span>"+ic+"</span>");x.id=id;x.type="button";x.title=lb;x.onclick=fn;return x;}
+    cl.appendChild(b("tlColour","\ud83c\udf19","Map colour",cycle));
     cl.appendChild(b("tlFav","\u2b50","Favourite",function(){
       var c=map.getCenter(),best=null,bd=1e9;
       Object.keys(C.cities).forEach(function(k){var d=Math.pow(C.cities[k].lat-c.lat,2)+Math.pow(C.cities[k].lon-c.lng,2);if(d<bd){bd=d;best=k;}});
@@ -492,6 +492,7 @@ function suggest(lat,lon){
     }));
     cl.appendChild(b("tlReport","\ud83d\udce2","Report",function(){ if(typeof suggest==="function"){var c=map.getCenter();suggest(c.lat,c.lng);}else toast("Use the add button on the map"); }));
     cl.appendChild(b("tlFeedback","\ud83d\udcac","Feedback",function(){ toast("Feedback: email us or use the popup"); }));
+    cl.appendChild(b("tlTheme","\ud83d\udca1","Theme",function(){var x=document.getElementById("themeBtn");if(x)x.click();else toast("Theme: use the site toggle");}));
     var tg=el("button","tlB tlTog","<span>\u2699\ufe0f</span><span class='lb'>Tools</span>");tg.type="button";tg.id="tlTog";
     tg.onclick=function(){var o=cl.classList.toggle("open");lsSet(LS_CORNER,o?"open":"closed");};
     cl.appendChild(tg);
@@ -499,7 +500,7 @@ function suggest(lat,lon){
   }
   if(!document.getElementById("tlTabs")){
     var tabs=el("nav","tlTabs");tabs.id="tlTabs";
-    function tab(h,ic,lb){var a=el("a","tlTab","<span class='ic'>"+ic+"</span><span class='lb'>"+lb+"</span>");a.href=h;
+    function tab(h,ic,lb){var a=el("a","tlTab","<span class='ic'>"+ic+"</span>");a.title=lb;a.setAttribute("aria-label",lb);a.href=h;
       a.onclick=function(e){var t=document.querySelector(h);if(t){e.preventDefault();t.scrollIntoView({behavior:"smooth",block:"start"});}};return a;}
     tabs.appendChild(tab("#map","\ud83d\uddfa","Map"));
     tabs.appendChild(tab("#count","\ud83d\udebb","Nearby"));
