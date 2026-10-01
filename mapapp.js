@@ -457,7 +457,7 @@ function suggest(lat,lon){
     var st=el("style");st.id="tlStyle";
     st.textContent=".tlCC{position:fixed;right:14px;bottom:74px;z-index:1200;display:flex;flex-direction:column;gap:7px;align-items:flex-end}"
     +".tlB{display:flex;align-items:center;gap:7px;width:150px;justify-content:space-between;padding:7px 11px;border-radius:22px;border:1px solid #cbd5e1;background:#fff;color:#0f172a;font:inherit;font-size:1rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18)}"
-    +".tlB .lb{font-size:.7rem;font-weight:800;flex:1;text-align:left}.tlTog{background:#0f172a;color:#fff;border-color:transparent}"
+    +".tlB .lb{font-size:.7rem;font-weight:800;flex:1;text-align:left}.tlTog{background:#0f172a;color:#fff;border-color:transparent;width:40px;height:40px;justify-content:center;padding:0;border-radius:50%}"
     +".tlCC:not(.open) .tlB:not(.tlTog){display:none}"
     +".tlTabs{position:fixed;left:0;right:0;bottom:0;z-index:1150;display:none;align-items:center;justify-content:space-around;background:#fff;border-top:1px solid #e2e8f0;box-shadow:0 -2px 12px rgba(0,0,0,.1);padding:6px 4px}"
     +".tlTab{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;text-decoration:none;color:#64748b;font:inherit}"
@@ -493,8 +493,8 @@ function suggest(lat,lon){
     cl.appendChild(b("tlReport","\ud83d\udce2","Report",function(){ if(typeof suggest==="function"){var c=map.getCenter();suggest(c.lat,c.lng);}else toast("Use the add button on the map"); }));
     cl.appendChild(b("tlFeedback","\ud83d\udcac","Feedback",function(){ toast("Feedback: email us or use the popup"); }));
     cl.appendChild(b("tlTheme","\ud83d\udca1","Theme",function(){var x=document.getElementById("themeBtn");if(x)x.click();else toast("Theme: use the site toggle");}));
-    var tg=el("button","tlB tlTog","<span>\u2699\ufe0f</span><span class='lb'>Tools</span>");tg.type="button";tg.id="tlTog";
-    tg.onclick=function(){var o=cl.classList.toggle("open");lsSet(LS_CORNER,o?"open":"closed");};
+    var tg=el("button","tlB tlTog","<span>\u25be</span>");tg.type="button";tg.id="tlTog";
+    tg.onclick=function(){var o=cl.classList.toggle("open");lsSet(LS_CORNER,o?"open":"closed");tg.innerHTML="<span>"+(o?"\u25be":"\ud83e\uddf0")+"</span>";};
     cl.appendChild(tg);
     document.body.appendChild(cl);
   }
@@ -512,6 +512,17 @@ function suggest(lat,lon){
     document.body.appendChild(tabs);
   }
 })();
+
+
+  /* ===== BLOCK:BRAND-ASSETS (injected - no page edits needed) ===== */
+  (function(){
+    function link(rel,href,extra){var l=document.createElement("link");l.rel=rel;l.href=href;if(extra)for(var k in extra)l.setAttribute(k,extra[k]);document.head.appendChild(l);}
+    if(!document.querySelector('link[rel="icon"][href="/favicon.svg"]'))link("icon","/favicon.svg",{type:"image/svg+xml"});
+    link("apple-touch-icon","/icons/apple-touch-icon.png");
+    link("manifest","/manifest.webmanifest");
+    var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement("meta");m.name="theme-color";m.content="#0F172A";document.head.appendChild(m);}
+    if("serviceWorker" in navigator){try{navigator.serviceWorker.register("/sw.js").catch(function(){});}catch(e){}}
+  })();
 
 loadAll();
 })();
