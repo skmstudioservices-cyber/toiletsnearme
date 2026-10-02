@@ -1,0 +1,35 @@
+name: Sitemap page
+on:
+  push:
+    branches: [main]
+    paths: ["sitemap.xml"]
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * *"
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate sitemap page
+        run: |
+          cat > /tmp/gen.py <<'PY'
+          import re, html, datetime, os
+          xml = open("sitemap.xml", encoding="utf-8").read()
+          locs = re.findall(r"<loc>(.*?)</loc>", xml)
+          rows = "\n".join('<li><a href="%s">%s</a></li>' % (html.escape(u), html.escape(u)) for u in locs)
+          stamp = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+          page = "<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Sitemap - %d pages</title><meta name=robots content=noindex><style>body{font:16px/1.6 system-ui,sans-serif;max-width:760px;margin:0 auto;padding:24px}li{margin:4px 0}a{color:#0f172a}small{color:#64748b}</style></head><body><h1>Sitemap</h1><p><small>%d pages - updated %s</small></p><ul>%s</ul></body></html>" % (len(locs), len(locs), stamp, rows)
+          os.makedirs("sitemap", exist_ok=True)
+          open("sitemap/index.html","w",encoding="utf-8").write(page)
+          PY
+          python3 /tmp/gen.py
+      - name: Commit if changed
+        run: |
+          git config user.name "skm-bot"
+          git config user.email "skmstudio.services@gmail.com"
+          git add sitemap/index.html
+          git diff --staged --quiet || git commit -m "chore: refresh sitemap page"
+          git push
