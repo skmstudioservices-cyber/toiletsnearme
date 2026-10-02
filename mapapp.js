@@ -155,24 +155,27 @@ function updateCount(){
 map.on("moveend zoomend",updateCount);
 
 /* ---------- geocoding ---------- */
-function closeResults(){if(resultsEl){resultsEl.remove();resultsEl=null;}}
+var resItems=[],resIdx=-1;
+function hlResults(){resItems.forEach(function(d,i){d.style.background=(i===resIdx)?"#e2e8f0":"";});}
+function closeResults(){if(resultsEl){resultsEl.remove();resultsEl=null;}resItems=[];resIdx=-1;}
 function showResults(list,cb,inp){
   closeResults();
   resultsEl=document.createElement("div");
-  resultsEl.style.cssText="position:absolute;z-index:9999;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 10px 30px rgba(15,23,42,.18);max-height:250px;overflow:auto;min-width:260px;font-size:.85rem";
+  resultsEl.style.cssText="position:absolute;z-index:9999;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 10px 30px rgba(15,23,42,.18);max-height:min(250px,50vh);overflow:auto;width:min(340px,calc(100vw - 24px));font-size:clamp(.78rem,.85vw + .6rem,.9rem)";
   list.forEach(function(it){
     var d=document.createElement("div");
     d.style.cssText="padding:9px 12px;cursor:pointer;border-bottom:1px solid #f1f5f9";
     d.textContent=it.label;
-    d.onmouseover=function(){d.style.background="#f1f5f9";};
-    d.onmouseout=function(){d.style.background="";};
+    d.onmouseover=function(){resIdx=resItems.indexOf(d);hlResults();};
     d.onclick=function(){cb(it);closeResults();};
-    resultsEl.appendChild(d);
+    resultsEl.appendChild(d);resItems.push(d);
   });
   document.body.appendChild(resultsEl);
   var r=inp.getBoundingClientRect();
-  resultsEl.style.left=r.left+"px";resultsEl.style.top=(r.bottom+6)+"px";
-  resultsEl.style.width=Math.max(260,r.width)+"px";
+  var w=Math.min(Math.max(r.width,240),window.innerWidth-24);
+  var left=Math.min(Math.max(r.left,12),Math.max(12,window.innerWidth-w-12));
+  resultsEl.style.left=left+"px";resultsEl.style.top=(r.bottom+6)+"px";
+  resultsEl.style.width=w+"px";
 }
 function geocode(term,cb,isPostal){
   var u="https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=in&"+(isPostal?("postalcode="+encodeURIComponent(term)):("q="+encodeURIComponent(term)));
@@ -230,7 +233,13 @@ function bindSearch(inp){
     },550);
   });
   inp.addEventListener("keydown",function(e){
+    if(e.key==="ArrowDown"||e.key==="ArrowUp"){
+      if(!resItems.length)return;e.preventDefault();
+      resIdx=e.key==="ArrowDown"?(resIdx+1)%resItems.length:(resIdx-1+resItems.length)%resItems.length;
+      hlResults();return;
+    }
     if(e.key==="Enter"){
+      if(resIdx>=0&&resItems[resIdx]){e.preventDefault();resItems[resIdx].click();return;}
       clearTimeout(geoTimer);closeResults();
       resolveQuery(inp.value.trim(),function(list){
         if(!list.length){toast("Nothing found \u2014 try a place, pincode, DIGIPIN or lat,lon");return;}
@@ -239,8 +248,22 @@ function bindSearch(inp){
     }
   });
 }
+function quickPicks(inp){
+  if(!inp||inp._qp)return; inp._qp=1;
+  var terms=["Sulabh toilet","Open now","Toilet at metro","Washroom near me","Free toilet"];
+  var row=document.createElement("div");
+  row.className="qprow";
+  row.style.cssText="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 2px";
+  terms.forEach(function(t){
+    var b=document.createElement("button");b.type="button";b.className="qpick";b.textContent=t;
+    b.style.cssText="padding:6px 10px;border-radius:16px;border:1px solid #cbd5e1;background:#fff;color:#0f172a;font:inherit;font-size:clamp(.72rem,.8vw + .5rem,.82rem);cursor:pointer;white-space:nowrap";
+    b.onclick=function(){inp.value=t;inp.dispatchEvent(new Event("input",{bubbles:true}));inp.focus();};
+    row.appendChild(b);
+  });
+  try{ inp.parentNode.insertBefore(row, inp.nextSibling); }catch(e){}
+}
 var qEl=document.getElementById(EMBED?"kwq":"q");
-if(qEl)bindSearch(qEl);
+if(qEl){bindSearch(qEl);quickPicks(qEl);}
 window.MA={clearPin:function(){if(searchMk){map.removeLayer(searchMk);searchMk=null;}}};
 
 /* ---------- origin bar + routing ---------- */
@@ -364,6 +387,23 @@ document.getElementById("originme").onclick=function(){
   b.onclick=function(){startNav();};
   originWrap.insertBefore(b,originWrap.lastChild);
 })();
+(function(){
+  var b=document.createElement("button");
+  b.type="button";b.id="originpick";
+  b.textContent="\ud83d\udccd Pick start on map";
+  b.style.cssText="padding:10px 12px;border-radius:10px;border:1px solid #cbd5e1;background:#fff;font-weight:700;cursor:pointer;font-size:.85rem";
+  b.onclick=function(){
+    if(!dest){toast("Tap a "+C.poiname+" pin first, then route");return;}
+    toast("Tap the map to set your start point");
+    var h=function(e){
+      map.off("click",h);
+      var oi=document.getElementById("origin");if(oi)oi.value=e.latlng.lat.toFixed(5)+", "+e.latlng.lng.toFixed(5);
+      drawRoute(e.latlng.lat,e.latlng.lng);
+    };
+    map.on("click",h);
+  };
+  originWrap.insertBefore(b,originWrap.lastChild);
+})();
 
 /* ---------- non-embed extras ---------- */
 if(!EMBED){
@@ -417,7 +457,7 @@ if(!EMBED){
     sq.id="kwq";sq.placeholder="Search any place, pincode or name\u2026";
     sq.style.cssText="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #cbd5e1;font-family:inherit;font-size:.9rem;margin-bottom:8px;box-sizing:border-box";
     mapEl.parentNode.insertBefore(sq,mapEl);
-    bindSearch(sq);
+    bindSearch(sq);quickPicks(sq);
   }
   var near=document.getElementById("kwnear");
   if(near&&navigator.geolocation){
@@ -436,7 +476,7 @@ function suggest(lat,lon){
   var body=encodeURIComponent("New "+C.poiname+" suggestion:\n\n- Latitude: "+lat.toFixed(6)+"\n- Longitude: "+lon.toFixed(6)+
     "\n- DIGIPIN: "+dp+"\n- City: \n- Name / operator: \n- Opening hours: \n- Free or paid: \n- Notes: \n\n(Alternatively edit OpenStreetMap directly - the map picks it up automatically.)");
   var url="mailto:skmstudio.services@gmail.com?subject="+title+"&body="+body;
-  L_.popup({maxWidth:340}).setLatLng([lat,lon]).setContent(
+  L_.popup({maxWidth:Math.min(340,window.innerWidth-40)}).setLatLng([lat,lon]).setContent(
     '<div class="pp"><b>\u2795 Suggested spot</b><div class="row">\ud83d\udccd '+lat.toFixed(5)+", "+lon.toFixed(5)+'</div>'+
     '<div class="row">\ud83d\uded1 DIGIPIN <b>'+dp+"</b> <span class='cpl' onclick=\"copyT('"+dp+"')\">copy</span></div>"+
     '<div class="row" style="margin:6px 0">Know this spot? Suggest it publicly - approved spots appear after review:</div>'+
