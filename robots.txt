@@ -13,10 +13,10 @@ User-agent: GPTBot
 Disallow: /
 
 User-agent: OAI-SearchBot
-Disallow: /
+Allow: /
 
 User-agent: ChatGPT-User
-Disallow: /
+Allow: /
 
 User-agent: ChatGPT Agent
 Disallow: /
