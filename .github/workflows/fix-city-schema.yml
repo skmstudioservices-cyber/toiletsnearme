@@ -1,0 +1,61 @@
+name: Fix city schema + robots (one-shot)
+
+# Fixes two real mistakes found 23 Oct 2026:
+# 1. City pages had NO JSON-LD (FAQ/Breadcrumb/Place) -> added here.
+# 2. robots.txt blocked OAI-SearchBot (an AI SEARCH bot) -> allow it, keep GPTBot blocked.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch city pages + robots
+        run: |
+          python3 - <<'PY'
+          import os, re, json
+          BASE="https://toiletsnearme.pages.dev"
+          CITIES={"delhi":("Delhi","Delhi",28.6139,77.2090),"mumbai":("Mumbai","Maharashtra",19.0760,72.8777),
+          "bengaluru":("Bengaluru","Karnataka",12.9716,77.5946),"hyderabad":("Hyderabad","Telangana",17.3850,78.4867),
+          "chennai":("Chennai","Tamil Nadu",13.0827,80.2707),"kolkata":("Kolkata","West Bengal",22.5726,88.3639),
+          "pune":("Pune","Maharashtra",18.5204,73.8567),"ahmedabad":("Ahmedabad","Gujarat",23.0225,72.5714),
+          "jaipur":("Jaipur","Rajasthan",26.9124,75.7873),"lucknow":("Lucknow","Uttar Pradesh",26.8467,80.9462),
+          "surat":("Surat","Gujarat",21.1702,72.8311),"indore":("Indore","Madhya Pradesh",22.7196,75.8577),
+          "chandigarh":("Chandigarh","Chandigarh",30.7333,76.7794),"bhopal":("Bhopal","Madhya Pradesh",23.2599,77.4126),
+          "nagpur":("Nagpur","Maharashtra",21.1458,79.0882)}
+          def block(city,state,la,lo):
+              bc={"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+                  {"@type":"ListItem","position":1,"name":"Home","item":BASE+"/"},
+                  {"@type":"ListItem","position":2,"name":"Public toilets in "+city,"item":BASE+"/"+city.lower()+"/"}]}
+              faq={"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+                  {"@type":"Question","name":"Where can I find a public toilet in "+city+"?","acceptedAnswer":{"@type":"Answer","text":"Use the live map on this page to find public toilets across "+city+", "+state+" - including 24x7 petrol-pump, mall and metro options, with directions."}},
+                  {"@type":"Question","name":"Are public toilets in "+city+" free?","acceptedAnswer":{"@type":"Answer","text":"Many community toilets in "+city+" are free; pay-and-use ones usually cost Rs 5-10 and are often cleaner."}},
+                  {"@type":"Question","name":"Are there women's toilets in "+city+"?","acceptedAnswer":{"@type":"Answer","text":"Yes - most public and pay-and-use toilets in "+city+" have separate women's sections, usually with attendants."}}]}
+              pl={"@context":"https://schema.org","@type":"Place","name":"Public toilets in "+city,"address":{"@type":"PostalAddress","addressLocality":city,"addressRegion":state,"addressCountry":"IN"},"geo":{"@type":"GeoCoordinates","latitude":la,"longitude":lo}}
+              return "\n".join('<script type="application/ld+json">%s</script>'%json.dumps(x) for x in (bc,faq,pl))
+          fixed=0
+          for slug,(city,state,la,lo) in CITIES.items():
+              p=slug+"/index.html"
+              if not os.path.exists(p): continue
+              h=open(p,encoding="utf-8").read()
+              if "application/ld+json" in h: continue
+              if "</head>" in h: h=h.replace("</head>", block(city,state,la,lo)+"\n</head>",1)
+              open(p,"w",encoding="utf-8").write(h); fixed+=1
+          print("city pages patched:",fixed)
+          rp="robots.txt"
+          if os.path.exists(rp):
+              r=open(rp,encoding="utf-8").read()
+              r2=r.replace("User-agent: OAI-SearchBot\nDisallow: /","User-agent: OAI-SearchBot\nAllow: /").replace("User-agent: ChatGPT-User\nDisallow: /","User-agent: ChatGPT-User\nAllow: /")
+              if r2!=r: open(rp,"w",encoding="utf-8").write(r2); print("robots.txt patched")
+          PY
+      - name: Commit + push
+        run: |
+          git config user.name "skm-bot"
+          git config user.email "bot@skmstudioservices.local"
+          git add -A
+          git diff --cached --quiet && echo "nothing to commit" || git commit -m "fix(seo): add JSON-LD to city pages; allow OAI-SearchBot in robots"
+          git push || echo "push skipped"
