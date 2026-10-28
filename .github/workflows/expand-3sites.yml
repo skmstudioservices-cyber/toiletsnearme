@@ -1,0 +1,37 @@
+name: Expand 3 Sites (100km)
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - name: Clone 3 repos
+        run: |
+          mkdir -p /tmp/work && cd /tmp/work
+          for r in toiletsnearme washroomsnearme restareanearme; do
+            git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/skmstudioservices-cyber/$r.git $r
+          done
+          ls -d /tmp/work/*
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Build
+        env:
+          WORK: /tmp/work
+        run: python /tmp/work/toiletsnearme/scripts/build_3sites.py
+      - name: Commit and push each repo
+        run: |
+          for r in toiletsnearme washroomsnearme restareanearme; do
+            cd /tmp/work/$r
+            git config user.name "skm-bot"; git config user.email "bot@skm.local"
+            git add -A
+            if git diff --staged --quiet; then echo "$r: nothing"; else
+              git commit -m "feat: 100km city expansion + sitemap"
+              git push origin HEAD:main && echo "$r: pushed"
+            fi
+          done
+      - name: Summary
+        if: always()
+        run: cat /tmp/work/cities-added-3sites.json || true
