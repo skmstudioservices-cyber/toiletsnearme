@@ -1,0 +1,33 @@
+name: Add Cities (OSM)
+on:
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: deploy after build
+        default: 'true'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: skmstudioservices-cyber/toiletsnearme
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Build cities
+        run: python scripts/build_cities.py
+      - name: Commit
+        run: |
+          git config user.name "skm-bot"
+          git config user.email "bot@skm.local"
+          git add -A
+          git commit -m "feat: add 50+ Indian cities with real OSM toilet data" || echo "nothing to commit"
+          git push
+      - name: Show result
+        run: |
+          echo "--- cities added ---"
+          cat data/cities-added.json || true
+          echo "--- total cities ---"
+          python -c "import json;d=json.load(open('data/manifest.json'));print(len(d['cities']),'cities');print(sorted(d['cities']))"
