@@ -1,33 +1,34 @@
 name: Add Cities (OSM)
 on:
   workflow_dispatch:
-    inputs:
-      deploy:
-        description: deploy after build
-        default: 'true'
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
         with:
           repository: skmstudioservices-cyber/toiletsnearme
-          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          ref: main
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
-      - name: Build cities
+      - name: Build cities (incremental, retries on 502)
         run: python scripts/build_cities.py
-      - name: Commit
+      - name: Commit and push
         run: |
           git config user.name "skm-bot"
           git config user.email "bot@skm.local"
           git add -A
-          git commit -m "feat: add 50+ Indian cities with real OSM toilet data" || echo "nothing to commit"
-          git push
-      - name: Show result
+          if git diff --staged --quiet; then echo "nothing to commit"; else
+            git commit -m "feat: add Indian cities with real OSM toilet data (incremental)"
+            git push origin HEAD:main
+          fi
+      - name: Summary
+        if: always()
         run: |
-          echo "--- cities added ---"
+          echo "=== cities-added.json ==="
           cat data/cities-added.json || true
-          echo "--- total cities ---"
-          python -c "import json;d=json.load(open('data/manifest.json'));print(len(d['cities']),'cities');print(sorted(d['cities']))"
+          echo "=== totals ==="
+          python -c "import json;d=json.load(open('data/manifest.json'));print(len(d['cities']),'cities total');print(sorted(d['cities']))" || true

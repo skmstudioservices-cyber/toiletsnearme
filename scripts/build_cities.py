@@ -73,11 +73,19 @@ NEW = {
 }
 
 def fetch(lat, lon, radius=12000):
-    q = f'[out:json][timeout:90];node(around:{radius},{lat},{lon})["amenity"="toilets"];out body;'
+    q = f'[out:json][timeout:120];node(around:{radius},{lat},{lon})["amenity"="toilets"];out body;'
     data = urllib.parse.urlencode({"data": q}).encode()
-    req = urllib.request.Request(OVERPASS, data=data, headers={"User-Agent":"toiletsnearme-build/1.0"})
-    with urllib.request.urlopen(req, timeout=150) as r:
-        return json.load(r)
+    last = None
+    for attempt, wait in enumerate((0, 25, 60, 120)):
+        if wait: time.sleep(wait)
+        try:
+            req = urllib.request.Request(OVERPASS, data=data, headers={"User-Agent":"toiletsnearme-build/1.0"})
+            with urllib.request.urlopen(req, timeout=180) as r:
+                return json.load(r)
+        except Exception as e:
+            last = e
+            print(f"    retry {attempt+1} after {e}")
+    raise last
 
 def geojson(els):
     feats = []
@@ -237,6 +245,17 @@ def main():
 
     added, skipped = [], []
     for slug, (name, state, lat, lon, areas) in NEW.items():
+        cache = os.path.join(ROOT, "data", f"{slug}.json")
+        if os.path.exists(cache):
+            try:
+                gj = json.load(open(cache))
+                n = len(gj.get("features", []))
+                if n >= 3:
+                    counts[slug] = n; added.append((slug, name, state, n))
+                    print(f"OK {slug}: {n} toilets (cached)")
+                    continue
+            except Exception:
+                pass
         try:
             raw = fetch(lat, lon)
             gj = geojson(raw.get("elements", []))
@@ -245,7 +264,7 @@ def main():
             print(f"SKIP {slug}: fetch error {e}")
             skipped.append((slug, "fetch error"))
             continue
-        if n < 5:
+        if n < 3:
             print(f"SKIP {slug}: only {n} toilets")
             skipped.append((slug, f"only {n} toilets"))
             continue
