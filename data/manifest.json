@@ -1,1 +1,217 @@
-{"cities": {"chennai": {"name": "Chennai", "n": 155}, "bengaluru": {"name": "Bengaluru", "n": 522}, "hyderabad": {"name": "Hyderabad", "n": 107}, "mumbai": {"name": "Mumbai", "n": 400}, "delhi": {"name": "Delhi", "n": 1061}, "lucknow": {"name": "Lucknow", "n": 42}, "ahmedabad": {"name": "Ahmedabad", "n": 68}, "chandigarh": {"name": "Chandigarh", "n": 68}, "pune": {"name": "Pune", "n": 97}, "kolkata": {"name": "Kolkata", "n": 79}, "nagpur": {"name": "Nagpur", "n": 35}, "jaipur": {"name": "Jaipur", "n": 62}, "bhopal": {"name": "Bhopal", "n": 28}, "surat": {"name": "Surat", "n": 4}, "indore": {"name": "Indore", "n": 351}}, "generated": "2026-10-01"}
+{
+ "cities": {
+  "delhi": {
+   "name": "Delhi",
+   "n": 1061
+  },
+  "mumbai": {
+   "name": "Mumbai",
+   "n": 400
+  },
+  "bengaluru": {
+   "name": "Bengaluru",
+   "n": 522
+  },
+  "hyderabad": {
+   "name": "Hyderabad",
+   "n": 107
+  },
+  "chennai": {
+   "name": "Chennai",
+   "n": 155
+  },
+  "kolkata": {
+   "name": "Kolkata",
+   "n": 79
+  },
+  "pune": {
+   "name": "Pune",
+   "n": 97
+  },
+  "ahmedabad": {
+   "name": "Ahmedabad",
+   "n": 68
+  },
+  "jaipur": {
+   "name": "Jaipur",
+   "n": 62
+  },
+  "lucknow": {
+   "name": "Lucknow",
+   "n": 42
+  },
+  "surat": {
+   "name": "Surat",
+   "n": 4
+  },
+  "indore": {
+   "name": "Indore",
+   "n": 351
+  },
+  "chandigarh": {
+   "name": "Chandigarh",
+   "n": 68
+  },
+  "bhopal": {
+   "name": "Bhopal",
+   "n": 28
+  },
+  "nagpur": {
+   "name": "Nagpur",
+   "n": 35
+  },
+  "agra": {
+   "name": "Agra",
+   "n": 15
+  },
+  "varanasi": {
+   "name": "Varanasi",
+   "n": 8
+  },
+  "kanpur": {
+   "name": "Kanpur",
+   "n": 21
+  },
+  "meerut": {
+   "name": "Meerut",
+   "n": 45
+  },
+  "ghaziabad": {
+   "name": "Ghaziabad",
+   "n": 13
+  },
+  "noida": {
+   "name": "Noida",
+   "n": 53
+  },
+  "prayagraj": {
+   "name": "Prayagraj",
+   "n": 8
+  },
+  "amritsar": {
+   "name": "Amritsar",
+   "n": 9
+  },
+  "gurugram": {
+   "name": "Gurugram",
+   "n": 38
+  },
+  "faridabad": {
+   "name": "Faridabad",
+   "n": 10
+  },
+  "dehradun": {
+   "name": "Dehradun",
+   "n": 7
+  },
+  "haridwar": {
+   "name": "Haridwar",
+   "n": 12
+  },
+  "shimla": {
+   "name": "Shimla",
+   "n": 7
+  },
+  "dharamshala": {
+   "name": "Dharamshala",
+   "n": 24
+  },
+  "leh": {
+   "name": "Leh",
+   "n": 9
+  },
+  "jodhpur": {
+   "name": "Jodhpur",
+   "n": 11
+  },
+  "udaipur": {
+   "name": "Udaipur",
+   "n": 22
+  },
+  "ajmer": {
+   "name": "Ajmer",
+   "n": 5
+  },
+  "bikaner": {
+   "name": "Bikaner",
+   "n": 3
+  },
+  "jaisalmer": {
+   "name": "Jaisalmer",
+   "n": 6
+  },
+  "vadodara": {
+   "name": "Vadodara",
+   "n": 36
+  },
+  "gandhinagar": {
+   "name": "Gandhinagar",
+   "n": 5
+  },
+  "nashik": {
+   "name": "Nashik",
+   "n": 7
+  },
+  "aurangabad": {
+   "name": "Aurangabad",
+   "n": 6
+  },
+  "thane": {
+   "name": "Thane",
+   "n": 122
+  },
+  "navi-mumbai": {
+   "name": "Navi Mumbai",
+   "n": 27
+  },
+  "visakhapatnam": {
+   "name": "Visakhapatnam",
+   "n": 16
+  },
+  "vijayawada": {
+   "name": "Vijayawada",
+   "n": 11
+  },
+  "tirupati": {
+   "name": "Tirupati",
+   "n": 4
+  },
+  "mysuru": {
+   "name": "Mysuru",
+   "n": 26
+  },
+  "coimbatore": {
+   "name": "Coimbatore",
+   "n": 19
+  },
+  "madurai": {
+   "name": "Madurai",
+   "n": 15
+  },
+  "tiruchirappalli": {
+   "name": "Tiruchirappalli",
+   "n": 15
+  },
+  "kochi": {
+   "name": "Kochi",
+   "n": 38
+  },
+  "thiruvananthapuram": {
+   "name": "Thiruvananthapuram",
+   "n": 46
+  },
+  "bhubaneswar": {
+   "name": "Bhubaneswar",
+   "n": 12
+  },
+  "patna": {
+   "name": "Patna",
+   "n": 16
+  },
+  "siliguri": {
+   "name": "Siliguri",
+   "n": 13
+  }
+ },
+ "generated": "2026-10-28"
+}

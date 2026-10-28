@@ -1,0 +1,287 @@
+{
+ "added": [
+  [
+   "agra",
+   "Agra",
+   "Uttar Pradesh",
+   15
+  ],
+  [
+   "varanasi",
+   "Varanasi",
+   "Uttar Pradesh",
+   8
+  ],
+  [
+   "kanpur",
+   "Kanpur",
+   "Uttar Pradesh",
+   21
+  ],
+  [
+   "meerut",
+   "Meerut",
+   "Uttar Pradesh",
+   45
+  ],
+  [
+   "ghaziabad",
+   "Ghaziabad",
+   "Uttar Pradesh",
+   13
+  ],
+  [
+   "noida",
+   "Noida",
+   "Uttar Pradesh",
+   53
+  ],
+  [
+   "prayagraj",
+   "Prayagraj",
+   "Uttar Pradesh",
+   8
+  ],
+  [
+   "amritsar",
+   "Amritsar",
+   "Punjab",
+   9
+  ],
+  [
+   "gurugram",
+   "Gurugram",
+   "Haryana",
+   38
+  ],
+  [
+   "faridabad",
+   "Faridabad",
+   "Haryana",
+   10
+  ],
+  [
+   "dehradun",
+   "Dehradun",
+   "Uttarakhand",
+   7
+  ],
+  [
+   "haridwar",
+   "Haridwar",
+   "Uttarakhand",
+   12
+  ],
+  [
+   "shimla",
+   "Shimla",
+   "Himachal Pradesh",
+   7
+  ],
+  [
+   "dharamshala",
+   "Dharamshala",
+   "Himachal Pradesh",
+   24
+  ],
+  [
+   "leh",
+   "Leh",
+   "Ladakh",
+   9
+  ],
+  [
+   "jodhpur",
+   "Jodhpur",
+   "Rajasthan",
+   11
+  ],
+  [
+   "udaipur",
+   "Udaipur",
+   "Rajasthan",
+   22
+  ],
+  [
+   "ajmer",
+   "Ajmer",
+   "Rajasthan",
+   5
+  ],
+  [
+   "bikaner",
+   "Bikaner",
+   "Rajasthan",
+   3
+  ],
+  [
+   "jaisalmer",
+   "Jaisalmer",
+   "Rajasthan",
+   6
+  ],
+  [
+   "vadodara",
+   "Vadodara",
+   "Gujarat",
+   36
+  ],
+  [
+   "gandhinagar",
+   "Gandhinagar",
+   "Gujarat",
+   5
+  ],
+  [
+   "nashik",
+   "Nashik",
+   "Maharashtra",
+   7
+  ],
+  [
+   "aurangabad",
+   "Aurangabad",
+   "Maharashtra",
+   6
+  ],
+  [
+   "thane",
+   "Thane",
+   "Maharashtra",
+   122
+  ],
+  [
+   "navi-mumbai",
+   "Navi Mumbai",
+   "Maharashtra",
+   27
+  ],
+  [
+   "visakhapatnam",
+   "Visakhapatnam",
+   "Andhra Pradesh",
+   16
+  ],
+  [
+   "vijayawada",
+   "Vijayawada",
+   "Andhra Pradesh",
+   11
+  ],
+  [
+   "tirupati",
+   "Tirupati",
+   "Andhra Pradesh",
+   4
+  ],
+  [
+   "mysuru",
+   "Mysuru",
+   "Karnataka",
+   26
+  ],
+  [
+   "coimbatore",
+   "Coimbatore",
+   "Tamil Nadu",
+   19
+  ],
+  [
+   "madurai",
+   "Madurai",
+   "Tamil Nadu",
+   15
+  ],
+  [
+   "tiruchirappalli",
+   "Tiruchirappalli",
+   "Tamil Nadu",
+   15
+  ],
+  [
+   "kochi",
+   "Kochi",
+   "Kerala",
+   38
+  ],
+  [
+   "thiruvananthapuram",
+   "Thiruvananthapuram",
+   "Kerala",
+   46
+  ],
+  [
+   "bhubaneswar",
+   "Bhubaneswar",
+   "Odisha",
+   12
+  ],
+  [
+   "patna",
+   "Patna",
+   "Bihar",
+   16
+  ],
+  [
+   "siliguri",
+   "Siliguri",
+   "West Bengal",
+   13
+  ]
+ ],
+ "skipped": [
+  [
+   "ludhiana",
+   "only 2 toilets"
+  ],
+  [
+   "jalandhar",
+   "only 0 toilets"
+  ],
+  [
+   "jammu",
+   "only 1 toilets"
+  ],
+  [
+   "srinagar",
+   "only 1 toilets"
+  ],
+  [
+   "kota",
+   "only 0 toilets"
+  ],
+  [
+   "rajkot",
+   "only 0 toilets"
+  ],
+  [
+   "jamnagar",
+   "only 1 toilets"
+  ],
+  [
+   "solapur",
+   "only 1 toilets"
+  ],
+  [
+   "kolhapur",
+   "only 1 toilets"
+  ],
+  [
+   "mangaluru",
+   "fetch error"
+  ],
+  [
+   "hubballi",
+   "only 0 toilets"
+  ],
+  [
+   "guwahati",
+   "only 1 toilets"
+  ],
+  [
+   "raipur",
+   "only 2 toilets"
+  ]
+ ],
+ "generated": "2026-10-28 22:30 IST"
+}
