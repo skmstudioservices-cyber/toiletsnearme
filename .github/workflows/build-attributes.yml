@@ -17,14 +17,20 @@ jobs:
       - name: Toilets attributes
         env: { REPO: /tmp/work/toiletsnearme, SITE: 'https://toiletsnearme.pages.dev', NOUN: toilet }
         run: python /tmp/work/toiletsnearme/scripts/attributes.py
-      - name: Washrooms attributes
+      - name: Push toilets
+        run: |
+          cd /tmp/work/toiletsnearme
+          git config user.name skm-bot; git config user.email bot@skm.local
+          git add -A
+          git diff --staged --quiet || (git commit -m "feat: attribute layer + crowdsource form" && git push origin HEAD:main && echo "toilets pushed")
+      - name: Washrooms attributes (optional)
+        continue-on-error: true
         env: { REPO: /tmp/work/washroomsnearme, SITE: 'https://washroomsnearme.pages.dev', NOUN: washroom }
         run: python /tmp/work/washroomsnearme/scripts/attributes.py
-      - name: Push
+      - name: Push washrooms (optional)
+        continue-on-error: true
         run: |
-          for r in toiletsnearme washroomsnearme; do
-            cd /tmp/work/$r
-            git config user.name skm-bot; git config user.email bot@skm.local
-            git add -A
-            git diff --staged --quiet || (git commit -m "feat: attribute layer + crowdsource form" && git push origin HEAD:main && echo "$r pushed")
-          done
+          cd /tmp/work/washroomsnearme
+          git config user.name skm-bot; git config user.email bot@skm.local
+          git add -A
+          git diff --staged --quiet || (git commit -m "feat: attribute layer + crowdsource form" && git push origin HEAD:main && echo "washrooms pushed")
