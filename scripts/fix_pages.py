@@ -61,10 +61,10 @@ def main():
         else:
             h = h.replace("</body>", blk + "\n</body>", 1)
         # count-led title for CTR
-        new_title = f"Public {NOUN} in {name}: {fmt(total)} Locations — Live Map"
+        new_title = f"Public {NOUN} in {name} — All Locations, Live Map"
         h = re.sub(r"<title>.*?</title>", f"<title>{html.escape(new_title)}</title>", h, count=1, flags=re.S)
-        new_desc = (f"{fmt(total)} public {NOUN} in {name} — free and pay-and-use, 24-hour and "
-                    f"wheelchair-accessible, with directions. Map data © OpenStreetMap.")[:155]
+        new_desc = (f"All mapped public {NOUN} in {name} — free and pay-and-use, 24-hour and "
+                    f"wheelchair-accessible, with directions. Map data © OpenStreetMap, updated as new spots are added.")[:158]
         h = re.sub(r'<meta name="description" content="[^"]*"', f'<meta name="description" content="{html.escape(new_desc)}"', h, count=1)
         h = re.sub(r'<meta property="og:title" content="[^"]*"', f'<meta property="og:title" content="{html.escape(new_title)}"', h, count=1)
         h = re.sub(r'<meta property="og:description" content="[^"]*"', f'<meta property="og:description" content="{html.escape(new_desc)}"', h, count=1)

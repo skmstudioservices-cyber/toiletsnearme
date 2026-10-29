@@ -109,7 +109,7 @@ CFG_POPUP = [{"k":"operator","l":"Operator"},{"k":"opening_hours","l":"Hours"},
 
 def page(slug, name, state, lat, lon, areas, n, allcities):
     title = f"Public toilets in {name} \u2014 Live Map & Areas"
-    desc = (f"{n} mapped public toilets in {name}, {state} \u2014 live map, free vs paid, "
+    desc = (f"All mapped public toilets in {name}, {state} \u2014 live map, free vs paid, "
             f"24-hour and wheelchair-accessible toilets in {areas[0]}, {areas[1]} and more, with directions.")
     desc = desc[:155]
     canon = f"{SITE}/{slug}/"
