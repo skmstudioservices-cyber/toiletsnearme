@@ -1,0 +1,31 @@
+name: Fix Pages (attrs + titles + homepage links)
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - run: |
+          mkdir -p /tmp/work && cd /tmp/work
+          git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/skmstudioservices-cyber/toiletsnearme.git toiletsnearme
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Fix toilets pages
+        env: { REPO: /tmp/work/toiletsnearme, SITE: 'https://toiletsnearme.pages.dev', NOUN: toilets, NOUN1: toilet }
+        run: python /tmp/work/toiletsnearme/scripts/fix_pages.py
+      - name: Verify injection happened
+        run: |
+          cd /tmp/work/toiletsnearme
+          echo "pages with attribute block:"; grep -l "block-attributes-" */index.html 2>/dev/null | wc -l
+          echo "pages with crowdsource form:"; grep -l "block-crowdsource-" */index.html 2>/dev/null | wc -l
+          echo "homepage has browse block:"; grep -c "block-browse-cities" index.html || true
+          echo "--- delhi title ---"; grep -o "<title>[^<]*</title>" delhi/index.html
+      - name: Push
+        run: |
+          cd /tmp/work/toiletsnearme
+          git config user.name skm-bot; git config user.email bot@skm.local
+          git add -A
+          git diff --staged --quiet || (git commit -m "fix: attribute block rendered on every city page + count titles + homepage city links" && git push origin HEAD:main && echo pushed)
