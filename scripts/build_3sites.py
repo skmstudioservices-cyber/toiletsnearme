@@ -238,6 +238,7 @@ def build_site(repo_dir, site, noun, accent, allc, counts):
     print(f"  {noun}: {len(counts)} city pages + sitemap ({len(urls)} urls)")
 
 def main():
+    MODE = os.environ.get("MODE", "all")
     base = os.environ.get("WORK", "/tmp/work")
     t_dir = os.path.join(base, "toiletsnearme")
     w_dir = os.path.join(base, "washroomsnearme")
@@ -247,60 +248,67 @@ def main():
 
     counts, added, skipped = {}, [], []
     rest_feats = []
-    for slug, (name, state, lat, lon, areas) in NEW.items():
-        cache = os.path.join(t_dir, "data", f"{slug}.json")
-        if os.path.exists(cache):
-            try:
-                n = len(json.load(open(cache)).get("features", []))
-                if n >= 3:
-                    counts[slug] = n; added.append([slug, name, state, n]); print(f"OK {slug}: {n} (cached)"); continue
-            except Exception: pass
-        try:
-            gj = geojson(fetch_toilets(lat, lon).get("elements", []))
-            n = len(gj["features"])
-        except Exception as e:
-            print(f"SKIP {slug}: {e}"); skipped.append([slug, f"fetch: {e}"]); continue
-        if n < 3:
-            print(f"SKIP {slug}: only {n}"); skipped.append([slug, f"only {n}"]); continue
-        os.makedirs(os.path.join(t_dir, "data"), exist_ok=True)
-        json.dump(gj, open(cache, "w"), separators=(",", ":"))
-        counts[slug] = n; added.append([slug, name, state, n])
-        print(f"OK {slug}: {n} within 100km")
-        time.sleep(2)
+    if MODE in ("all", "toilets"):
+      for slug, (name, state, lat, lon, areas) in NEW.items():
+          cache = os.path.join(t_dir, "data", f"{slug}.json")
+          if os.path.exists(cache):
+              try:
+                  n = len(json.load(open(cache)).get("features", []))
+                  if n >= 3:
+                      counts[slug] = n; added.append([slug, name, state, n]); print(f"OK {slug}: {n} (cached)"); continue
+              except Exception: pass
+          try:
+              gj = geojson(fetch_toilets(lat, lon).get("elements", []))
+              n = len(gj["features"])
+          except Exception as e:
+              print(f"SKIP {slug}: {e}"); skipped.append([slug, f"fetch: {e}"]); continue
+          if n < 3:
+              print(f"SKIP {slug}: only {n}"); skipped.append([slug, f"only {n}"]); continue
+          os.makedirs(os.path.join(t_dir, "data"), exist_ok=True)
+          json.dump(gj, open(cache, "w"), separators=(",", ":"))
+          counts[slug] = n; added.append([slug, name, state, n])
+          print(f"OK {slug}: {n} within 100km")
+          time.sleep(2)
 
     # rest areas (for restareanearme)
-    try:
-        for slug, (name, state, lat, lon, areas) in list(NEW.items())[:20]:
-            try:
-                els = fetch_rest(lat, lon).get("elements", [])
-                for e in els:
-                    t = e.get("tags", {}) or {}
-                    if e.get("lat") is None: continue
-                    rest_feats.append({"name": t.get("name", "Rest area"),
-                                       "nearest_city": name, "state": state,
-                                       "lat": e["lat"], "lon": e["lon"],
-                                       "operator": t.get("operator", "")})
-                time.sleep(1)
-            except Exception as e:
-                print(f"  rest skip {slug}: {e}")
-    except Exception as e:
-        print("rest err", e)
+    if MODE in ("all", "restarea"):
+     try:
+         for slug, (name, state, lat, lon, areas) in list(NEW.items())[:20]:
+             try:
+                 els = fetch_rest(lat, lon).get("elements", [])
+                 for e in els:
+                     t = e.get("tags", {}) or {}
+                     if e.get("lat") is None: continue
+                     rest_feats.append({"name": t.get("name", "Rest area"),
+                                        "nearest_city": name, "state": state,
+                                        "lat": e["lat"], "lon": e["lon"],
+                                        "operator": t.get("operator", "")})
+                 time.sleep(1)
+             except Exception as e:
+                 print(f"  rest skip {slug}: {e}")
+     except Exception as e:
+         print("rest err", e)
 
     # copy toilet data into washrooms
-    os.makedirs(os.path.join(w_dir, "data"), exist_ok=True)
-    for slug in counts:
+    if MODE in ("all", "washrooms"):
+     os.makedirs(os.path.join(w_dir, "data"), exist_ok=True)
+     for slug in counts:
         src = os.path.join(t_dir, "data", f"{slug}.json")
         if os.path.exists(src):
             shutil.copy(src, os.path.join(w_dir, "data", f"{slug}.json"))
 
-    build_site(t_dir, SITE_TOILET, "Toilets", "#0d9488", allc, counts)
-    build_site(w_dir, SITE_WASH, "Washrooms", "#7c3aed", allc, counts)
+    if MODE in ("all", "toilets"):
+        build_site(t_dir, SITE_TOILET, "Toilets", "#0d9488", allc, counts)
+    if MODE in ("all", "washrooms"):
+        build_site(w_dir, SITE_WASH, "Washrooms", "#7c3aed", allc, counts)
 
     # restareanearme: additive data file only (respects its static architecture)
-    os.makedirs(os.path.join(r_dir, "data"), exist_ok=True)
-    json.dump({"generated": time.strftime("%Y-%m-%d"), "count": len(rest_feats),
+    if MODE in ("all", "restarea"):
+     os.makedirs(os.path.join(r_dir, "data"), exist_ok=True)
+    if MODE in ("all", "restarea"):
+     json.dump({"generated": time.strftime("%Y-%m-%d"), "count": len(rest_feats),
                "rest_areas": rest_feats}, open(os.path.join(r_dir, "data", "rest-areas-100km.json"), "w"), indent=1)
-    print(f"  restareas: {len(rest_feats)} facilities written to data/rest-areas-100km.json")
+     print(f"  restareas: {len(rest_feats)} facilities written to data/rest-areas-100km.json")
 
     json.dump({"added": added, "skipped": skipped, "generated": time.strftime("%Y-%m-%d %H:%M IST"),
                "radius_km": 100, "total_cities": len(counts)},

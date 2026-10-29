@@ -1,0 +1,66 @@
+name: Expand 3 Sites (split jobs)
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  toilets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - run: |
+          mkdir -p /tmp/work && cd /tmp/work
+          git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/skmstudioservices-cyber/toiletsnearme.git toiletsnearme
+          git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/skmstudioservices-cyber/washroomsnearme.git washroomsnearme
+          git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/skmstudioservices-cyber/restareanearme.git restareanearme
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Build toilets
+        env: { WORK: /tmp/work, MODE: toilets }
+        run: python /tmp/work/toiletsnearme/scripts/build_3sites.py
+      - name: Push toilets
+        run: |
+          cd /tmp/work/toiletsnearme
+          git config user.name skm-bot; git config user.email bot@skm.local
+          git add -A
+          git diff --staged --quiet || (git commit -m "feat: 100km city expansion" && git push origin HEAD:main)
+  washrooms:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - run: |
+          mkdir -p /tmp/work && cd /tmp/work
+          git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/skmstudioservices-cyber/toiletsnearme.git toiletsnearme
+          git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/skmstudioservices-cyber/washroomsnearme.git washroomsnearme
+          git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/skmstudioservices-cyber/restareanearme.git restareanearme
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Build washrooms
+        env: { WORK: /tmp/work, MODE: washrooms }
+        run: python /tmp/work/toiletsnearme/scripts/build_3sites.py
+      - name: Push washrooms
+        run: |
+          cd /tmp/work/washroomsnearme
+          git config user.name skm-bot; git config user.email bot@skm.local
+          git add -A
+          git diff --staged --quiet || (git commit -m "feat: 100km city expansion" && git push origin HEAD:main)
+  restarea:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - run: |
+          mkdir -p /tmp/work && cd /tmp/work
+          git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/skmstudioservices-cyber/toiletsnearme.git toiletsnearme
+          git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/skmstudioservices-cyber/washroomsnearme.git washroomsnearme
+          git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/skmstudioservices-cyber/restareanearme.git restareanearme
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Build rest areas
+        env: { WORK: /tmp/work, MODE: restarea }
+        run: python /tmp/work/toiletsnearme/scripts/build_3sites.py
+      - name: Push restarea
+        run: |
+          cd /tmp/work/restareanearme
+          git config user.name skm-bot; git config user.email bot@skm.local
+          git add -A
+          git diff --staged --quiet || (git commit -m "feat: rest areas within 100km" && git push origin HEAD:main)
