@@ -1,0 +1,30 @@
+name: Build Attribute Layer
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  attrs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - run: |
+          mkdir -p /tmp/work && cd /tmp/work
+          git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/skmstudioservices-cyber/toiletsnearme.git toiletsnearme
+          git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/skmstudioservices-cyber/washroomsnearme.git washroomsnearme
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Toilets attributes
+        env: { REPO: /tmp/work/toiletsnearme, SITE: 'https://toiletsnearme.pages.dev', NOUN: toilet }
+        run: python /tmp/work/toiletsnearme/scripts/attributes.py
+      - name: Washrooms attributes
+        env: { REPO: /tmp/work/washroomsnearme, SITE: 'https://washroomsnearme.pages.dev', NOUN: washroom }
+        run: python /tmp/work/washroomsnearme/scripts/attributes.py
+      - name: Push
+        run: |
+          for r in toiletsnearme washroomsnearme; do
+            cd /tmp/work/$r
+            git config user.name skm-bot; git config user.email bot@skm.local
+            git add -A
+            git diff --staged --quiet || (git commit -m "feat: attribute layer + crowdsource form" && git push origin HEAD:main && echo "$r pushed")
+          done
