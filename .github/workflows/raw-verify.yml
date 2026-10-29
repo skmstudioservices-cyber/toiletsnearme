@@ -1,0 +1,21 @@
+name: Raw Live Verify
+on:
+  workflow_dispatch:
+    inputs:
+      path: { description: page path, default: delhi }
+jobs:
+  v:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          P="${{ github.event.inputs.path }}"
+          U="https://toiletsnearme.pages.dev/$P/ +%s)"
+          echo "URL=$U"
+          curl -s -o /tmp/p -w "code=%{http_code} bytes=%{size_download}\n" -m 30 "$U"
+          echo "--- marker counts in RAW html ---"
+          for m in block-interlink block-attributes block-crowdsource "Nearby cities" "1,061 Locations"; do
+            printf "  %-22s %s\n" "$m" "$(grep -c "$m" /tmp/p)"
+          done
+          echo "internal_links=$(grep -o 'href="/[a-z-]*/"' /tmp/p | sort -u | wc -l)"
+          echo "--- headers ---"
+          curl -sI -m 20 "$U" | grep -iE "cache-control|cf-cache-status" || true
