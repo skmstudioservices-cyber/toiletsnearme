@@ -1,0 +1,31 @@
+name: Build Interlinking
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  link:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - run: |
+          mkdir -p /tmp/work && cd /tmp/work
+          git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/skmstudioservices-cyber/toiletsnearme.git toiletsnearme
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Interlink toilets
+        env: { REPO: /tmp/work/toiletsnearme, SITE: 'https://toiletsnearme.pages.dev', NOUN: toilets }
+        run: python /tmp/work/toiletsnearme/scripts/interlink.py
+      - name: Verify
+        run: |
+          cd /tmp/work/toiletsnearme
+          echo "pages with interlink block:"; grep -l "block-interlink-" */index.html | wc -l
+          echo "homepage state groups:"; grep -o "<h3>[^<]*</h3>" index.html | wc -l
+          echo "--- delhi internal links count ---"
+          grep -o 'href="/[a-z-]*/"' delhi/index.html | sort -u | wc -l
+      - name: Push
+        run: |
+          cd /tmp/work/toiletsnearme
+          git config user.name skm-bot; git config user.email bot@skm.local
+          git add -A
+          git diff --staged --quiet || (git commit -m "feat: interlinking (nearby + state + cross-site + guides)" && git push origin HEAD:main && echo pushed)
