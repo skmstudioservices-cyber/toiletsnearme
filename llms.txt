@@ -1,6 +1,6 @@
 # Toilets Near Me
 
-Live maps and guides for finding public toilets in India (15 cities), by SKM Studio Network.
+Live maps and guides for finding public toilets across all Indian cities, by SKM Studio Network.
 
 ## Main pages
 - / — live map, all cities
@@ -14,7 +14,8 @@ Live maps and guides for finding public toilets in India (15 cities), by SKM Stu
 - /toilets-at-petrol-pumps/ — Toilets at petrol pumps
 
 ## City pages
-Delhi, Mumbai, Bengaluru, Hyderabad, Chennai, Kolkata, Pune, Ahmedabad, Jaipur, Lucknow, Surat, Indore, Chandigarh, Bhopal, Nagpur
+All Indian cities — 106 city guides and growing:
+Agra, Ahmedabad, Ahmednagar, Ajmer, Aligarh, Alwar, Ambala, Amritsar, Anand, Anantapur, Aurangabad, Ballari, Bareilly, Bathinda, Bengaluru, Bharatpur, Bharuch, Bhilai, Bhilwara, Bhopal, Bhubaneswar, Bikaner, Chandigarh, Chandrapur, Chennai, Coimbatore, Cuttack, Davanagere, Dehradun, Delhi, Dharamshala, Erode, Faridabad, Gandhinagar, Ghaziabad, Gorakhpur, Gurugram, Haldwani, Haridwar, Hisar, Hyderabad, Indore, Jaipur, Jaisalmer, Jalgaon, Jhansi, Jodhpur, Junagadh, Kakinada, Kannur, Kanpur, Kanyakumari, Kargil, Karnal, Kochi, Kolkata, Kollam, Kurnool, Latur, Leh, Lucknow, Madurai, Mandi, Mathura, Meerut, Mohali, Moradabad, Mumbai, Muzaffarpur, Mysuru, Nagpur, Nainital, Nashik, Navi Mumbai, Nellore, Noida, Pali, Patiala, Patna, Prayagraj, Pune, Rajahmundry, Ratnagiri, Rishikesh, Rohtak, Saharanpur, Satara, Shimla, Shivamogga, Sikar, Silchar, Siliguri, Solan, Surat, Thane, Thanjavur, Thiruvananthapuram, Thrissur, Tiruchirappalli, Tirupati, Udaipur, Vadodara, Varanasi, Vellore, Vijayawada, Visakhapatnam
 
 Data: OpenStreetMap (ODbL), refreshed monthly. Contact: skmstudio.services@gmail.com
 - /privacy/ — Privacy policy
