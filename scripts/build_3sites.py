@@ -230,9 +230,21 @@ def build_site(repo_dir, site, noun, accent, allc, counts):
         if not os.path.isdir(d): continue
         open(os.path.join(d, "index.html"), "w").write(page(slug, name, state, lat, lon,
             ["City Centre","Main Market","Bus Stand","Railway Station","Old Town"], counts[slug], allc, noun, site, accent))
-    urls = [f"{site}/"] + [f"{site}/{k}/" for k in sorted(counts)]
+    # sitemap from disk (never only the latest batch)
+    def _dirs(root):
+        cities, guides = [], []
+        for d in sorted(os.listdir(root)):
+            q = os.path.join(root, d)
+            if not os.path.isdir(q) or not os.path.exists(os.path.join(q, "index.html")):
+                continue
+            if d in ("data", "scripts", "functions", "icons", "js", "sitemap"):
+                continue
+            (cities if os.path.exists(os.path.join(root, "data", d + ".json")) else guides).append(d)
+        return cities, guides
+    _c, _g = _dirs(repo_dir)
+    urls = [f"{site}/"] + [f"{site}/{g}/" for g in _g] + [f"{site}/about/", f"{site}/privacy/"] + [f"{site}/{c}/" for c in _c]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-    sm += "".join(f"<url><loc>{u}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>\n" for u in urls)
+    sm += "".join(f"<url><loc>{u}</loc><changefreq>weekly</changefreq><priority>{'1.0' if u.rstrip('/')==site else '0.8'}</priority></url>\n" for u in urls)
     sm += "</urlset>\n"
     open(os.path.join(repo_dir, "sitemap.xml"), "w").write(sm)
     print(f"  {noun}: {len(counts)} city pages + sitemap ({len(urls)} urls)")

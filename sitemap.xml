@@ -1,57 +1,120 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://toiletsnearme.pages.dev/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/ahmednagar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/aligarh/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/alwar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/ambala/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/anand/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/anantapur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/ballari/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/bareilly/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/bathinda/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/bharatpur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/bharuch/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/bhilai/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/bhilwara/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/chandrapur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/cuttack/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/davanagere/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/erode/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/gorakhpur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/haldwani/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/hisar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/jalgaon/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/jhansi/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/junagadh/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/kakinada/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/kannur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/kanyakumari/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/kargil/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/karnal/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/kollam/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/kurnool/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/latur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/mandi/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/mathura/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/mohali/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/moradabad/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/muzaffarpur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/nainital/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/nellore/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/pali/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/patiala/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/rajahmundry/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/ratnagiri/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/rishikesh/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/rohtak/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/saharanpur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/satara/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/shivamogga/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/sikar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/silchar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/solan/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/thanjavur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/thrissur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://toiletsnearme.pages.dev/vellore/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/free-public-toilets-near-me/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/pay-and-use-toilets-near-me/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/public-toilets-at-malls/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/public-toilets-near-me-open-now/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/sulabh-toilets-near-me/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/toilets-at-petrol-pumps/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/toilets-at-railway-stations/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/wheelchair-accessible-toilets-near-me/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/about/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/privacy/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/agra/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/ahmedabad/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/ahmednagar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/ajmer/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/aligarh/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/alwar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/ambala/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/amritsar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/anand/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/anantapur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/aurangabad/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/ballari/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/bareilly/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/bathinda/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/bengaluru/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/bharatpur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/bharuch/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/bhilai/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/bhilwara/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/bhopal/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/bhubaneswar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/bikaner/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/chandigarh/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/chandrapur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/chennai/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/coimbatore/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/cuttack/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/davanagere/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/dehradun/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/delhi/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/dharamshala/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/erode/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/faridabad/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/gandhinagar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/ghaziabad/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/gorakhpur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/gurugram/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/haldwani/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/haridwar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/hisar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/hyderabad/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/indore/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/jaipur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/jaisalmer/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/jalgaon/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/jhansi/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/jodhpur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/junagadh/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/kakinada/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/kannur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/kanpur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/kanyakumari/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/kargil/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/karnal/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/kochi/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/kolkata/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/kollam/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/kurnool/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/latur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/leh/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/lucknow/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/madurai/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/mandi/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/mathura/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/meerut/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/mohali/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/moradabad/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/mumbai/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/muzaffarpur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/mysuru/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/nagpur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/nainital/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/nashik/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/navi-mumbai/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/nellore/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/noida/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/pali/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/patiala/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/patna/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/prayagraj/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/pune/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/rajahmundry/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/ratnagiri/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/rishikesh/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/rohtak/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/saharanpur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/satara/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/shimla/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/shivamogga/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/sikar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/silchar/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/siliguri/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/solan/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/surat/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/thane/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/thanjavur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/thiruvananthapuram/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/thrissur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/tiruchirappalli/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/tirupati/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/udaipur/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/vadodara/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/varanasi/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/vellore/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/vijayawada/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://toiletsnearme.pages.dev/visakhapatnam/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
 </urlset>

@@ -109,9 +109,10 @@ CFG_POPUP = [{"k":"operator","l":"Operator"},{"k":"opening_hours","l":"Hours"},
 
 def page(slug, name, state, lat, lon, areas, n, allcities):
     title = f"Public toilets in {name} \u2014 Live Map & Areas"
-    desc = (f"All mapped public toilets in {name}, {state} \u2014 live map, free vs paid, "
-            f"24-hour and wheelchair-accessible toilets in {areas[0]}, {areas[1]} and more, with directions.")
-    desc = desc[:155]
+    desc = (f"All mapped public toilets in {name}, {state} \u2014 free vs paid, "
+            f"24-hour and wheelchair-accessible, on a live map.")
+    if len(desc) > 158:  # never cut mid-word
+        desc = desc[:158].rsplit(" ", 1)[0].rstrip(",;:") + "."
     canon = f"{SITE}/{slug}/"
     cityobj = {k:{"name":v[0],"lat":v[2],"lon":v[3]} for k,v in allcities.items()}
     cfg = {"cities":cityobj,"filters":CFG_FILTERS,"popup":CFG_POPUP,"poiname":"toilet",
@@ -130,7 +131,8 @@ def page(slug, name, state, lat, lon, areas, n, allcities):
              "address":{"@type":"PostalAddress","addressLocality":name,"addressRegion":state,"addressCountry":"IN"},
              "geo":{"@type":"GeoCoordinates","latitude":lat,"longitude":lon}}
     areachips = "".join(f'<span class="area">{html.escape(a)}</span>' for a in areas)
-    others = "".join(f'<a href="/{k}/">{v[0]}</a>' for k,v in sorted(allcities.items(), key=lambda x:x[1][0]))
+    others = "".join(f'<a href="/{k}/">{v[0]}</a>' for k,v in sorted(allcities.items(), key=lambda x:x[1][0])
+                     if os.path.isdir(os.path.join(ROOT, k)))  # never link a city that has no page
     J = lambda o: json.dumps(o, ensure_ascii=False)
     return f'''<!DOCTYPE html>
 <html lang="en">
@@ -289,13 +291,31 @@ def main():
     with open(manifest_path, "w") as f:
         json.dump(manifest, f, indent=1)
 
-    # sitemap
-    urls = [f"{SITE}/"] + [f"{SITE}/{k}/" for k in sorted(manifest["cities"])]
+    # sitemap — ALWAYS rebuilt from what is actually on disk (never from the
+    # latest batch only). Fixes the 30 Oct regression where a city-expansion run
+    # overwrote the sitemap with 53 new cities and dropped Delhi/Mumbai/guides.
+    def _page_dirs(root):
+        cities, guides = [], []
+        for d in sorted(os.listdir(root)):
+            p = os.path.join(root, d)
+            if not os.path.isdir(p) or not os.path.exists(os.path.join(p, "index.html")):
+                continue
+            if d in ("data", "scripts", "functions", "icons", "js", "sitemap"):
+                continue
+            if os.path.exists(os.path.join(root, "data", d + ".json")):
+                cities.append(d)
+            elif d not in ("about", "privacy"):
+                guides.append(d)
+        return cities, guides
+
+    _c, _g = _page_dirs(ROOT)
+    _urls = [f"{SITE}/"] + [f"{SITE}/{g}/" for g in _g] + [f"{SITE}/about/", f"{SITE}/privacy/"] + [f"{SITE}/{c}/" for c in _c]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-    sm += "".join(f"<url><loc>{u}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>\n" for u in urls)
+    sm += "".join(f"<url><loc>{u}</loc><changefreq>weekly</changefreq><priority>{'1.0' if u.rstrip('/')==SITE else '0.8'}</priority></url>\n" for u in _urls)
     sm += "</urlset>\n"
     with open(os.path.join(ROOT, "sitemap.xml"), "w") as f:
         f.write(sm)
+    print(f"  sitemap rebuilt from disk: {len(_urls)} urls ({len(_c)} cities, {len(_g)} guides)")
 
     print(f"\nADDED {len(added)} cities, SKIPPED {len(skipped)}")
     for a in added: print("  +", a[1], a[2], a[3])
