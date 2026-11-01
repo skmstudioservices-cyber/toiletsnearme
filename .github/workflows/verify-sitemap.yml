@@ -1,0 +1,18 @@
+name: Verify sitemap headers (live)
+on:
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch sitemap as a bot would
+        run: |
+          set -x
+          URL="https://toiletsnearme.pages.dev/sitemap.xml"
+          echo "=== HEADERS ==="
+          curl -sS -D - -o /dev/null -A "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" "$URL"
+          echo "=== FIRST 300 BYTES ==="
+          curl -sS -A "Mozilla/5.0 (compatible; Googlebot/2.1)" "$URL" | head -c 300
+          echo
+          echo "=== URL COUNT ==="
+          curl -sS "$URL" | grep -c "<loc>"
