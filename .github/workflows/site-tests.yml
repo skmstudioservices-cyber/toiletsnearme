@@ -1,0 +1,83 @@
+name: Site tests (SEO + PWA + Monetag + responsive)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+
+      - name: SEO / PWA / Monetag audit
+        run: |
+          python3 - <<'PY'
+          import re, sys, urllib.request, xml.etree.ElementTree as ET
+          BASE="https://toiletsnearme.pages.dev"
+          UA={"User-Agent":"Mozilla/5.0 (compatible; SKMTest/1.0)"}
+          def get(u):
+              try:
+                  r=urllib.request.urlopen(urllib.request.Request(u,headers=UA),timeout=30)
+                  return r.status, r.read().decode("utf-8","ignore")
+              except Exception as e:
+                  return getattr(e,'code',0), ""
+          sm=get(BASE+"/sitemap.xml")[1]
+          urls=[e.text for e in ET.fromstring(sm).findall(".//{http://www.sitemaps.org/schemas/sitemap/0.9}loc")]
+          print(f"sitemap urls: {len(urls)}")
+          fails=[]
+          for u in urls:
+              st,html=get(u)
+              if st!=200: fails.append(f"{u} status {st}"); continue
+              for label,pat in [("title",r"<title>[^<]{10,}</title>"),
+                                ("meta-desc",r'<meta name="description" content="[^"]{50,}"'),
+                                ("canonical",r'<link rel="canonical" href="https://toiletsnearme\.pages\.dev'),
+                                ("monetag-meta",r'<meta name="monetag" content="[a-f0-9]{32}"'),
+                                ("monetag-tag",r'quge5\.com/88/tag\.min\.js'),
+                                ("manifest",r'rel="manifest"'),
+                                ("viewport",r'name="viewport"')]:
+                  if not re.search(pat,html): fails.append(f"{u} missing {label}")
+          print(f"pages checked: {len(urls)} | failures: {len(fails)}")
+          for f in fails[:40]: print("  FAIL",f)
+          sys.exit(1 if fails else 0)
+          PY
+
+      - name: PWA assets
+        run: |
+          for u in /manifest.webmanifest /sw.js /favicon.svg /robots.txt; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "https://toiletsnearme.pages.dev$u")
+            echo "$u -> $code"; [ "$code" = "200" ] || exit 1
+          done
+
+      - name: Redirects
+        run: |
+          for p in /public-washroom-near-me.html /toilet-near-me.html /free-toilet-near-me.html; do
+            loc=$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" "https://toiletsnearme.pages.dev$p")
+            echo "$p -> $loc"
+          done
+
+      - name: Responsive screenshots
+        run: |
+          npm i -D playwright@latest >/dev/null 2>&1
+          npx playwright install chromium --with-deps >/dev/null 2>&1
+          node -e '
+          const { chromium } = require("playwright");
+          (async () => {
+            const b = await chromium.launch();
+            const pages = ["/", "/delhi/", "/washroom-near-me/", "/about/"];
+            const sizes = [[390,844,"mobile"],[768,1024,"tablet"],[1280,800,"desktop"]];
+            for (const p of pages) for (const [w,h,name] of sizes) {
+              const pg = await b.newPage({ viewport: { width:w, height:h } });
+              await pg.goto("https://toiletsnearme.pages.dev"+p, { waitUntil:"networkidle", timeout:45000 });
+              const overflow = await pg.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
+              const title = await pg.title();
+              console.log(`${p} ${name} ${w}x${h} overflow=${overflow} title="${title.slice(0,40)}"`);
+              await pg.screenshot({ path: `shot-${p.replace(/\//g,"_")}-${name}.png`, fullPage: false });
+              await pg.close();
+            }
+            await b.close();
+          })();'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: screenshots, path: shot-*.png, retention-days: 7, if-no-files-found: ignore }
