@@ -1,0 +1,45 @@
+name: Lockfile and production build
+on:
+  push:
+    branches: [main]
+    paths:
+      - "package.json"
+      - ".nvmrc"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: main-lockfile
+  cancel-in-progress: false
+jobs:
+  lock-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set pinned Node.js and npm cache
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Generate deterministic lockfile
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Verify clean install
+        run: npm ci --no-audit --no-fund
+      - name: Verify production build
+        run: npm run build
+      - name: Commit lockfile after successful build
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          if git diff --cached --quiet; then
+            echo "Lockfile is already current."
+          else
+            git commit -m "build: add reproducible npm lockfile"
+            git push origin HEAD:main
+          fi
