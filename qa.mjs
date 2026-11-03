@@ -34,8 +34,8 @@ for (const vp of VIEWPORTS) {
     const errors = [];
     page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
     page.on('pageerror', (e) => errors.push(String(e)));
-    const resp = await page.goto(BASE + pg.path, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => null);
-    await page.waitForTimeout(1200);
+    const resp = await page.goto(BASE + pg.path, { waitUntil: 'domcontentloaded', timeout: 60000 }).catch(() => null);
+    await page.waitForTimeout(1800);
     check(`${pg.name} ${vp.name} HTTP 200`, resp?.status() === 200, `status ${resp?.status()}`);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
     check(`${pg.name} ${vp.name} no horizontal overflow`, !overflow);
@@ -57,12 +57,16 @@ const page = await ctx.newPage();
 const errs = [];
 page.on('pageerror', (e) => errs.push(String(e)));
 
+async function safe(name, fn) { try { await fn(); } catch (e) { check(name, false, String(e).split('\n')[0].slice(0,90)); } }
+
 // homepage search filter
-await page.goto(BASE + '/', { waitUntil: 'networkidle' });
+await page.goto(BASE + '/', { waitUntil: 'domcontentloaded' });
 const before = await page.locator('[data-city]:visible').count();
-await page.fill('[data-city-search]', 'delhi');
-await page.waitForTimeout(400);
-const after = await page.locator('[data-city]:visible').count();
+await safe('home search input accepts text', async () => {
+  await page.fill('[data-city-search]', 'delhi', { timeout: 15000 });
+  await page.waitForTimeout(500);
+});
+const after = await page.locator('[data-city]:visible').count().catch(() => before);
 check('home search filters city grid', after > 0 && after < before, `${before} → ${after}`);
 await page.screenshot({ path: `${OUT}/interaction-home-search.png` });
 await page.fill('[data-city-search]', '');
@@ -70,18 +74,19 @@ await page.fill('[data-city-search]', '');
 // nav toggle on mobile
 const mctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
 const mpage = await mctx.newPage();
-await mpage.goto(BASE + '/', { waitUntil: 'networkidle' });
-const navVisibleBefore = await mpage.locator('#primary-nav').isVisible();
-await mpage.click('[data-nav-toggle]');
-await mpage.waitForTimeout(300);
-const navVisibleAfter = await mpage.locator('#primary-nav').isVisible();
-check('mobile nav opens', !navVisibleBefore && navVisibleAfter);
+await mpage.goto(BASE + '/', { waitUntil: 'domcontentloaded' });
+await mpage.waitForTimeout(800);
+const navVisibleBefore = await mpage.locator('#primary-nav').isVisible().catch(() => false);
+await safe('mobile nav toggle clickable', () => mpage.click('[data-nav-toggle]', { timeout: 15000 }));
+await mpage.waitForTimeout(400);
+const navVisibleAfter = await mpage.locator('#primary-nav').isVisible().catch(() => false);
+check('mobile nav opens', !navVisibleBefore && navVisibleAfter, `${navVisibleBefore} → ${navVisibleAfter}`);
 await mpage.screenshot({ path: `${OUT}/interaction-mobile-nav.png` });
 await mctx.close();
 
 // city page: map + pins + filters
-await page.goto(BASE + '/delhi/', { waitUntil: 'networkidle' });
-await page.waitForTimeout(2500);
+await page.goto(BASE + '/delhi/', { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(3500);
 const tiles = await page.locator('.leaflet-tile-loaded').count();
 check('delhi map tiles load', tiles > 4, `${tiles} tiles`);
 const pins = await page.locator('.facility-pin, .cluster-pin').count();
@@ -120,7 +125,7 @@ if (await singlePin.count()) {
 // geolocation denial path
 const dctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, permissions: [] });
 const dpage = await dctx.newPage();
-await dpage.goto(BASE + '/', { waitUntil: 'networkidle' });
+await dpage.goto(BASE + '/', { waitUntil: 'domcontentloaded' });
 await dpage.click('[data-geolocate]');
 await dpage.waitForTimeout(2500);
 const hint = await dpage.locator('[data-geo-hint]').innerText().catch(() => '');
