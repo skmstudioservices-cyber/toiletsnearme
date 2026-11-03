@@ -124,15 +124,30 @@ await page.evaluate(() => {
   const el = document.querySelector('[data-map]');
   if (el) el.scrollIntoView();
 });
-const singlePin = page.locator('.facility-pin').first();
+// zoom in via a cluster first so individual pins separate, then open a popup
+await safe('zoom into cluster', async () => {
+  const cluster = page.locator('.cluster-pin').first();
+  if (await cluster.count()) {
+    await cluster.click({ force: true, timeout: 8000 });
+    await page.waitForTimeout(1800);
+  }
+});
+let singlePin = page.locator('.facility-pin').first();
+if (!(await singlePin.count())) {
+  await safe('zoom in again', async () => {
+    const c2 = page.locator('.cluster-pin').first();
+    if (await c2.count()) { await c2.click({ force: true, timeout: 8000 }); await page.waitForTimeout(1800); }
+  });
+  singlePin = page.locator('.facility-pin').first();
+}
 if (await singlePin.count()) {
-  await singlePin.click({ force: true });
-  await page.waitForTimeout(600);
+  await safe('click pin', () => singlePin.click({ force: true, timeout: 8000 }));
+  await page.waitForTimeout(900);
   const popup = await page.locator('.leaflet-popup-content').count();
-  check('pin popup opens', popup > 0);
+  check('pin popup opens', popup > 0, `${popup} popup(s)`);
   await page.screenshot({ path: `${OUT}/interaction-delhi-popup.png` });
 } else {
-  check('pin popup opens', false, 'no unclustered pin at this zoom');
+  check('pin popup opens', false, 'no unclustered pin after zooming');
 }
 
 // geolocation denial path
