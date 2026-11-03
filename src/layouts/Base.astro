@@ -1,4 +1,5 @@
 ---
+import '../styles/global.css';
 interface Props { title: string; description: string; canonical: string; jsonld?: object[] }
 const { title, description, canonical, jsonld = [] } = Astro.props;
 const site = 'https://toiletsnearme.pages.dev';
@@ -23,7 +24,7 @@ const site = 'https://toiletsnearme.pages.dev';
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="manifest" href="/manifest.webmanifest" />
   {jsonld.map((j) => (<script type="application/ld+json" set:html={JSON.stringify(j)} />))}
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D74LPRXWDW"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js"></script>
   <script is:inline>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
