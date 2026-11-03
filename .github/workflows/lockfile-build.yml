@@ -5,6 +5,7 @@ on:
     paths:
       - "package.json"
       - ".nvmrc"
+      - ".github/workflows/lockfile-build.yml"
   workflow_dispatch:
 permissions:
   contents: write
@@ -21,11 +22,10 @@ jobs:
         with:
           ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set pinned Node.js and npm cache
+      - name: Set pinned Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: npm
       - name: Generate deterministic lockfile
         run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
       - name: Verify clean install
