@@ -3,28 +3,61 @@ import Base from '../layouts/Base.astro';
 const site = 'https://toiletsnearme.pages.dev';
 ---
 <Base title="Privacy — Toilets Near Me"
-  description="What Toilets Near Me collects (very little), why, and your rights."
+  description="What Toilets Near Me collects, why it is used, and your privacy choices."
   canonical={site + '/privacy/'}
   jsonld={[{ '@context':'https://schema.org','@type':'WebPage', name:'Privacy — Toilets Near Me', url: site + '/privacy/' }]}>
   <section class="wrap py-12">
     <h1 class="text-[32px] font-extrabold tracking-tight">Privacy</h1>
     <p class="mt-4 max-w-2xl text-[15px] text-[var(--color-muted)]">
-      Toilets Near Me is a static website. We do not require an account and we do not ask for
-      personal details to use the maps.
+      You can browse the directory without creating an account. We do not ask for your name,
+      phone number or precise location to view toilet listings.
     </p>
-    <h2 class="mt-8 text-[22px] font-extrabold">What we collect</h2>
+
+    <h2 class="mt-8 text-[22px] font-extrabold">Feedback you choose to submit</h2>
     <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
-      Aggregate analytics (Google Analytics 4) — pages viewed, approximate country and device type.
-      We do not collect names, phone numbers or precise locations.
+      An optional feedback prompt may appear after a delay. If you submit an answer, we receive
+      the feedback text or selected option, the page path (without query strings), and the
+      submission time. We do not record prompt impressions, dismissals, referrer URLs, browser
+      user-agent strings or a session identifier through this feedback feature. If you close or
+      ignore the prompt, no feedback record is sent. Please do not include sensitive personal
+      information in feedback.
     </p>
-    <h2 class="mt-8 text-[22px] font-extrabold">Third parties</h2>
+
+    <h2 class="mt-8 text-[22px] font-extrabold">Voice input</h2>
     <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
-      Map tiles are served by OpenStreetMap. Analytics by Google. Advertising, where shown, by Monetag.
+      If you choose voice input, your browser's speech-recognition feature converts speech to
+      text. Processing may be provided by your browser or its speech service. We receive only
+      the resulting text if you choose to submit it; you can edit it before sending or use text
+      input instead.
     </p>
-    <h2 class="mt-8 text-[22px] font-extrabold">Your rights</h2>
+
+    <h2 class="mt-8 text-[22px] font-extrabold">Local browser storage</h2>
     <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
-      Write to <a class="underline" href="mailto:skmstudio.services@gmail.com">skmstudio.services@gmail.com</a>
-      to ask what is held about you, or to have it removed.
+      We use local browser storage to remember that the optional feedback prompt was shown,
+      so it is not shown again for 24 hours. This setting stays in your browser and is not sent
+      to our database.
+    </p>
+
+    <h2 class="mt-8 text-[22px] font-extrabold">Analytics, advertising and third parties</h2>
+    <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
+      We use Google Analytics to understand site usage. Advertising is provided by Monetag and
+      may involve third-party scripts, cookies or similar technologies. These providers may
+      process technical information such as IP address, browser/device information and ad
+      interactions under their own privacy policies. Map tiles are provided by OpenStreetMap
+      contributors. Your browser connects to these providers when the relevant features load.
+    </p>
+
+    <h2 class="mt-8 text-[22px] font-extrabold">Your choices and requests</h2>
+    <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
+      You can skip the feedback prompt, disable browser storage, or use browser controls to
+      restrict cookies and third-party content. To ask about feedback you submitted or request
+      its deletion, write to
+      <a class="underline" href="mailto:skmstudio.services@gmail.com">skmstudio.services@gmail.com</a>.
+    </p>
+
+    <p class="mt-8 max-w-2xl text-sm text-[var(--color-muted)]">
+      This notice describes the current site implementation and may be updated when features
+      or service providers change.
     </p>
   </section>
 </Base>
