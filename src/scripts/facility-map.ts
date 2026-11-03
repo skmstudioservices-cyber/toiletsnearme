@@ -50,7 +50,7 @@ function matches(f: Facility, active: Set<FilterKey>): boolean {
 }
 
 function popupHtml(f: Facility, cityName: string, slug: string): string {
-  const title = f.name || `Public toilet in ${cityName}`;
+  const title = displayName(f, cityName);
   const rows = tagsOf(f).map((t) => `<span>${esc(t)}</span>`).join('');
   const op = f.operator ? `<div class="popup-op">${esc(f.operator)}</div>` : '';
   const desc = f.description ? `<div class="popup-desc">${esc(f.description)}</div>` : '';
@@ -60,10 +60,18 @@ function popupHtml(f: Facility, cityName: string, slug: string): string {
     <a class="popup-link" href="/${slug}/">More toilets in ${esc(cityName)} →</a></div>`;
 }
 
+function displayName(f: Facility, cityName: string): string {
+  if (f.name) return f.name;
+  if (f.operator) return `Public toilet · ${f.operator}`;
+  if (f.description) return f.description;
+  return `Public toilet in ${cityName}`;
+}
+
 function cardHtml(f: Facility, cityName: string, slug: string, withCity: boolean): string {
-  const title = f.name || `Unnamed public toilet`;
+  const title = displayName(f, cityName);
+  const locator = `${f.lat.toFixed(4)}, ${f.lon.toFixed(4)}`;
   const tags = tagsOf(f).slice(0, 6).map((t) => `<span class="fchip">${esc(t)}</span>`).join('');
-  const op = f.operator ? `<span class="fcard-op">${esc(f.operator)}</span>` : '';
+  const op = f.operator && f.name ? `<span class="fcard-op">${esc(f.operator)}</span>` : `<span class="fcard-op">${esc(locator)}</span>`;
   const city = withCity ? `<a class="fcard-city" href="/${slug}/">${esc(cityName)}</a>` : '';
   return `<li class="fcard">
     <div class="fcard-head"><span class="fcard-name">${esc(title)}</span>${city}</div>
@@ -227,9 +235,10 @@ export function initFacilityMap(root: HTMLElement) {
         hydrate(rows.map((r) => ({
           id: `${r[0]},${r[1]}`, lat: Number(r[0]), lon: Number(r[1]),
           name: r[4] || '', fee: r[5] === 0 ? 'free' : r[5] === 1 ? 'paid' : 'unknown',
-          feeRaw: '', open24: !!r[6], openingHours: '', wheelchair: !!r[7], wheelchairRaw: '',
-          women: !!r[8], men: false, baby: !!r[9], customers: false,
-          water: false, soap: false, parking: false, operator: '', description: '', unisex: false,
+          feeRaw: '', open24: !!r[6], openingHours: r[12] || '', wheelchair: !!r[7], wheelchairRaw: '',
+          women: !!r[8], men: false, baby: !!r[9], customers: !!r[16],
+          water: !!r[13], soap: !!r[14], parking: !!r[15],
+          operator: r[10] || '', description: r[11] || '', unisex: false,
           slug: r[2], cityName: r[3],
         } as any)));
       }).catch(() => { if (statusEl) statusEl.textContent = 'Map data could not load — refresh to retry.'; });

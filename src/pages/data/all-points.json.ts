@@ -13,6 +13,8 @@ export const GET: APIRoute = async () => {
         f.name || '',
         f.fee === 'free' ? 0 : f.fee === 'paid' ? 1 : 2,
         f.open24 ? 1 : 0, f.wheelchair ? 1 : 0, f.women ? 1 : 0, f.baby ? 1 : 0,
+        f.operator || '', f.description || '', f.openingHours || '',
+        f.water ? 1 : 0, f.soap ? 1 : 0, f.parking ? 1 : 0, f.customers ? 1 : 0,
       ]);
     }
   }
