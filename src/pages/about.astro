@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+const site = 'https://toiletsnearme.pages.dev';
+---
+<Base title="About — Toilets Near Me"
+  description="What Toilets Near Me is, how its maps work, and how to reach us."
+  canonical={site + '/about/'}
+  jsonld={[{ '@context':'https://schema.org','@type':'AboutPage', name:'About — Toilets Near Me', url: site + '/about/' }]}>
+  <section class="wrap py-12">
+    <h1 class="text-[32px] font-extrabold tracking-tight">About Toilets Near Me</h1>
+    <p class="mt-4 max-w-2xl text-[15px] text-[var(--color-muted)]">
+      Toilets Near Me maps public toilets and washrooms across all Indian cities, using open
+      OpenStreetMap data. Every facility carries its real tags — free or paid, opening hours,
+      wheelchair access, women's section and baby changing — so you can filter for what you need.
+    </p>
+    <h2 class="mt-8 text-[22px] font-extrabold">How the maps work</h2>
+    <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
+      Each city page loads its own dataset and draws the facilities on a Leaflet map with
+      OpenStreetMap tiles. Tap any pin to see its details and get directions.
+    </p>
+    <h2 class="mt-8 text-[22px] font-extrabold">Contact</h2>
+    <p class="mt-2 text-[15px] text-[var(--color-muted)]">Email <a class="underline" href="mailto:skmstudio.services@gmail.com">skmstudio.services@gmail.com</a>.</p>
+    <p class="mt-8 text-[13px] text-[var(--color-muted)]">Data © OpenStreetMap contributors, available under the ODbL.</p>
+  </section>
+</Base>

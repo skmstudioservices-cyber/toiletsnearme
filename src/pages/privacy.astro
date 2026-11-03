@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+const site = 'https://toiletsnearme.pages.dev';
+---
+<Base title="Privacy — Toilets Near Me"
+  description="What Toilets Near Me collects (very little), why, and your rights."
+  canonical={site + '/privacy/'}
+  jsonld={[{ '@context':'https://schema.org','@type':'WebPage', name:'Privacy — Toilets Near Me', url: site + '/privacy/' }]}>
+  <section class="wrap py-12">
+    <h1 class="text-[32px] font-extrabold tracking-tight">Privacy</h1>
+    <p class="mt-4 max-w-2xl text-[15px] text-[var(--color-muted)]">
+      Toilets Near Me is a static website. We do not require an account and we do not ask for
+      personal details to use the maps.
+    </p>
+    <h2 class="mt-8 text-[22px] font-extrabold">What we collect</h2>
+    <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
+      Aggregate analytics (Google Analytics 4) — pages viewed, approximate country and device type.
+      We do not collect names, phone numbers or precise locations.
+    </p>
+    <h2 class="mt-8 text-[22px] font-extrabold">Third parties</h2>
+    <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
+      Map tiles are served by OpenStreetMap. Analytics by Google. Advertising, where shown, by Monetag.
+    </p>
+    <h2 class="mt-8 text-[22px] font-extrabold">Your rights</h2>
+    <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
+      Write to <a class="underline" href="mailto:skmstudio.services@gmail.com">skmstudio.services@gmail.com</a>
+      to ask what is held about you, or to have it removed.
+    </p>
+  </section>
+</Base>

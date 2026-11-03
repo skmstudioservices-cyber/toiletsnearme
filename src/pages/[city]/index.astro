@@ -1,0 +1,105 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getAllCities, getCityData } from '../../lib/cities';
+
+export function getStaticPaths() {
+  return getAllCities().map((c) => ({ params: { city: c.slug }, props: { city: c } }));
+}
+
+const { city } = Astro.props as any;
+const geo = getCityData(city.slug);
+const feats = (geo?.features || []).map((f: any) => ({
+  lat: f.geometry?.coordinates?.[1], lon: f.geometry?.coordinates?.[0], p: f.properties || {},
+})).filter((x: any) => typeof x.lat === 'number' && typeof x.lon === 'number');
+
+const site = 'https://toiletsnearme.pages.dev';
+const url = `${site}/${city.slug}/`;
+const title = `Public toilets in ${city.name} — All Locations, Live Map`;
+const description = `All mapped public toilets in ${city.name} — free vs paid, 24-hour and wheelchair-accessible, with directions. ${city.count.toLocaleString('en-IN')} facilities on a live map.`;
+
+const jsonld = [
+  { '@context':'https://schema.org','@type':'WebPage', name: title, description, url,
+    isPartOf: { '@type':'WebSite', name:'Toilets Near Me', url: site + '/' } },
+  { '@context':'https://schema.org','@type':'FAQPage', mainEntity: [
+    { '@type':'Question', name:`How many public toilets are mapped in ${city.name}?`,
+      acceptedAnswer:{ '@type':'Answer', text:`${city.count.toLocaleString('en-IN')} public toilets and washrooms are mapped in ${city.name} on OpenStreetMap.` } },
+    { '@type':'Question', name:`Are public toilets in ${city.name} free?`,
+      acceptedAnswer:{ '@type':'Answer', text:`${city.free} mapped facilities are free and ${city.paid} are pay-and-use (typically ₹5–₹10).` } },
+    { '@type':'Question', name:`Are there wheelchair-accessible toilets in ${city.name}?`,
+      acceptedAnswer:{ '@type':'Answer', text:`${city.wheelchair} mapped facilities in ${city.name} are tagged wheelchair-accessible.` } },
+  ]},
+];
+const rows = [
+  ['Free entry', city.free], ['Paid (₹5–10 typical)', city.paid],
+  ['Open 24 hours', city.open24], ['Wheelchair accessible', city.wheelchair],
+  ["Women's section", city.women], ['Baby changing', city.baby],
+];
+---
+<Base title={title} description={description} canonical={url} jsonld={jsonld}>
+  <section class="bg-[radial-gradient(900px_320px_at_50%_-10%,var(--color-mint),transparent)] pt-12 pb-8">
+    <div class="wrap">
+      <nav class="text-[13px] text-[var(--color-muted)]"><a href="/" class="underline">All cities</a> / {city.name}</nav>
+      <h1 class="mt-2 text-[clamp(26px,4.5vw,40px)] font-extrabold leading-tight tracking-tight">
+        Public toilets in {city.name} — all locations, live map
+      </h1>
+      <p class="mt-3 max-w-2xl text-[15px] text-[var(--color-muted)]">
+        {city.count.toLocaleString('en-IN')} public toilets and washrooms mapped across {city.name}.
+        Filter by need, tap a pin for directions. Data © OpenStreetMap contributors.
+      </p>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div id="map" class="card overflow-hidden"></div>
+    <p class="mt-2 text-[13px] text-[var(--color-muted)]">Tap any pin for details · {feats.length.toLocaleString('en-IN')} facilities shown</p>
+  </section>
+
+  <section class="wrap pt-10">
+    <h2 class="text-[22px] font-extrabold">What you'll actually find in {city.name}</h2>
+    <p class="mt-1 text-sm text-[var(--color-muted)]">Counted from OpenStreetMap tags. A low number means "not recorded yet" — not "not there".</p>
+    <div class="card mt-4 overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-[var(--color-mint)] text-left"><tr><th class="p-3 font-bold">Feature</th><th class="p-3 font-bold">Reported</th></tr></thead>
+        <tbody>
+          {rows.map(([label, n]) => (
+            <tr class="border-t border-[var(--color-line)]"><td class="p-3">{label}</td><td class="p-3 font-semibold">{n} of {city.count}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="wrap pt-10">
+    <h2 class="text-[22px] font-extrabold">Public toilets in {city.name} — FAQ</h2>
+    <div class="mt-4 space-y-3">
+      <details class="card p-4"><summary class="cursor-pointer font-bold">How many public toilets are mapped in {city.name}?</summary>
+        <p class="mt-2 text-sm text-[var(--color-muted)]">{city.count.toLocaleString('en-IN')} facilities are mapped on OpenStreetMap in {city.name}.</p></details>
+      <details class="card p-4"><summary class="cursor-pointer font-bold">Are public toilets in {city.name} free?</summary>
+        <p class="mt-2 text-sm text-[var(--color-muted)]">{city.free} are free and {city.paid} are pay-and-use, typically ₹5–₹10.</p></details>
+      <details class="card p-4"><summary class="cursor-pointer font-bold">Are there wheelchair-accessible toilets in {city.name}?</summary>
+        <p class="mt-2 text-sm text-[var(--color-muted)]">{city.wheelchair} mapped facilities are tagged wheelchair-accessible.</p></details>
+    </div>
+  </section>
+
+  <script type="application/json" id="geo" set:html={JSON.stringify(feats)} />
+  <script>
+    import L from 'leaflet';
+    import 'leaflet/dist/leaflet.css';
+    const el = document.getElementById('map');
+    const raw = document.getElementById('geo')?.textContent || '[]';
+    const pts = JSON.parse(raw);
+    if (el && pts.length) {
+      const map = L.map(el).setView([pts[0].lat, pts[0].lon], 11);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19, attribution: '© OpenStreetMap contributors',
+      }).addTo(map);
+      const group = L.featureGroup(pts.map((p: any) => {
+        const fee = p.p?.fee === 'no' ? 'Free' : p.p?.fee === 'yes' ? 'Paid' : '';
+        const wc = p.p?.wheelchair === 'yes' ? '♿' : '';
+        return L.circleMarker([p.lat, p.lon], { radius: 6, color: '#087f5b', fillColor: '#087f5b', fillOpacity: .8 })
+          .bindPopup(`<b>Public toilet</b><br>${fee} ${wc}`);
+      })).addTo(map);
+      map.fitBounds(group.getBounds().pad(0.2));
+    }
+  </script>
+</Base>

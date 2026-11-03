@@ -1,0 +1,60 @@
+---
+interface Props { title: string; description: string; canonical: string; jsonld?: object[] }
+const { title, description, canonical, jsonld = [] } = Astro.props;
+const site = 'https://toiletsnearme.pages.dev';
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#087f5b" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={`${site}/og-image.png`} />
+  <meta name="monetag" content="f32430058ca3608d8c333951e133229a" />
+  <script src="https://quge5.com/88/tag.min.js" data-zone="298480" async data-cfasync="false"></script>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  {jsonld.map((j) => (<script type="application/ld+json" set:html={JSON.stringify(j)} />))}
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D74LPRXWDW"></script>
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date()); gtag('config', 'G-D74LPRXWDW');
+  </script>
+</head>
+<body>
+  <header class="sticky top-0 z-10 border-b border-[var(--color-line)] bg-white/95 backdrop-blur">
+    <div class="wrap flex min-h-[70px] items-center justify-between gap-4">
+      <a href="/" class="flex items-center gap-2.5 text-[19px] font-extrabold tracking-tight">
+        <span class="grid h-[42px] w-[42px] place-items-center rounded-[13px] bg-[var(--color-green)] text-[23px] text-white">🚻</span>
+        Toilets Near Me
+      </a>
+      <nav class="hidden gap-5 text-sm text-[var(--color-muted)] md:flex">
+        <a href="/#find">Find toilets</a>
+        <a href="/about/">About</a>
+        <a href="/privacy/">Privacy</a>
+      </nav>
+    </div>
+  </header>
+  <main><slot /></main>
+  <footer class="mt-16 border-t border-[var(--color-line)] bg-white py-10">
+    <div class="wrap text-sm text-[var(--color-muted)]">
+      <p class="m-0">Data © OpenStreetMap contributors (ODbL). Public toilet locations mapped across all Indian cities.</p>
+      <p class="mt-2">© 2026 SKM Studio Network · <a class="underline" href="/about/">About</a> · <a class="underline" href="/privacy/">Privacy</a></p>
+    </div>
+  </footer>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+    }
+  </script>
+</body>
+</html>

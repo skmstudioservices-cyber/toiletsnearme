@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+import CityCard from '../components/CityCard.astro';
+import { getAllCities } from '../lib/cities';
+
+const cities = getAllCities();
+const total = cities.reduce((s, c) => s + c.count, 0);
+const site = 'https://toiletsnearme.pages.dev';
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org', '@type': 'WebSite',
+    name: 'Toilets Near Me', url: site + '/',
+    description: 'Live map of public toilets and washrooms across all Indian cities.',
+  },
+  {
+    '@context': 'https://schema.org', '@type': 'Organization',
+    name: 'Toilets Near Me', url: site + '/',
+    parentOrganization: { '@type': 'Organization', name: 'SKM Studio Network' },
+  },
+];
+---
+<Base
+  title="Public Toilet & Washroom Near Me — Live Map of All Indian Cities"
+  description={`Find the nearest public toilet or washroom in seconds — live map covering all Indian cities. ${total.toLocaleString('en-IN')} facilities mapped, free and pay-and-use.`}
+  canonical={site + '/'}
+  jsonld={jsonld}
+>
+  <section class="bg-[radial-gradient(1200px_400px_at_50%_-10%,var(--color-mint),transparent)] pt-14 pb-10">
+    <div class="wrap text-center">
+      <h1 class="mx-auto max-w-3xl text-[clamp(28px,5vw,44px)] font-extrabold leading-tight tracking-tight">
+        Public toilet near me — live map of all Indian cities
+      </h1>
+      <p class="mx-auto mt-4 max-w-2xl text-[15px] text-[var(--color-muted)]">
+        {total.toLocaleString('en-IN')} public toilets and washrooms mapped across {cities.length} cities.
+        Free, pay-and-use, 24-hour and wheelchair-accessible facilities with directions.
+      </p>
+    </div>
+  </section>
+
+  <section id="find" class="wrap pb-4">
+    <h2 class="text-[22px] font-extrabold">Explore nearby toilets</h2>
+    <p class="mt-1 text-sm text-[var(--color-muted)]">Pick your city — every mapped toilet, on one live map.</p>
+    <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      {cities.map((c) => <CityCard slug={c.slug} name={c.name} count={c.count} />)}
+    </div>
+  </section>
+
+  <section id="how" class="wrap pt-12">
+    <h2 class="text-[22px] font-extrabold">Find what you need in 3 steps</h2>
+    <div class="mt-5 grid gap-4 md:grid-cols-3">
+      <div class="card p-5"><div class="text-2xl">📍</div><h3 class="mt-2 font-bold">Pick your city</h3><p class="mt-1 text-sm text-[var(--color-muted)]">Choose from {cities.length} city guides, each with its own live map.</p></div>
+      <div class="card p-5"><div class="text-2xl">🔎</div><h3 class="mt-2 font-bold">Filter by need</h3><p class="mt-1 text-sm text-[var(--color-muted)]">Free, paid, 24-hour, wheelchair-accessible, women's section, baby changing.</p></div>
+      <div class="card p-5"><div class="text-2xl">🧭</div><h3 class="mt-2 font-bold">Get directions</h3><p class="mt-1 text-sm text-[var(--color-muted)]">Tap any pin for its DIGIPIN and directions drawn on the map itself.</p></div>
+    </div>
+  </section>
+</Base>

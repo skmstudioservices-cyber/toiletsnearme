@@ -1,0 +1,8 @@
+---
+interface Props { slug: string; name: string; count: number }
+const { slug, name, count } = Astro.props;
+---
+<a href={`/${slug}/`} class="card block p-4 transition hover:-translate-y-0.5 hover:shadow-lg">
+  <div class="text-[15px] font-bold">{name}</div>
+  <div class="mt-1 text-[13px] text-[var(--color-muted)]">{count.toLocaleString('en-IN')} toilets mapped</div>
+</a>
