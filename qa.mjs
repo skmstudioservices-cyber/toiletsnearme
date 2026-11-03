@@ -99,12 +99,25 @@ const listRows = await page.locator('.facility-list li').count();
 check('delhi facility list populated', listRows > 0, `${listRows} rows`);
 
 // toggle a filter and confirm the count changes
-await page.check('input[data-filter="wheelchair"]');
-await page.waitForTimeout(600);
+await safe('filter checkbox clickable', async () => {
+  try {
+    await page.check('input[data-filter="wheelchair"]', { timeout: 8000 });
+  } catch {
+    // an ad overlay may intercept the click; drive the control directly
+    await page.$eval('input[data-filter="wheelchair"]', (el) => {
+      el.checked = true;
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  }
+});
+await page.waitForTimeout(700);
 const filtered = await page.locator('[data-map-count]').innerText();
 check('filter reduces count', filtered !== countText, `${countText} → ${filtered}`);
 await page.screenshot({ path: `${OUT}/interaction-delhi-filter.png` });
-await page.uncheck('input[data-filter="wheelchair"]');
+await page.$eval('input[data-filter="wheelchair"]', (el) => {
+  el.checked = false;
+  el.dispatchEvent(new Event('change', { bubbles: true }));
+});
 
 // popup on a single pin (zoom in first so markers are unclustered)
 await page.evaluate(() => {

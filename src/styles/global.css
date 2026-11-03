@@ -204,3 +204,13 @@ img { max-width: 100%; height: auto; }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* Ad/analytics tags inject empty overlay shells with high z-index that sit over
+   page content and swallow pointer events (verified: an empty div blocked the
+   facility filter chips on /delhi/). An empty element has nothing to click, so
+   letting clicks pass through is safe — once a tag fills it, it keeps events. */
+body > div:empty,
+body > div > div:empty,
+body > div > div > div:empty {
+  pointer-events: none !important;
+}
