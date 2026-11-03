@@ -37,6 +37,15 @@ function tagsOf(f: Facility): string[] {
   return t;
 }
 
+function score(f: Facility): number {
+  let s = 0;
+  if (f.name) s += 100;
+  if (f.operator) s += 20;
+  if (f.description) s += 10;
+  s += tagsOf(f).length * 3;
+  return s;
+}
+
 function matches(f: Facility, active: Set<FilterKey>): boolean {
   for (const k of active) {
     if (k === 'free' && f.fee !== 'free') return false;
@@ -158,7 +167,9 @@ export function initFacilityMap(root: HTMLElement) {
     if (emptyEl) emptyEl.hidden = visible.length !== 0;
 
     if (listEl) {
-      const shown = visible.slice(0, 30);
+      // most informative first: named facilities, then ones with operator or tags
+      const scored = [...visible].sort((a, b) => score(b) - score(a));
+      const shown = scored.slice(0, 30);
       listEl.innerHTML = shown
         .map((f: any) => cardHtml(f, f.cityName || cityName, f.slug || slug, withCity))
         .join('');

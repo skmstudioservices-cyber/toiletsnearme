@@ -139,12 +139,34 @@ const site = 'https://toiletsnearme.pages.dev';
     });
   }
 
-  // load saved values into the inputs
+  // Seed every control from the value actually in use (saved override, else the
+  // live computed token) so a colour picker never opens on black.
+  function toHex(input: string) {
+    const v = input.trim();
+    if (v.startsWith('#')) return v.length === 4 ? '#' + v[1] + v[1] + v[2] + v[2] + v[3] + v[3] : v.slice(0, 7);
+    const m = v.match(/rgba?\(([^)]+)\)/);
+    if (m) {
+      const [r, g, b] = m[1].split(',').map((n) => parseInt(n, 10));
+      return '#' + [r, g, b].map((n) => n.toString(16).padStart(2, '0')).join('');
+    }
+    return '#000000';
+  }
+
   let saved: Record<string, string> = {};
   try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { saved = {}; }
+
   document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-token]').forEach((el) => {
-    const v = saved[el.dataset.token as string];
-    if (v !== undefined) el.value = v;
+    const token = el.dataset.token as string;
+    const current = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+    const v = saved[token];
+    if (el instanceof HTMLInputElement && el.type === 'color') {
+      el.value = toHex(v || current || '#000000');
+    } else if (el instanceof HTMLInputElement && el.type === 'range') {
+      const numeric = (v ?? current ?? '').replace(/px$/, '');
+      if (numeric && !Number.isNaN(Number(numeric))) el.value = String(Number(numeric));
+    } else if (el instanceof HTMLSelectElement) {
+      if (v) el.value = v;
+    }
   });
   syncOutputs();
 
