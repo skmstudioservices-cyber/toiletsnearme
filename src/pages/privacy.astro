@@ -2,62 +2,70 @@
 import Base from '../layouts/Base.astro';
 const site = 'https://toiletsnearme.pages.dev';
 ---
-<Base title="Privacy — Toilets Near Me"
-  description="What Toilets Near Me collects, why it is used, and your privacy choices."
+<Base
+  title="Privacy — Toilets Near Me"
+  description="What Toilets Near Me collects, why, and how to opt out. No account, no selling of data, no fingerprinting."
   canonical={site + '/privacy/'}
-  jsonld={[{ '@context':'https://schema.org','@type':'WebPage', name:'Privacy — Toilets Near Me', url: site + '/privacy/' }]}>
-  <section class="wrap py-12">
-    <h1 class="text-[32px] font-extrabold tracking-tight">Privacy</h1>
-    <p class="mt-4 max-w-2xl text-[15px] text-[var(--color-muted)]">
-      You can browse the directory without creating an account. We do not ask for your name,
-      phone number or precise location to view toilet listings.
+  jsonld={[{ '@context': 'https://schema.org', '@type': 'WebPage', name: 'Privacy — Toilets Near Me', url: site + '/privacy/' }]}
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Privacy</span></nav>
+      <h1>Privacy</h1>
+      <p class="lead">The short version: no account, nothing sold, and no personal details required to use the maps.</p>
+    </div>
+  </section>
+
+  <section class="wrap prose">
+    <h2>What we collect</h2>
+    <p>
+      Aggregate analytics through Google Analytics 4 — pages viewed, approximate country, and device type. Google
+      Analytics sets cookies; you can block them in your browser without losing any functionality on this site.
+    </p>
+    <p>
+      We do not collect names, phone numbers, email addresses or precise location. Your location is only used inside
+      your own browser when you press "Use my location" — it is not sent to us or stored.
     </p>
 
-    <h2 class="mt-8 text-[22px] font-extrabold">Feedback you choose to submit</h2>
-    <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
-      An optional feedback prompt may appear after a delay. If you submit an answer, we receive
-      the feedback text or selected option, the page path (without query strings), the prompt delay, submission time, and whether you
-      used a quick option, text or voice input. We do not record prompt impressions, dismissals, referrer URLs, browser
-      user-agent strings or a session identifier through this feedback feature. If you close or
-      ignore the prompt, no feedback record is sent. Please do not include sensitive personal
-      information in feedback.
+    <h2>What we do not do</h2>
+    <ul>
+      <li>No accounts, no logins, no newsletter signup.</li>
+      <li>No session identifiers or browser fingerprinting.</li>
+      <li>No referrer logging beyond what standard analytics records.</li>
+      <li>No selling or sharing of data with third parties for their own purposes.</li>
+    </ul>
+
+    <h2>Third parties</h2>
+    <ul>
+      <li><strong>OpenStreetMap</strong> — map tiles and facility data.</li>
+      <li><strong>Google Analytics</strong> — aggregate usage statistics.</li>
+      <li><strong>Monetag</strong> — advertising, where ads are shown.</li>
+      <li><strong>Cloudflare</strong> — hosting and delivery.</li>
+    </ul>
+
+    <h2>Your rights</h2>
+    <p>
+      Write to <a href="mailto:skmstudio.services@gmail.com">skmstudio.services@gmail.com</a> to ask what is held
+      about you, or to have it removed.
     </p>
 
-    <h2 class="mt-8 text-[22px] font-extrabold">Voice input</h2>
-    <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
-      If you choose voice input, your browser's speech-recognition feature converts speech to
-      text. Processing may be provided by your browser or its speech service. We receive only
-      the resulting text if you choose to submit it; you can edit it before sending or use text
-      input instead.
-    </p>
-
-    <h2 class="mt-8 text-[22px] font-extrabold">Local browser storage</h2>
-    <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
-      We use local browser storage to remember that the optional feedback prompt was shown,
-      so it is not shown again for 24 hours. This setting stays in your browser and is not sent
-      to our database.
-    </p>
-
-    <h2 class="mt-8 text-[22px] font-extrabold">Analytics, advertising and third parties</h2>
-    <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
-      We use Google Analytics to understand site usage. Advertising is provided by Monetag and
-      may involve third-party scripts, cookies or similar technologies. These providers may
-      process technical information such as IP address, browser/device information and ad
-      interactions under their own privacy policies. Map tiles are provided by OpenStreetMap
-      contributors. Your browser connects to these providers when the relevant features load.
-    </p>
-
-    <h2 class="mt-8 text-[22px] font-extrabold">Your choices and requests</h2>
-    <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
-      You can skip the feedback prompt, disable browser storage, or use browser controls to
-      restrict cookies and third-party content. To ask about feedback you submitted or request
-      its deletion, write to
-      <a class="underline" href="mailto:skmstudio.services@gmail.com">skmstudio.services@gmail.com</a>.
-    </p>
-
-    <p class="mt-8 max-w-2xl text-sm text-[var(--color-muted)]">
-      This notice describes the current site implementation and may be updated when features
-      or service providers change.
-    </p>
+    <h2>Changes</h2>
+    <p>If this policy changes, the updated version appears on this page.</p>
+    <p class="fineprint">Data © OpenStreetMap contributors, available under the Open Database Licence.</p>
   </section>
 </Base>
+
+<style>
+  .page-hero { background: radial-gradient(700px 240px at 20% -20%, var(--color-mint) 0%, transparent 70%); border-bottom: 1px solid var(--color-line); padding: 30px 0 26px; }
+  .crumbs { display: flex; gap: 8px; font-size: 13px; color: var(--color-muted); }
+  .crumbs a { text-decoration: underline; text-underline-offset: 2px; }
+  .page-hero h1 { margin: 10px 0 0; font-size: clamp(26px, 4.4vw, 38px); }
+  .lead { margin: 10px 0 0; color: var(--color-muted); max-width: 62ch; font-size: 16px; }
+  .prose { max-width: 74ch; padding-top: 30px; }
+  .prose h2 { font-size: 19px; margin: 28px 0 8px; }
+  .prose p { margin: 0 0 12px; font-size: 15px; color: var(--color-muted); line-height: 1.7; }
+  .prose ul { margin: 0 0 12px; padding-left: 20px; display: grid; gap: 8px; font-size: 15px; color: var(--color-muted); }
+  .prose strong { color: var(--color-ink); }
+  .prose a { color: var(--color-green-dark); text-decoration: underline; }
+  .fineprint { font-size: 13px !important; }
+</style>

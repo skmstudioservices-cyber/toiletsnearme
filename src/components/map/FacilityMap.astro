@@ -1,0 +1,82 @@
+---
+import type { Facility } from '../../lib/cities';
+
+interface Props {
+  facilities: Facility[];
+  label: string;
+  height?: 'sm' | 'lg';
+  showFilters?: boolean;
+  showList?: boolean;
+  id?: string;
+}
+const {
+  facilities,
+  label,
+  height = 'lg',
+  showFilters = true,
+  showList = true,
+  id = 'city-map',
+} = Astro.props;
+
+const counts = {
+  free: facilities.filter((f) => f.fee === 'free').length,
+  paid: facilities.filter((f) => f.fee === 'paid').length,
+  open24: facilities.filter((f) => f.open24).length,
+  wheelchair: facilities.filter((f) => f.wheelchair).length,
+  women: facilities.filter((f) => f.women).length,
+  baby: facilities.filter((f) => f.baby).length,
+};
+
+const filters = [
+  { key: 'free', label: 'Free', count: counts.free },
+  { key: 'paid', label: 'Paid', count: counts.paid },
+  { key: 'open24', label: '24 hours', count: counts.open24 },
+  { key: 'wheelchair', label: 'Wheelchair', count: counts.wheelchair },
+  { key: 'women', label: "Women's section", count: counts.women },
+  { key: 'baby', label: 'Baby changing', count: counts.baby },
+];
+---
+<div class="facility-map" data-facility-map id={id}>
+  {
+    showFilters && (
+      <div class="map-toolbar">
+        <div class="map-filters" role="group" aria-label={`Filter ${label} by facility feature`}>
+          {filters.map((f) => (
+            <label class="filter-chip">
+              <input type="checkbox" data-filter={f.key} />
+              <span>{f.label}</span>
+              <em>{f.count.toLocaleString('en-IN')}</em>
+            </label>
+          ))}
+        </div>
+        <button type="button" class="btn btn-ghost map-locate" data-map-locate>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" />
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          Use my location
+        </button>
+      </div>
+    )
+  }
+
+  <div class={`map-shell map-${height}`}>
+    <div data-map role="application" aria-label={`Interactive map of ${label}`}></div>
+    <p class="map-legend">
+      <span><i class="dot dot-free"></i>Free</span>
+      <span><i class="dot dot-paid"></i>Paid</span>
+      <span><i class="dot dot-unknown"></i>Fee not recorded</span>
+      <span class="map-count"><strong data-map-count>{facilities.length.toLocaleString('en-IN')}</strong> facilities shown</span>
+    </p>
+    <p class="map-empty" data-map-empty hidden>No facilities match those filters — try turning one off.</p>
+  </div>
+
+  {showList && <ul class="facility-list" data-map-list aria-label={`Facilities in ${label}`}></ul>}
+
+  <script type="application/json" data-map-points set:html={JSON.stringify(facilities)} />
+</div>
+
+<script>
+  import { initFacilityMap } from '../../scripts/facility-map';
+  document.querySelectorAll<HTMLElement>('[data-facility-map]').forEach((el) => initFacilityMap(el));
+</script>

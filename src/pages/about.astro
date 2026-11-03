@@ -1,25 +1,72 @@
 ---
 import Base from '../layouts/Base.astro';
+import { getAllCities } from '../lib/cities';
+const cities = getAllCities();
+const total = cities.reduce((s, c) => s + c.count, 0);
 const site = 'https://toiletsnearme.pages.dev';
 ---
-<Base title="About — Toilets Near Me"
-  description="What Toilets Near Me is, how its maps work, and how to reach us."
+<Base
+  title="About — Toilets Near Me"
+  description="What Toilets Near Me is, where its data comes from, how the maps work, and how to report a facility that has changed."
   canonical={site + '/about/'}
-  jsonld={[{ '@context':'https://schema.org','@type':'AboutPage', name:'About — Toilets Near Me', url: site + '/about/' }]}>
-  <section class="wrap py-12">
-    <h1 class="text-[32px] font-extrabold tracking-tight">About Toilets Near Me</h1>
-    <p class="mt-4 max-w-2xl text-[15px] text-[var(--color-muted)]">
-      Toilets Near Me maps public toilets and washrooms across all Indian cities, using open
-      OpenStreetMap data. Every facility carries its real tags — free or paid, opening hours,
-      wheelchair access, women's section and baby changing — so you can filter for what you need.
+  jsonld={[{ '@context': 'https://schema.org', '@type': 'AboutPage', name: 'About — Toilets Near Me', url: site + '/about/' }]}
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">About</span></nav>
+      <h1>About Toilets Near Me</h1>
+      <p class="lead">A live map of public toilets and washrooms across Indian cities — one clear answer, no signup.</p>
+    </div>
+  </section>
+
+  <section class="wrap prose">
+    <h2>Why this site exists</h2>
+    <p>
+      Finding a clean, working public toilet in an unfamiliar Indian city is harder than it should be. Listings are
+      scattered, details are stale, and there is rarely a clear answer on whether a facility is free, paid, open now,
+      or accessible. This site puts every mapped facility for a city on one map and lets you filter for what you
+      actually need.
     </p>
-    <h2 class="mt-8 text-[22px] font-extrabold">How the maps work</h2>
-    <p class="mt-2 max-w-2xl text-[15px] text-[var(--color-muted)]">
-      Each city page loads its own dataset and draws the facilities on a Leaflet map with
-      OpenStreetMap tiles. Tap any pin to see its details and get directions.
+
+    <h2>Where the data comes from</h2>
+    <p>
+      All locations come from OpenStreetMap, the community-maintained map of the world, used under the ODbL licence.
+      {total.toLocaleString('en-IN')} facilities across {cities.length} cities are currently mapped here.
     </p>
-    <h2 class="mt-8 text-[22px] font-extrabold">Contact</h2>
-    <p class="mt-2 text-[15px] text-[var(--color-muted)]">Email <a class="underline" href="mailto:skmstudio.services@gmail.com">skmstudio.services@gmail.com</a>.</p>
-    <p class="mt-8 text-[13px] text-[var(--color-muted)]">Data © OpenStreetMap contributors, available under the ODbL.</p>
+    <p>
+      Counts on each city page are computed directly from the OpenStreetMap tags on those facilities — free, paid,
+      24-hour, wheelchair access, women's sections, baby changing. If a feature is not recorded on a facility we do not
+      infer it: a missing tag means "not recorded yet", not "not available".
+    </p>
+
+    <h2>How the maps work</h2>
+    <p>
+      Each city page loads that city's facility data and draws it with Leaflet over OpenStreetMap tiles. Pins are
+      grouped when you zoom out and separate as you zoom in. Tap a pin to see what is recorded for that facility, or
+      use "Use my location" to centre the map on where you are. Directions open the exact spot in OpenStreetMap.
+    </p>
+
+    <h2>Reporting a problem</h2>
+    <p>
+      Facility details change — toilets close, move, or start charging. If something is wrong, the fastest fix is to
+      correct it on OpenStreetMap itself, which fixes it for every map that uses the data, including this one.
+    </p>
+
+    <h2>Contact</h2>
+    <p>Email <a href="mailto:skmstudio.services@gmail.com">skmstudio.services@gmail.com</a>.</p>
+    <p class="fineprint">Data © OpenStreetMap contributors, available under the Open Database Licence.</p>
   </section>
 </Base>
+
+<style>
+  .page-hero { background: radial-gradient(700px 240px at 20% -20%, var(--color-mint) 0%, transparent 70%); border-bottom: 1px solid var(--color-line); padding: 30px 0 26px; }
+  .crumbs { display: flex; gap: 8px; font-size: 13px; color: var(--color-muted); }
+  .crumbs a { text-decoration: underline; text-underline-offset: 2px; }
+  .page-hero h1 { margin: 10px 0 0; font-size: clamp(26px, 4.4vw, 38px); }
+  .lead { margin: 10px 0 0; color: var(--color-muted); max-width: 62ch; font-size: 16px; }
+  .prose { max-width: 74ch; padding-top: 30px; }
+  .prose h2 { font-size: 19px; margin: 28px 0 8px; }
+  .prose p { margin: 0 0 12px; font-size: 15px; color: var(--color-muted); line-height: 1.7; }
+  .prose a { color: var(--color-green-dark); text-decoration: underline; }
+  .fineprint { font-size: 13px !important; }
+</style>

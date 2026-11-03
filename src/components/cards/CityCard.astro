@@ -1,0 +1,29 @@
+---
+interface Props { slug: string; name: string; count: number; free: number; lat: number; lon: number }
+const { slug, name, count, free, lat, lon } = Astro.props;
+---
+<a href={`/${slug}/`} class="city-card" data-city data-name={name.toLowerCase()} data-lat={lat} data-lon={lon}>
+  <span class="city-name">{name}</span>
+  <span class="city-meta">{count.toLocaleString('en-IN')} mapped</span>
+  <span class="city-free">{free.toLocaleString('en-IN')} free</span>
+</a>
+
+<style>
+  .city-card {
+    display: grid;
+    gap: 2px;
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    transition: border-color .15s, transform .15s, box-shadow .15s;
+  }
+  .city-card:hover, .city-card:focus-visible {
+    border-color: var(--color-green);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(13,148,136,.12);
+  }
+  .city-name { font-weight: 600; font-size: 15px; }
+  .city-meta { font-size: 13px; color: var(--color-muted); }
+  .city-free { font-size: 12px; font-weight: 600; color: var(--color-green-dark); }
+</style>

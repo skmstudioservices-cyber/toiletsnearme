@@ -1,13 +1,29 @@
 ---
-interface Props {
-  icon: string;
-  title: string;
-  description: string;
-}
+interface Props { icon: string; title: string; description: string }
 const { icon, title, description } = Astro.props;
 ---
-<article class="card p-5">
-  <div class="text-2xl" aria-hidden="true">{icon}</div>
-  <h3 class="mt-2 font-bold">{title}</h3>
-  <p class="mt-1 text-sm text-[var(--color-muted)]">{description}</p>
+<article class="feature-card">
+  <span class="feature-icon" aria-hidden="true">{icon}</span>
+  <h3>{title}</h3>
+  <p>{description}</p>
 </article>
+
+<style>
+  .feature-card {
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 22px;
+    height: 100%;
+  }
+  .feature-icon {
+    display: grid; place-items: center;
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: var(--color-mint-soft);
+    border: 1px solid var(--color-mint);
+    font-size: 21px;
+  }
+  h3 { margin: 14px 0 0; font-size: 16px; }
+  p { margin: 6px 0 0; font-size: 14px; color: var(--color-muted); line-height: 1.55; }
+</style>

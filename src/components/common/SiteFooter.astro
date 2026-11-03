@@ -1,6 +1,55 @@
-<footer class="mt-16 border-t border-[var(--color-line)] bg-white py-10">
-  <div class="wrap text-sm text-[var(--color-muted)]">
-    <p class="m-0">Data © OpenStreetMap contributors (ODbL). Public toilet locations mapped across Indian cities.</p>
-    <p class="mt-2">© 2026 SKM Studio Network · <a class="underline" href="/about/">About</a> · <a class="underline" href="/privacy/">Privacy</a></p>
+---
+const year = 2026;
+---
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <div class="footer-brand">
+        <img src="/favicon.svg" alt="" width="34" height="34" />
+        <span>Toilets Near Me</span>
+      </div>
+      <p class="footer-note">
+        Public toilets and washrooms mapped across Indian cities from OpenStreetMap.
+        Free, pay-and-use, 24-hour and wheelchair-accessible facilities.
+      </p>
+    </div>
+    <nav aria-label="Footer navigation">
+      <h2 class="footer-h">Explore</h2>
+      <ul class="footer-links">
+        <li><a href="/#cities">All cities</a></li>
+        <li><a href="/free-public-toilets-near-me/">Free public toilets</a></li>
+        <li><a href="/pay-and-use-toilets-near-me/">Pay-and-use toilets</a></li>
+        <li><a href="/24-hour-toilet-near-me/">24-hour toilets</a></li>
+        <li><a href="/washroom-near-me/">Washrooms near me</a></li>
+        <li><a href="/highway-toilets-near-me/">Highway toilets</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Site information">
+      <h2 class="footer-h">About</h2>
+      <ul class="footer-links">
+        <li><a href="/about/">About this site</a></li>
+        <li><a href="/privacy/">Privacy</a></li>
+        <li><a href="/wheelchair-accessible-toilets-near-me/">Accessibility</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="wrap footer-legal">
+    <p>Data © OpenStreetMap contributors, available under the ODbL. Facility details are community-recorded and may change.</p>
+    <p>© {year} SKM Studio Network</p>
   </div>
 </footer>
+
+<style>
+  .site-footer { margin-top: 64px; border-top: 1px solid var(--color-line); background: #fff; padding: 44px 0 26px; }
+  .footer-grid { display: grid; gap: 28px; }
+  .footer-brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; }
+  .footer-brand img { border-radius: 10px; }
+  .footer-note { margin: 10px 0 0; font-size: 14px; color: var(--color-muted); max-width: 42ch; }
+  .footer-h { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--color-muted); margin: 0 0 10px; }
+  .footer-links { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .footer-links a { font-size: 14px; color: var(--color-ink); }
+  .footer-links a:hover { color: var(--color-green-dark); text-decoration: underline; }
+  .footer-legal { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--color-line); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--color-muted); }
+  .footer-legal p { margin: 0; }
+  @media (min-width: 780px) { .footer-grid { grid-template-columns: 1.6fr 1fr 1fr; } }
+</style>

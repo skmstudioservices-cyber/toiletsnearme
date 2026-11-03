@@ -1,16 +1,14 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { getAllCities, getCityData } from '../../lib/cities';
+import FacilityMap from '../../components/map/FacilityMap.astro';
+import { getAllCities, getCityFacilities } from '../../lib/cities';
 
 export function getStaticPaths() {
   return getAllCities().map((c) => ({ params: { city: c.slug }, props: { city: c } }));
 }
 
 const { city } = Astro.props as any;
-const geo = getCityData(city.slug);
-const feats = (geo?.features || []).map((f: any) => ({
-  lat: f.geometry?.coordinates?.[1], lon: f.geometry?.coordinates?.[0], p: f.properties || {},
-})).filter((x: any) => typeof x.lat === 'number' && typeof x.lon === 'number');
+const facilities = getCityFacilities(city.slug);
 
 const site = 'https://toiletsnearme.pages.dev';
 const url = `${site}/${city.slug}/`;
@@ -18,88 +16,166 @@ const title = `Public toilets in ${city.name} — All Locations, Live Map`;
 const description = `All mapped public toilets in ${city.name} — free vs paid, 24-hour and wheelchair-accessible, with directions. ${city.count.toLocaleString('en-IN')} facilities on a live map.`;
 
 const jsonld = [
-  { '@context':'https://schema.org','@type':'WebPage', name: title, description, url,
-    isPartOf: { '@type':'WebSite', name:'Toilets Near Me', url: site + '/' } },
-  { '@context':'https://schema.org','@type':'FAQPage', mainEntity: [
-    { '@type':'Question', name:`How many public toilets are mapped in ${city.name}?`,
-      acceptedAnswer:{ '@type':'Answer', text:`${city.count.toLocaleString('en-IN')} public toilets and washrooms are mapped in ${city.name} on OpenStreetMap.` } },
-    { '@type':'Question', name:`Are public toilets in ${city.name} free?`,
-      acceptedAnswer:{ '@type':'Answer', text:`${city.free} mapped facilities are free and ${city.paid} are pay-and-use (typically ₹5–₹10).` } },
-    { '@type':'Question', name:`Are there wheelchair-accessible toilets in ${city.name}?`,
-      acceptedAnswer:{ '@type':'Answer', text:`${city.wheelchair} mapped facilities in ${city.name} are tagged wheelchair-accessible.` } },
-  ]},
+  {
+    '@context': 'https://schema.org', '@type': 'WebPage', name: title, description, url,
+    isPartOf: { '@type': 'WebSite', name: 'Toilets Near Me', url: site + '/' },
+    about: { '@type': 'Place', name: city.name, geo: { '@type': 'GeoCoordinates', latitude: city.lat.toFixed(4), longitude: city.lon.toFixed(4) } },
+  },
+  {
+    '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
+      { '@type': 'Question', name: `How many public toilets are mapped in ${city.name}?`,
+        acceptedAnswer: { '@type': 'Answer', text: `${city.count.toLocaleString('en-IN')} public toilets and washrooms are mapped in ${city.name} on OpenStreetMap.` } },
+      { '@type': 'Question', name: `Are public toilets in ${city.name} free?`,
+        acceptedAnswer: { '@type': 'Answer', text: `${city.free} mapped facilities are tagged free to use and ${city.paid} are pay-and-use, typically ₹5–₹10.` } },
+      { '@type': 'Question', name: `Are there wheelchair-accessible toilets in ${city.name}?`,
+        acceptedAnswer: { '@type': 'Answer', text: `${city.wheelchair} mapped facilities in ${city.name} are tagged wheelchair-accessible.` } },
+      { '@type': 'Question', name: `Are any toilets in ${city.name} open 24 hours?`,
+        acceptedAnswer: { '@type': 'Answer', text: `${city.open24} mapped facilities in ${city.name} are tagged as open 24 hours.` } },
+    ],
+  },
+  {
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'All cities', item: site + '/' },
+      { '@type': 'ListItem', position: 2, name: city.name, item: url },
+    ],
+  },
 ];
+
 const rows = [
-  ['Free entry', city.free], ['Paid (₹5–10 typical)', city.paid],
-  ['Open 24 hours', city.open24], ['Wheelchair accessible', city.wheelchair],
-  ["Women's section", city.women], ['Baby changing', city.baby],
-];
+  ['Free entry', city.free],
+  ['Paid (₹5–10 typical)', city.paid],
+  ['Open 24 hours', city.open24],
+  ['Wheelchair accessible', city.wheelchair],
+  ["Women's section", city.women],
+  ['Baby changing', city.baby],
+  ['Named facility', city.named],
+  ['Customers only', city.customers],
+].filter(([, n]) => (n as number) > 0);
+
+const pct = (n: number) => (city.count ? Math.round((n / city.count) * 100) : 0);
 ---
 <Base title={title} description={description} canonical={url} jsonld={jsonld}>
-  <section class="bg-[radial-gradient(900px_320px_at_50%_-10%,var(--color-mint),transparent)] pt-12 pb-8">
+  <section class="city-hero">
     <div class="wrap">
-      <nav class="text-[13px] text-[var(--color-muted)]"><a href="/" class="underline">All cities</a> / {city.name}</nav>
-      <h1 class="mt-2 text-[clamp(26px,4.5vw,40px)] font-extrabold leading-tight tracking-tight">
-        Public toilets in {city.name} — all locations, live map
-      </h1>
-      <p class="mt-3 max-w-2xl text-[15px] text-[var(--color-muted)]">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/">All cities</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{city.name}</span>
+      </nav>
+      <h1>Public toilets in {city.name}</h1>
+      <p class="city-sub">
         {city.count.toLocaleString('en-IN')} public toilets and washrooms mapped across {city.name}.
-        Filter by need, tap a pin for directions. Data © OpenStreetMap contributors.
+        Filter by what you need, tap a pin for details. Data © OpenStreetMap contributors.
       </p>
+      <ul class="city-badges">
+        <li><strong>{city.free.toLocaleString('en-IN')}</strong> free</li>
+        <li><strong>{city.wheelchair.toLocaleString('en-IN')}</strong> wheelchair accessible</li>
+        <li><strong>{city.open24.toLocaleString('en-IN')}</strong> open 24h</li>
+        <li><strong>{city.women.toLocaleString('en-IN')}</strong> women's section</li>
+      </ul>
     </div>
   </section>
 
-  <section class="wrap">
-    <div id="map" class="card overflow-hidden"></div>
-    <p class="mt-2 text-[13px] text-[var(--color-muted)]">Tap any pin for details · {feats.length.toLocaleString('en-IN')} facilities shown</p>
+  <section class="wrap section">
+    <h2 class="sr-only">Map of public toilets in {city.name}</h2>
+    <FacilityMap facilities={facilities} label={`public toilets in ${city.name}`} height="lg" />
   </section>
 
-  <section class="wrap pt-10">
-    <h2 class="text-[22px] font-extrabold">What you'll actually find in {city.name}</h2>
-    <p class="mt-1 text-sm text-[var(--color-muted)]">Counted from OpenStreetMap tags. A low number means "not recorded yet" — not "not there".</p>
-    <div class="card mt-4 overflow-hidden">
-      <table class="w-full text-sm">
-        <thead class="bg-[var(--color-mint)] text-left"><tr><th class="p-3 font-bold">Feature</th><th class="p-3 font-bold">Reported</th></tr></thead>
-        <tbody>
-          {rows.map(([label, n]) => (
-            <tr class="border-t border-[var(--color-line)]"><td class="p-3">{label}</td><td class="p-3 font-semibold">{n} of {city.count}</td></tr>
-          ))}
-        </tbody>
-      </table>
+  <section class="wrap section">
+    <div class="two-col">
+      <div>
+        <h2>What you'll actually find in {city.name}</h2>
+        <p class="section-sub">Counted from OpenStreetMap tags. A low number means "not recorded yet" — not "not there".</p>
+        <div class="card table-card">
+          <table>
+            <caption class="sr-only">Facility features recorded for {city.name}</caption>
+            <thead><tr><th scope="col">Feature</th><th scope="col">Reported</th><th scope="col">Share</th></tr></thead>
+            <tbody>
+              {rows.map(([label, n]) => (
+                <tr>
+                  <th scope="row">{label}</th>
+                  <td>{(n as number).toLocaleString('en-IN')} of {city.count.toLocaleString('en-IN')}</td>
+                  <td><span class="bar"><i style={`width:${pct(n as number)}%`}></i></span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <aside class="side-notes">
+        <h2>Practical notes for {city.name}</h2>
+        <ul>
+          <li><strong>Malls and metro stations</strong> usually have the cleanest free facilities.</li>
+          <li><strong>Pay-and-use complexes</strong> charge ₹5–₹10 and are attended.</li>
+          <li><strong>Petrol pumps and hospitals</strong> are the most reliable overnight options.</li>
+          <li>Tap any pin on the map to open the exact location in OpenStreetMap.</li>
+        </ul>
+        <p class="side-cta"><a href="/#cities">Browse all cities →</a></p>
+      </aside>
     </div>
   </section>
 
-  <section class="wrap pt-10">
-    <h2 class="text-[22px] font-extrabold">Public toilets in {city.name} — FAQ</h2>
-    <div class="mt-4 space-y-3">
-      <details class="card p-4"><summary class="cursor-pointer font-bold">How many public toilets are mapped in {city.name}?</summary>
-        <p class="mt-2 text-sm text-[var(--color-muted)]">{city.count.toLocaleString('en-IN')} facilities are mapped on OpenStreetMap in {city.name}.</p></details>
-      <details class="card p-4"><summary class="cursor-pointer font-bold">Are public toilets in {city.name} free?</summary>
-        <p class="mt-2 text-sm text-[var(--color-muted)]">{city.free} are free and {city.paid} are pay-and-use, typically ₹5–₹10.</p></details>
-      <details class="card p-4"><summary class="cursor-pointer font-bold">Are there wheelchair-accessible toilets in {city.name}?</summary>
-        <p class="mt-2 text-sm text-[var(--color-muted)]">{city.wheelchair} mapped facilities are tagged wheelchair-accessible.</p></details>
+  <section class="wrap section">
+    <h2>Public toilets in {city.name} — FAQ</h2>
+    <div class="faq">
+      <details class="card"><summary>How many public toilets are mapped in {city.name}?</summary>
+        <p>{city.count.toLocaleString('en-IN')} facilities are mapped on OpenStreetMap in {city.name}.</p></details>
+      <details class="card"><summary>Are public toilets in {city.name} free?</summary>
+        <p>{city.free.toLocaleString('en-IN')} are tagged free and {city.paid.toLocaleString('en-IN')} are pay-and-use, typically ₹5–₹10.</p></details>
+      <details class="card"><summary>Are there wheelchair-accessible toilets in {city.name}?</summary>
+        <p>{city.wheelchair.toLocaleString('en-IN')} mapped facilities are tagged wheelchair-accessible.</p></details>
+      <details class="card"><summary>Which toilets in {city.name} are open at night?</summary>
+        <p>{city.open24.toLocaleString('en-IN')} mapped facilities are tagged as open 24 hours. Petrol pumps and hospitals are the most dependable overnight options.</p></details>
     </div>
   </section>
-
-  <script type="application/json" id="geo" set:html={JSON.stringify(feats)} />
-  <script>
-    import L from 'leaflet';
-    import 'leaflet/dist/leaflet.css';
-    const el = document.getElementById('map');
-    const raw = document.getElementById('geo')?.textContent || '[]';
-    const pts = JSON.parse(raw);
-    if (el && pts.length) {
-      const map = L.map(el).setView([pts[0].lat, pts[0].lon], 11);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19, attribution: '© OpenStreetMap contributors',
-      }).addTo(map);
-      const group = L.featureGroup(pts.map((p: any) => {
-        const fee = p.p?.fee === 'no' ? 'Free' : p.p?.fee === 'yes' ? 'Paid' : '';
-        const wc = p.p?.wheelchair === 'yes' ? '♿' : '';
-        return L.circleMarker([p.lat, p.lon], { radius: 6, color: '#087f5b', fillColor: '#087f5b', fillOpacity: .8 })
-          .bindPopup(`<b>Public toilet</b><br>${fee} ${wc}`);
-      })).addTo(map);
-      map.fitBounds(group.getBounds().pad(0.2));
-    }
-  </script>
 </Base>
+
+<style>
+  .city-hero {
+    background: radial-gradient(760px 260px at 20% -20%, var(--color-mint) 0%, transparent 70%);
+    border-bottom: 1px solid var(--color-line);
+    padding: 30px 0 26px;
+  }
+  .crumbs { display: flex; gap: 8px; font-size: 13px; color: var(--color-muted); }
+  .crumbs a { text-decoration: underline; text-underline-offset: 2px; }
+  .city-hero h1 { margin: 10px 0 0; font-size: clamp(26px, 4.4vw, 40px); }
+  .city-sub { margin: 10px 0 0; max-width: 68ch; color: var(--color-muted); font-size: 15px; }
+  .city-badges { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; padding: 0; }
+  .city-badges li {
+    background: #fff; border: 1px solid var(--color-line); border-radius: 999px;
+    padding: 6px 12px; font-size: 13px; color: var(--color-muted);
+  }
+  .city-badges strong { color: var(--color-ink); }
+
+  .section { padding: 34px 0 0; }
+  .section-sub { margin: 6px 0 16px; color: var(--color-muted); font-size: 14px; }
+  .two-col { display: grid; gap: 26px; }
+  .table-card { overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead th {
+    background: var(--color-mint-soft); text-align: left; font-size: 12px;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--color-green-deep);
+    padding: 10px 14px;
+  }
+  tbody th, tbody td { padding: 11px 14px; border-top: 1px solid var(--color-line); text-align: left; font-weight: 500; }
+  tbody th { font-weight: 600; }
+  tbody td { color: var(--color-muted); }
+  .bar { display: block; width: 90px; height: 6px; border-radius: 999px; background: var(--color-line); overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--color-green); }
+
+  .side-notes { background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 22px; align-self: start; }
+  .side-notes h2 { font-size: 17px; }
+  .side-notes ul { margin: 12px 0 0; padding-left: 18px; display: grid; gap: 10px; font-size: 14px; color: var(--color-muted); }
+  .side-notes strong { color: var(--color-ink); }
+  .side-cta { margin: 16px 0 0; font-size: 14px; font-weight: 600; }
+  .side-cta a { color: var(--color-green-dark); }
+
+  .faq { display: grid; gap: 10px; margin-top: 16px; }
+  .faq details { padding: 16px 18px; }
+  .faq summary { cursor: pointer; font-weight: 600; font-size: 15px; }
+  .faq summary::marker { color: var(--color-green); }
+  .faq p { margin: 10px 0 0; font-size: 14px; color: var(--color-muted); }
+
+  @media (min-width: 900px) { .two-col { grid-template-columns: 1.7fr 1fr; } }
+</style>

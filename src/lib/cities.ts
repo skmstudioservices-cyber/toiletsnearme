@@ -4,7 +4,6 @@ import path from 'node:path';
 export type City = {
   slug: string;
   name: string;
-  state: string;
   count: number;
   free: number;
   paid: number;
@@ -12,13 +11,65 @@ export type City = {
   wheelchair: number;
   women: number;
   baby: number;
+  named: number;
+  customers: number;
+  lat: number;
+  lon: number;
   dataFile: string;
+};
+
+export type Facility = {
+  id: string;
+  lat: number;
+  lon: number;
+  name: string;
+  fee: 'free' | 'paid' | 'unknown';
+  open24: boolean;
+  wheelchair: boolean;
+  women: boolean;
+  baby: boolean;
+  customers: boolean;
+  operator: string;
 };
 
 const DATA = path.resolve('./data');
 
 function titleise(slug: string) {
-  return slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  return slug
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+function readFeatureCollection(slug: string): any[] {
+  const p = path.join(DATA, `${slug}.json`);
+  if (!fs.existsSync(p)) return [];
+  try {
+    return JSON.parse(fs.readFileSync(p, 'utf8')).features || [];
+  } catch {
+    return [];
+  }
+}
+
+export function toFacility(f: any, i: number): Facility | null {
+  const lat = f?.geometry?.coordinates?.[1];
+  const lon = f?.geometry?.coordinates?.[0];
+  if (typeof lat !== 'number' || typeof lon !== 'number') return null;
+  const p = f.properties || {};
+  const fee = p.fee === 'no' ? 'free' : p.fee === 'yes' ? 'paid' : 'unknown';
+  return {
+    id: String(f.id ?? p['@id'] ?? `${lat},${lon},${i}`),
+    lat,
+    lon,
+    name: (p.name || '').trim(),
+    fee,
+    open24: p.opening_hours === '24/7',
+    wheelchair: p.wheelchair === 'yes' || p.wheelchair === 'designated',
+    women: p.female === 'yes' || p.unisex === 'yes',
+    baby: p.changing_table === 'yes',
+    customers: p.access === 'customers',
+    operator: (p.operator || '').trim(),
+  };
 }
 
 export function getAllCities(): City[] {
@@ -27,31 +78,41 @@ export function getAllCities(): City[] {
     if (!file.endsWith('.json')) continue;
     if (file === 'cities-added.json' || file === 'attributes.json') continue;
     const slug = file.replace(/\.json$/, '');
-    let fc: any;
-    try { fc = JSON.parse(fs.readFileSync(path.join(DATA, file), 'utf8')); } catch { continue; }
-    const feats: any[] = fc.features || [];
+    const feats = readFeatureCollection(slug);
     if (!feats.length) continue;
-    let free = 0, paid = 0, open24 = 0, wheelchair = 0, women = 0, baby = 0;
-    for (const f of feats) {
-      const p = f.properties || {};
-      if (p.fee === 'no') free++;
-      else if (p.fee === 'yes') paid++;
-      if (p.opening_hours === '24/7') open24++;
-      if (p.wheelchair === 'yes' || p.wheelchair === 'designated') wheelchair++;
-      if (p.female === 'yes' || p.unisex === 'yes') women++;
-      if (p.changing_table === 'yes') baby++;
+
+    let free = 0, paid = 0, open24 = 0, wheelchair = 0, women = 0, baby = 0, named = 0, customers = 0;
+    let latSum = 0, lonSum = 0, n = 0;
+    for (let i = 0; i < feats.length; i++) {
+      const f = toFacility(feats[i], i);
+      if (!f) continue;
+      if (f.fee === 'free') free++;
+      else if (f.fee === 'paid') paid++;
+      if (f.open24) open24++;
+      if (f.wheelchair) wheelchair++;
+      if (f.women) women++;
+      if (f.baby) baby++;
+      if (f.name) named++;
+      if (f.customers) customers++;
+      latSum += f.lat; lonSum += f.lon; n++;
     }
+    if (!n) continue;
+
     out.push({
-      slug, name: titleise(slug), state: '', count: feats.length,
-      free, paid, open24, wheelchair, women, baby, dataFile: file,
+      slug, name: titleise(slug), count: n, free, paid, open24, wheelchair, women, baby, named, customers,
+      lat: latSum / n, lon: lonSum / n, dataFile: file,
     });
   }
   out.sort((a, b) => a.name.localeCompare(b.name));
   return out;
 }
 
-export function getCityData(slug: string) {
-  const p = path.join(DATA, `${slug}.json`);
-  if (!fs.existsSync(p)) return null;
-  return JSON.parse(fs.readFileSync(p, 'utf8'));
+export function getCity(slug: string): City | undefined {
+  return getAllCities().find((c) => c.slug === slug);
+}
+
+export function getCityFacilities(slug: string): Facility[] {
+  return readFeatureCollection(slug)
+    .map((f, i) => toFacility(f, i))
+    .filter((f): f is Facility => f !== null);
 }

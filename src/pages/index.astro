@@ -1,11 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
-import CityCard from '../components/CityCard.astro';
+import CityCard from '../components/cards/CityCard.astro';
 import FeatureCard from '../components/cards/FeatureCard.astro';
 import { getAllCities } from '../lib/cities';
 
 const cities = getAllCities();
 const total = cities.reduce((s, c) => s + c.count, 0);
+const freeTotal = cities.reduce((s, c) => s + c.free, 0);
+const accessible = cities.reduce((s, c) => s + c.wheelchair, 0);
+const open24 = cities.reduce((s, c) => s + c.open24, 0);
 const site = 'https://toiletsnearme.pages.dev';
 
 const jsonld = [
@@ -13,6 +16,11 @@ const jsonld = [
     '@context': 'https://schema.org', '@type': 'WebSite',
     name: 'Toilets Near Me', url: site + '/',
     description: 'Live map of public toilets and washrooms across all Indian cities.',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${site}/?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
   },
   {
     '@context': 'https://schema.org', '@type': 'Organization',
@@ -23,36 +31,227 @@ const jsonld = [
 ---
 <Base
   title="Public Toilet & Washroom Near Me — Live Map of All Indian Cities"
-  description={`Find the nearest public toilet or washroom in seconds — live map covering all Indian cities. ${total.toLocaleString('en-IN')} facilities mapped, free and pay-and-use.`}
+  description={`Find the nearest public toilet or washroom in seconds. ${total.toLocaleString('en-IN')} facilities mapped across ${cities.length} Indian cities — free, pay-and-use, 24-hour and wheelchair-accessible, with directions.`}
   canonical={site + '/'}
   jsonld={jsonld}
 >
-  <section class="bg-[radial-gradient(1200px_400px_at_50%_-10%,var(--color-mint),transparent)] pt-14 pb-10">
-    <div class="wrap text-center">
-      <h1 class="mx-auto max-w-3xl text-[clamp(28px,5vw,44px)] font-extrabold leading-tight tracking-tight">
-        Public toilet near me — live map of all Indian cities
-      </h1>
-      <p class="mx-auto mt-4 max-w-2xl text-[15px] text-[var(--color-muted)]">
-        {total.toLocaleString('en-IN')} public toilets and washrooms mapped across {cities.length} cities.
-        Free, pay-and-use, 24-hour and wheelchair-accessible facilities with directions.
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <p class="eyebrow">Public toilets &amp; washrooms</p>
+      <h1>Find a clean public toilet near you</h1>
+      <p class="hero-sub">
+        {total.toLocaleString('en-IN')} mapped public toilets and washrooms across {cities.length} Indian cities.
+        Filter by free, paid, 24-hour, wheelchair access and women's sections — then tap a pin for directions.
       </p>
+
+      <div class="hero-search" role="search">
+        <label class="sr-only" for="city-search">Search for your city</label>
+        <input id="city-search" type="search" placeholder="Search your city — e.g. Delhi, Mumbai, Agra" autocomplete="off" data-city-search />
+        <button type="button" class="btn btn-ghost" data-geolocate>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" />
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          Near me
+        </button>
+      </div>
+      <p class="hero-hint" data-geo-hint aria-live="polite"></p>
+
+      <dl class="stat-strip">
+        <div><dt>Facilities mapped</dt><dd>{total.toLocaleString('en-IN')}</dd></div>
+        <div><dt>Free to use</dt><dd>{freeTotal.toLocaleString('en-IN')}</dd></div>
+        <div><dt>Wheelchair accessible</dt><dd>{accessible.toLocaleString('en-IN')}</dd></div>
+        <div><dt>Open 24 hours</dt><dd>{open24.toLocaleString('en-IN')}</dd></div>
+      </dl>
     </div>
   </section>
 
-  <section id="find" class="wrap pb-4">
-    <h2 class="text-[22px] font-extrabold">Explore nearby toilets</h2>
-    <p class="mt-1 text-sm text-[var(--color-muted)]">Pick your city — every mapped toilet, on one live map.</p>
-    <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-      {cities.map((c) => <CityCard slug={c.slug} name={c.name} count={c.count} />)}
+  <section id="cities" class="wrap section">
+    <div class="section-head">
+      <div>
+        <h2>Explore nearby toilets by city</h2>
+        <p>Every mapped facility, on one live map per city.</p>
+      </div>
+      <p class="result-count" data-result-count aria-live="polite">{cities.length} cities</p>
+    </div>
+
+    <div class="city-grid" data-city-grid>
+      {cities.map((c) => <CityCard slug={c.slug} name={c.name} count={c.count} free={c.free} lat={c.lat} lon={c.lon} />)}
+    </div>
+    <p class="no-results" data-no-results hidden>No city matches that search. Try a different spelling, or browse the full list.</p>
+  </section>
+
+  <section id="how" class="section section-alt">
+    <div class="wrap">
+      <h2>Finding a toilet in three steps</h2>
+      <p class="section-sub">No account, no app install — it works in the browser.</p>
+      <div class="feature-grid">
+        <FeatureCard icon="🔎" title="Pick your city" description={`${cities.length} city maps, each built from OpenStreetMap data for that city.`} />
+        <FeatureCard icon="🧭" title="Filter for what you need" description="Free or paid, open 24 hours, wheelchair accessible, women's section, baby changing." />
+        <FeatureCard icon="📍" title="Use your location" description="Share your location once and the map centres on the toilets closest to you." />
+        <FeatureCard icon="🗺️" title="Get directions" description="Tap any pin to open the exact spot in OpenStreetMap and start navigation." />
+      </div>
     </div>
   </section>
 
-  <section id="how" class="wrap pt-12">
-    <h2 class="text-[22px] font-extrabold">Find what you need in 3 steps</h2>
-    <div class="mt-5 grid gap-4 md:grid-cols-3">
-      <FeatureCard icon="📍" title="Pick your city" description={`Choose from ${cities.length} city guides, each with its own live map.`} />
-      <FeatureCard icon="🔎" title="Filter by need" description="Free, paid, 24-hour, wheelchair-accessible, women's section and baby changing." />
-      <FeatureCard icon="🧭" title="Get directions" description="Tap any pin for its DIGIPIN and directions drawn on the map itself." />
+  <section class="wrap section">
+    <div class="info-panel">
+      <div>
+        <h2>What you'll usually find</h2>
+        <p>
+          Indian cities generally have three kinds of public facilities: municipal community toilets, which are
+          free or cost a token amount; pay-and-use complexes (Sulabh and similar), typically ₹5–₹10 with an
+          attendant; and facility toilets inside malls, metro stations, petrol pumps and hospitals.
+        </p>
+        <p>
+          Counts on this site come from OpenStreetMap tags. Where a feature is not recorded we say so rather
+          than guess — a missing tag means "not recorded yet", not "not there".
+        </p>
+      </div>
+      <ul class="info-list">
+        <li><strong>Free</strong> — community and municipal toilets</li>
+        <li><strong>Paid</strong> — attended pay-and-use complexes</li>
+        <li><strong>24 hours</strong> — mostly petrol pumps and hospitals</li>
+        <li><strong>Accessible</strong> — tagged wheelchair access</li>
+      </ul>
     </div>
   </section>
 </Base>
+
+<script>
+  const grid = document.querySelector<HTMLElement>('[data-city-grid]');
+  const search = document.querySelector<HTMLInputElement>('[data-city-search]');
+  const countEl = document.querySelector<HTMLElement>('[data-result-count]');
+  const noneEl = document.querySelector<HTMLElement>('[data-no-results]');
+  const geoBtn = document.querySelector<HTMLButtonElement>('[data-geolocate]');
+  const geoHint = document.querySelector<HTMLElement>('[data-geo-hint]');
+
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-city]'));
+  const totalCities = cards.length;
+
+  function applyFilter(q: string) {
+    const term = q.trim().toLowerCase();
+    let shown = 0;
+    for (const card of cards) {
+      const match = !term || (card.dataset.name || '').includes(term);
+      card.hidden = !match;
+      if (match) shown++;
+    }
+    if (countEl) countEl.textContent = `${shown} ${shown === 1 ? 'city' : 'cities'}`;
+    if (noneEl) noneEl.hidden = shown !== 0;
+  }
+
+  search?.addEventListener('input', () => applyFilter(search.value));
+
+  function distanceKm(a: { lat: number; lon: number }, b: { lat: number; lon: number }) {
+    const R = 6371;
+    const dLat = ((b.lat - a.lat) * Math.PI) / 180;
+    const dLon = ((b.lon - a.lon) * Math.PI) / 180;
+    const s =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((a.lat * Math.PI) / 180) * Math.cos((b.lat * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(s));
+  }
+
+  geoBtn?.addEventListener('click', () => {
+    if (!('geolocation' in navigator)) {
+      if (geoHint) geoHint.textContent = 'Your browser does not support location.';
+      return;
+    }
+    geoBtn.disabled = true;
+    if (geoHint) geoHint.textContent = 'Finding cities near you…';
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const here = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        const sorted = cards
+          .map((card) => ({ card, d: distanceKm(here, { lat: Number(card.dataset.lat), lon: Number(card.dataset.lon) }) }))
+          .sort((a, b) => a.d - b.d);
+        for (const { card } of sorted) grid?.appendChild(card);
+        const nearest = sorted[0];
+        if (geoHint) {
+          geoHint.textContent = nearest
+            ? `Closest mapped city: ${nearest.card.querySelector('.city-name')?.textContent} — about ${Math.round(nearest.d)} km away. Cities reordered by distance.`
+            : '';
+        }
+        applyFilter(search?.value || '');
+        geoBtn.disabled = false;
+      },
+      () => {
+        if (geoHint) geoHint.textContent = 'Location permission denied — search for your city instead.';
+        geoBtn.disabled = false;
+      },
+      { timeout: 8000 },
+    );
+  });
+
+  applyFilter('');
+</script>
+
+<style>
+  .hero {
+    background:
+      radial-gradient(900px 320px at 50% -10%, var(--color-mint) 0%, transparent 70%),
+      linear-gradient(180deg, #ffffff 0%, var(--color-bg) 100%);
+    border-bottom: 1px solid var(--color-line);
+    padding: 52px 0 40px;
+  }
+  .hero-inner { text-align: center; display: grid; gap: 14px; justify-items: center; }
+  .hero h1 { font-size: clamp(30px, 5.2vw, 50px); max-width: 18ch; }
+  .hero-sub { margin: 0; max-width: 62ch; color: var(--color-muted); font-size: clamp(15px, 1.6vw, 17px); }
+  .hero-search {
+    display: flex; gap: 10px; width: min(660px, 100%);
+    background: #fff; border: 1px solid var(--color-line);
+    border-radius: 16px; padding: 8px; margin-top: 6px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, .06);
+  }
+  .hero-search input {
+    flex: 1; min-width: 0; border: 0; outline: 0; background: transparent;
+    font: inherit; font-size: 15px; padding: 0 10px; min-height: 44px;
+  }
+  .hero-search input::placeholder { color: var(--color-muted); }
+  .hero-search:focus-within { border-color: var(--color-green); box-shadow: 0 0 0 4px rgba(13,148,136,.12); }
+  .hero-hint { margin: 0; min-height: 20px; font-size: 13px; color: var(--color-green-dark); font-weight: 500; }
+
+  .stat-strip {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+    width: 100%; max-width: 760px; margin: 18px 0 0;
+  }
+  .stat-strip > div {
+    background: #fff; border: 1px solid var(--color-line); border-radius: 14px; padding: 12px 14px; text-align: left;
+  }
+  .stat-strip dt { font-size: 12px; color: var(--color-muted); font-weight: 500; }
+  .stat-strip dd { margin: 2px 0 0; font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+
+  .section { padding: 44px 0 8px; }
+  .section-alt { background: #fff; border-block: 1px solid var(--color-line); margin-top: 44px; padding: 44px 0; }
+  .section-sub { margin: 6px 0 22px; color: var(--color-muted); font-size: 15px; }
+  .section-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; justify-content: space-between; margin-bottom: 18px; }
+  .section-head h2 { font-size: clamp(21px, 2.6vw, 27px); }
+  .section-head p { margin: 4px 0 0; color: var(--color-muted); font-size: 14px; }
+  .result-count { font-size: 13px; font-weight: 600; color: var(--color-muted); margin: 0; }
+
+  .city-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .no-results { margin-top: 16px; font-size: 14px; color: var(--color-muted); }
+
+  .feature-grid { display: grid; gap: 14px; }
+  .info-panel {
+    display: grid; gap: 22px;
+    background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 26px;
+  }
+  .info-panel h2 { font-size: clamp(20px, 2.4vw, 25px); }
+  .info-panel p { margin: 10px 0 0; font-size: 15px; color: var(--color-muted); max-width: 68ch; }
+  .info-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; align-content: start; }
+  .info-list li { font-size: 14px; color: var(--color-muted); border-left: 3px solid var(--color-mint); padding-left: 12px; }
+  .info-list strong { color: var(--color-ink); display: block; font-size: 14px; }
+
+  @media (min-width: 640px) {
+    .stat-strip { grid-template-columns: repeat(4, 1fr); }
+    .city-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 900px) {
+    .city-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .feature-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .info-panel { grid-template-columns: 1.8fr 1fr; align-items: start; }
+  }
+</style>
