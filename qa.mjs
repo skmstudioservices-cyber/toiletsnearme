@@ -141,8 +141,14 @@ if (!(await singlePin.count())) {
   singlePin = page.locator('.facility-pin').first();
 }
 if (await singlePin.count()) {
-  await safe('click pin', () => singlePin.click({ force: true, timeout: 8000 }));
-  await page.waitForTimeout(900);
+  // dispatch the click straight on the marker element: ad overlays intercept
+  // real pointer events in headless runs, but Leaflet binds on the icon node
+  await safe('click pin', async () => {
+    await page.$eval('.facility-pin', (el) => {
+      el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+    });
+  });
+  await page.waitForTimeout(1200);
   const popup = await page.locator('.leaflet-popup-content').count();
   check('pin popup opens', popup > 0, `${popup} popup(s)`);
   await page.screenshot({ path: `${OUT}/interaction-delhi-popup.png` });
