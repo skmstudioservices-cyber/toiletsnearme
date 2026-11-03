@@ -1,0 +1,35 @@
+name: QA — redesign (browser + screenshots)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - '.github/workflows/qa-redesign.yml'
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22.23.4' }
+
+      - name: Install Playwright
+        run: |
+          npm i -D playwright@latest >/dev/null 2>&1
+          npx playwright install chromium --with-deps >/dev/null 2>&1
+
+      - name: Browser QA + screenshots
+        run: node qa.mjs
+        env:
+          BASE: https://toiletsnearme.pages.dev
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qa-screenshots
+          path: qa-out/
+          retention-days: 14
+          if-no-files-found: warn
