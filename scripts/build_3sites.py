@@ -171,6 +171,9 @@ def page(slug, name, state, lat, lon, areas, n, allc, noun, site, accent):
 <meta name="twitter:image" content="{site}/og-image.png">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="/theme.css">
+<meta name="monetag" content="f32430058ca3608d8c333951e133229a">
+<script src="https://quge5.com/88/tag.min.js" data-zone="298480" async data-cfasync="false"></script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})}</script>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#0F172A">
