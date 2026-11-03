@@ -19,12 +19,14 @@ const site = 'https://toiletsnearme.pages.dev';
   <meta property="og:type" content="website" />
   <meta property="og:url" content={canonical} />
   <meta property="og:image" content={`${site}/og-image.png`} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content={`${site}/og-image.png`} />
   <meta name="monetag" content="f32430058ca3608d8c333951e133229a" />
   <script src="https://quge5.com/88/tag.min.js" data-zone="298480" async data-cfasync="false"></script>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="manifest" href="/manifest.webmanifest" />
   {jsonld.map((j) => (<script type="application/ld+json" set:html={JSON.stringify(j)} />))}
-  <script async src="https://www.googletagmanager.com/gtag/js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D74LPRXWDW"></script>
   <script is:inline>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -35,7 +37,7 @@ const site = 'https://toiletsnearme.pages.dev';
   <header class="sticky top-0 z-10 border-b border-[var(--color-line)] bg-white/95 backdrop-blur">
     <div class="wrap flex min-h-[70px] items-center justify-between gap-4">
       <a href="/" class="flex items-center gap-2.5 text-[19px] font-extrabold tracking-tight">
-        <span class="grid h-[42px] w-[42px] place-items-center rounded-[13px] bg-[var(--color-green)] text-[23px] text-white">🚻</span>
+        <img src="/favicon.svg" alt="" width="42" height="42" class="h-[42px] w-[42px] rounded-[13px]" />
         Toilets Near Me
       </a>
       <nav class="hidden gap-5 text-sm text-[var(--color-muted)] md:flex">
