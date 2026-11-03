@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import CityCard from '../components/CityCard.astro';
+import FeatureCard from '../components/cards/FeatureCard.astro';
 import { getAllCities } from '../lib/cities';
 
 const cities = getAllCities();
@@ -49,9 +50,9 @@ const jsonld = [
   <section id="how" class="wrap pt-12">
     <h2 class="text-[22px] font-extrabold">Find what you need in 3 steps</h2>
     <div class="mt-5 grid gap-4 md:grid-cols-3">
-      <div class="card p-5"><div class="text-2xl">📍</div><h3 class="mt-2 font-bold">Pick your city</h3><p class="mt-1 text-sm text-[var(--color-muted)]">Choose from {cities.length} city guides, each with its own live map.</p></div>
-      <div class="card p-5"><div class="text-2xl">🔎</div><h3 class="mt-2 font-bold">Filter by need</h3><p class="mt-1 text-sm text-[var(--color-muted)]">Free, paid, 24-hour, wheelchair-accessible, women's section, baby changing.</p></div>
-      <div class="card p-5"><div class="text-2xl">🧭</div><h3 class="mt-2 font-bold">Get directions</h3><p class="mt-1 text-sm text-[var(--color-muted)]">Tap any pin for its DIGIPIN and directions drawn on the map itself.</p></div>
+      <FeatureCard icon="📍" title="Pick your city" description={`Choose from ${cities.length} city guides, each with its own live map.`} />
+      <FeatureCard icon="🔎" title="Filter by need" description="Free, paid, 24-hour, wheelchair-accessible, women's section and baby changing." />
+      <FeatureCard icon="🧭" title="Get directions" description="Tap any pin for its DIGIPIN and directions drawn on the map itself." />
     </div>
   </section>
 </Base>

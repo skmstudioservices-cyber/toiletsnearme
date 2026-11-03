@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import SiteHeader from '../components/common/SiteHeader.astro';
+import SiteFooter from '../components/common/SiteFooter.astro';
 interface Props { title: string; description: string; canonical: string; jsonld?: object[] }
 const { title, description, canonical, jsonld = [] } = Astro.props;
 const site = 'https://toiletsnearme.pages.dev';
@@ -29,31 +31,14 @@ const site = 'https://toiletsnearme.pages.dev';
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-D74LPRXWDW"></script>
   <script is:inline>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag(){window.dataLayer.push(arguments);}
     gtag('js', new Date()); gtag('config', 'G-D74LPRXWDW');
   </script>
 </head>
 <body>
-  <header class="sticky top-0 z-10 border-b border-[var(--color-line)] bg-white/95 backdrop-blur">
-    <div class="wrap flex min-h-[70px] items-center justify-between gap-4">
-      <a href="/" class="flex items-center gap-2.5 text-[19px] font-extrabold tracking-tight">
-        <img src="/favicon.svg" alt="" width="42" height="42" class="h-[42px] w-[42px] rounded-[13px]" />
-        Toilets Near Me
-      </a>
-      <nav class="hidden gap-5 text-sm text-[var(--color-muted)] md:flex">
-        <a href="/#find">Find toilets</a>
-        <a href="/about/">About</a>
-        <a href="/privacy/">Privacy</a>
-      </nav>
-    </div>
-  </header>
+  <SiteHeader />
   <main><slot /></main>
-  <footer class="mt-16 border-t border-[var(--color-line)] bg-white py-10">
-    <div class="wrap text-sm text-[var(--color-muted)]">
-      <p class="m-0">Data © OpenStreetMap contributors (ODbL). Public toilet locations mapped across all Indian cities.</p>
-      <p class="mt-2">© 2026 SKM Studio Network · <a class="underline" href="/about/">About</a> · <a class="underline" href="/privacy/">Privacy</a></p>
-    </div>
-  </footer>
+  <SiteFooter />
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
