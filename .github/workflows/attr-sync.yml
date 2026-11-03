@@ -1,0 +1,35 @@
+name: Attribute sync (KV -> pages)
+on:
+  schedule:
+    - cron: "0 */5 * * *"   # every 5 hours
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Force sync even with few pending updates"
+        default: "0"
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Pull KV updates
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          FORCE: ${{ github.event.inputs.force }}
+        run: node scripts/attr-sync.mjs
+      - name: Commit if changed
+        run: |
+          if [ -f data/attr-updates.json ] && ! git diff --quiet data/attr-updates.json; then
+            git config user.name "skm-attr-sync"
+            git config user.email "skmstudio.services@gmail.com"
+            git add data/attr-updates.json
+            git commit -m "data(attr): sync crowdsourced facility updates from KV"
+            git push
+          else
+            echo "no changes"
+          fi
