@@ -16,6 +16,7 @@ const PAGES = [
   { path: '/ahmedabad/', name: 'ahmedabad' },
   { path: '/agra/', name: 'agra' },
   { path: '/about/', name: 'about' },
+  { path: '/themes/', name: 'themes' },
 ];
 
 const results = [];
@@ -41,6 +42,8 @@ for (const vp of VIEWPORTS) {
     check(`${pg.name} ${vp.name} no horizontal overflow`, !overflow);
     const h1 = await page.locator('h1').count();
     check(`${pg.name} ${vp.name} single h1`, h1 === 1, `found ${h1}`);
+    const html = await page.content();
+    check(`${pg.name} ${vp.name} Monetag tag present`, html.includes('name="monetag"') && html.includes('quge5.com'));
     if (errors.length) check(`${pg.name} ${vp.name} console clean`, false, errors.slice(0, 3).join(' | '));
     else check(`${pg.name} ${vp.name} console clean`, true);
     await page.screenshot({ path: `${OUT}/${pg.name}-${vp.name}.png`, fullPage: false });
@@ -155,6 +158,52 @@ if (await singlePin.count()) {
 } else {
   check('pin popup opens', false, 'no unclustered pin after zooming');
 }
+
+// homepage map (remote data) + real facility names
+await page.goto(BASE + '/', { waitUntil: 'domcontentloaded' });
+await safe('scroll to homepage map', async () => {
+  await page.locator('#india-map').scrollIntoViewIfNeeded({ timeout: 15000 });
+  await page.waitForTimeout(4000);
+});
+const homePins = await page.locator('#india-map .facility-pin, #india-map .cluster-pin').count();
+check('homepage map renders markers', homePins > 0, `${homePins} markers`);
+const homeCards = await page.locator('#india-map .fcard').count();
+check('homepage facility cards render', homeCards > 0, `${homeCards} cards`);
+const namedCount = await page.locator('#india-map .fcard-name').evaluateAll(
+  (els) => els.filter((e) => (e.textContent || '').trim() && !/Unnamed/i.test(e.textContent || '')).length,
+);
+check('facility cards carry real names', namedCount > 0, `${namedCount} named of ${homeCards}`);
+await page.screenshot({ path: `${OUT}/interaction-home-map.png`, fullPage: false });
+
+// floating action cluster
+await safe('open floating actions', () => page.click('[data-fab-toggle]', { timeout: 10000 }));
+await page.waitForTimeout(300);
+const fabOpen = await page.locator('[data-fab-menu]').isVisible();
+check('floating action menu opens', fabOpen);
+await page.screenshot({ path: `${OUT}/interaction-fab.png` });
+await safe('open feedback dialog', () => page.click('[data-fab-feedback]', { timeout: 8000 }));
+await page.waitForTimeout(400);
+const fbkOpen = await page.locator('[data-fbk]').isVisible().catch(() => false);
+check('feedback dialog opens', fbkOpen);
+if (fbkOpen) await page.screenshot({ path: `${OUT}/interaction-feedback.png` });
+await page.keyboard.press('Escape').catch(() => {});
+
+// theme manager
+await page.goto(BASE + '/themes/', { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(600);
+const robots = await page.locator('meta[name="robots"]').getAttribute('content').catch(() => '');
+check('themes page is noindex', /noindex/.test(robots || ''), robots || 'missing');
+const tokenCount = await page.locator('[data-token]').count();
+check('theme manager exposes tokens', tokenCount > 5, `${tokenCount} controls`);
+await safe('save theme', async () => {
+  await page.click('[data-tm-save]', { timeout: 8000 });
+  await page.waitForTimeout(300);
+});
+const savedTheme = await page.evaluate(() => localStorage.getItem('tnm_theme_v1'));
+check('theme saves to storage', !!savedTheme);
+const trackingRows = await page.locator('[data-tm-stats] dt').count();
+check('tracking panel populated', trackingRows > 0, `${trackingRows} rows`);
+await page.screenshot({ path: `${OUT}/interaction-themes.png`, fullPage: true });
 
 // geolocation denial path
 const dctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, permissions: [] });

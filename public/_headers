@@ -26,3 +26,8 @@
   Cache-Control: public, max-age=600
 /robots.txt
   Cache-Control: public, max-age=600
+
+# Internal console — never indexed
+/themes/
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store

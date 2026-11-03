@@ -1,0 +1,158 @@
+---
+// Restores the old site's bottom-right action cluster.
+// Feedback is privacy-safe: only an answer the visitor chooses to send is kept
+// (locally, or by email) — impressions and dismissals are never recorded.
+---
+<div class="fab" data-fab>
+  <div class="fab-menu" data-fab-menu hidden>
+    <button type="button" class="fab-item" data-fab-feedback data-track="fab:feedback">
+      <span aria-hidden="true">🎤</span> Send feedback
+    </button>
+    <button type="button" class="fab-item" data-fab-near data-track="fab:near-me">
+      <span aria-hidden="true">📍</span> Toilets near me
+    </button>
+    <a class="fab-item" href="/themes/" data-track="fab:themes">
+      <span aria-hidden="true">🎨</span> Theme manager
+    </a>
+    <button type="button" class="fab-item" data-fab-top data-track="fab:top">
+      <span aria-hidden="true">⬆️</span> Back to top
+    </button>
+  </div>
+
+  <button type="button" class="fab-toggle" data-fab-toggle aria-expanded="false" aria-controls="fab-menu" data-track="fab:open">
+    <span class="sr-only">Page actions</span>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="5" r="1.8" fill="currentColor" />
+      <circle cx="12" cy="12" r="1.8" fill="currentColor" />
+      <circle cx="12" cy="19" r="1.8" fill="currentColor" />
+    </svg>
+  </button>
+</div>
+
+<dialog class="fbk" data-fbk>
+  <form method="dialog" class="fbk-card">
+    <div class="fbk-head">
+      <strong>Help us improve</strong>
+      <button class="fbk-x" value="close" aria-label="Close">✕</button>
+    </div>
+    <p class="fbk-q">What is the one thing missing on this page?</p>
+    <textarea data-fbk-text rows="3" maxlength="400" placeholder="Type here — or use the mic on your keyboard"></textarea>
+    <div class="fbk-quick" data-fbk-quick>
+      <button type="button">Facility details wrong</button>
+      <button type="button">Toilets missing</button>
+      <button type="button">Map not loading</button>
+      <button type="button">Something else</button>
+    </div>
+    <div class="fbk-actions">
+      <button type="submit" value="send" class="btn btn-primary" data-fbk-send>Save feedback</button>
+      <a class="btn btn-ghost" href="mailto:skmstudio.services@gmail.com?subject=Toilets%20Near%20Me%20feedback">Email instead</a>
+    </div>
+    <p class="fbk-note">Saved on this device only, and shown to you in the theme manager. Nothing is sent automatically. See the <a href="/privacy/">privacy policy</a>.</p>
+  </form>
+</dialog>
+
+<script>
+  import { track } from '../../scripts/tracking';
+
+  const fab = document.querySelector<HTMLElement>('[data-fab]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-fab-toggle]');
+  const menu = document.querySelector<HTMLElement>('[data-fab-menu]');
+  const dlg = document.querySelector<HTMLDialogElement>('[data-fbk]');
+
+  toggle?.addEventListener('click', () => {
+    const open = menu?.hasAttribute('hidden');
+    if (open) menu?.removeAttribute('hidden'); else menu?.setAttribute('hidden', '');
+    toggle.setAttribute('aria-expanded', String(!!open));
+  });
+
+  document.querySelector<HTMLElement>('[data-fab-top]')?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    menu?.setAttribute('hidden', '');
+  });
+
+  document.querySelector<HTMLElement>('[data-fab-near]')?.addEventListener('click', () => {
+    if (location.pathname !== '/') { location.href = '/#cities'; return; }
+    document.querySelector<HTMLButtonElement>('[data-geolocate]')?.click();
+    document.getElementById('cities')?.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  document.querySelector<HTMLElement>('[data-fab-feedback]')?.addEventListener('click', () => {
+    menu?.setAttribute('hidden', '');
+    dlg?.showModal();
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-fbk-quick] button').forEach((b) =>
+    b.addEventListener('click', () => {
+      const ta = document.querySelector<HTMLTextAreaElement>('[data-fbk-text]');
+      if (ta) ta.value = (ta.value ? ta.value + ' — ' : '') + (b.textContent || '');
+    }),
+  );
+
+  dlg?.querySelector('form')?.addEventListener('submit', (e) => {
+    const submitter = (e as SubmitEvent).submitter as HTMLButtonElement | null;
+    if (submitter?.value !== 'send') return;
+    const text = document.querySelector<HTMLTextAreaElement>('[data-fbk-text]')?.value?.trim();
+    if (!text) return;
+    try {
+      const key = 'tnm_feedback_v1';
+      const rows = JSON.parse(localStorage.getItem(key) || '[]');
+      rows.push({ at: new Date().toISOString(), path: location.pathname, text: text.slice(0, 400) });
+      localStorage.setItem(key, JSON.stringify(rows.slice(-100)));
+    } catch { /* storage blocked */ }
+    track('feedback', location.pathname);
+  });
+
+  void fab;
+</script>
+
+<style>
+  .fab { position: fixed; right: 18px; bottom: 18px; z-index: 60; display: grid; justify-items: end; gap: 10px; }
+  .fab-toggle {
+    width: 52px; height: 52px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--color-green); color: #fff;
+    border: 0; cursor: pointer;
+    box-shadow: 0 8px 24px rgba(13,148,136,.35);
+    transition: background-color .15s, transform .15s;
+  }
+  .fab-toggle:hover { background: var(--color-green-dark); transform: translateY(-1px); }
+  .fab-menu {
+    display: grid; gap: 6px; padding: 8px;
+    background: #fff; border: 1px solid var(--color-line);
+    border-radius: 16px; box-shadow: 0 16px 40px rgba(15,23,42,.16);
+    min-width: 210px;
+  }
+  .fab-menu[hidden] { display: none; }
+  .fab-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 10px;
+    border: 0; background: none; cursor: pointer;
+    font: inherit; font-size: 14px; font-weight: 500; color: var(--color-ink); text-align: left;
+  }
+  .fab-item:hover { background: var(--color-mint-soft); }
+
+  .fbk {
+    border: 0; padding: 0; border-radius: 18px; max-width: 440px; width: calc(100% - 32px);
+    box-shadow: 0 24px 60px rgba(15,23,42,.3);
+  }
+  .fbk::backdrop { background: rgba(15,23,42,.45); }
+  .fbk-card { padding: 20px; display: grid; gap: 10px; }
+  .fbk-head { display: flex; align-items: center; justify-content: space-between; }
+  .fbk-head strong { font-size: 16px; }
+  .fbk-x { border: 0; background: none; font-size: 16px; cursor: pointer; color: var(--color-muted); }
+  .fbk-q { margin: 0; font-size: 14px; color: var(--color-muted); }
+  .fbk textarea {
+    width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--color-line);
+    font: inherit; font-size: 14px; resize: vertical; min-height: 76px;
+  }
+  .fbk-quick { display: flex; flex-wrap: wrap; gap: 6px; }
+  .fbk-quick button {
+    font: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+    border: 1px solid var(--color-line); background: #fff; color: var(--color-muted);
+    border-radius: 999px; padding: 6px 10px;
+  }
+  .fbk-quick button:hover { border-color: var(--color-green); color: var(--color-green-dark); }
+  .fbk-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .fbk-note { margin: 0; font-size: 11.5px; color: var(--color-muted); }
+  .fbk-note a { text-decoration: underline; }
+</style>

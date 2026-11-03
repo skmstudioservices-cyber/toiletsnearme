@@ -24,12 +24,21 @@ export type Facility = {
   lon: number;
   name: string;
   fee: 'free' | 'paid' | 'unknown';
+  feeRaw: string;
   open24: boolean;
+  openingHours: string;
   wheelchair: boolean;
+  wheelchairRaw: string;
   women: boolean;
+  men: boolean;
   baby: boolean;
   customers: boolean;
+  water: boolean;
+  soap: boolean;
+  parking: boolean;
   operator: string;
+  description: string;
+  unisex: boolean;
 };
 
 const DATA = path.resolve('./data');
@@ -63,12 +72,21 @@ export function toFacility(f: any, i: number): Facility | null {
     lon,
     name: (p.name || '').trim(),
     fee,
+    feeRaw: (p.fee || '').trim(),
     open24: p.opening_hours === '24/7',
+    openingHours: (p.opening_hours || '').trim(),
     wheelchair: p.wheelchair === 'yes' || p.wheelchair === 'designated',
+    wheelchairRaw: (p.wheelchair || '').trim(),
     women: p.female === 'yes' || p.unisex === 'yes',
+    men: p.male === 'yes',
     baby: p.changing_table === 'yes',
     customers: p.access === 'customers',
+    water: p.water === 'yes' || p.drinking_water === 'yes',
+    soap: p.soap === 'yes' || p.handwashing === 'yes',
+    parking: p.parking === 'yes',
     operator: (p.operator || '').trim(),
+    description: (p.description || '').trim(),
+    unisex: p.unisex === 'yes',
   };
 }
 

@@ -24,7 +24,9 @@ body {
   font-family: var(--font-sans);
   color: var(--color-ink);
   background: var(--color-bg);
-  font-weight: 400;
+  font-size: var(--font-size, 16px);
+  line-height: var(--line-height, 1.6);
+  font-weight: var(--body-weight, 400);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -33,9 +35,9 @@ body {
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; height: auto; }
 
-.wrap { width: min(1160px, 92%); margin-inline: auto; }
+.wrap { width: min(var(--wrap-width, 1160px), 92%); margin-inline: auto; }
 
-:is(h1, h2, h3, h4) { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin: 0; }
+:is(h1, h2, h3, h4) { font-weight: var(--heading-weight, 700); letter-spacing: -0.02em; line-height: 1.2; margin: 0; }
 
 /* ---------- surfaces ---------- */
 .card {
@@ -214,3 +216,44 @@ body > div > div:empty,
 body > div > div > div:empty {
   pointer-events: none !important;
 }
+
+/* ---------- facility cards ---------- */
+.map-status { margin: 10px 0 0; font-size: 13px; color: var(--color-muted); }
+
+.facility-list {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+.fcard {
+  display: grid; gap: 6px;
+  background: #fff; border: 1px solid var(--color-line);
+  border-radius: 14px; padding: 14px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.fcard:hover { border-color: var(--color-green); box-shadow: 0 8px 20px rgba(13,148,136,.10); }
+.fcard-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.fcard-name { font-weight: 650; font-size: 15px; line-height: 1.3; }
+.fcard-city { font-size: 12px; font-weight: 600; color: var(--color-green-dark); white-space: nowrap; }
+.fcard-op { font-size: 12px; color: var(--color-muted); }
+.fcard-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.fchip {
+  background: var(--color-mint-soft); color: var(--color-green-deep);
+  border: 1px solid var(--color-mint); border-radius: 999px;
+  padding: 2px 8px; font-size: 11.5px; font-weight: 600; white-space: nowrap;
+}
+.fchip-empty { background: #f1f5f9; color: var(--color-muted); border-color: var(--color-line); }
+.fcard-actions { display: flex; gap: 12px; margin-top: 2px; }
+.fcard-actions a, .fcard-zoom {
+  font-size: 12.5px; font-weight: 600; color: var(--color-green-dark);
+  background: none; border: 0; padding: 0; cursor: pointer; font-family: inherit;
+}
+.fcard-actions a:hover, .fcard-zoom:hover { text-decoration: underline; }
+.fcard-more { font-size: 13px; color: var(--color-muted); display: block; }
+
+/* ---------- popup ---------- */
+.popup-card strong { display: block; font-size: 14px; }
+.popup-op { font-size: 12px; color: var(--color-muted); margin-top: 2px; }
+.popup-desc { font-size: 12.5px; color: var(--color-muted); margin-top: 4px; }
+.popup-link { display: block; margin-top: 8px; font-size: 12.5px; font-weight: 600; color: var(--color-green-dark); }
+.popup-link:hover { text-decoration: underline; }

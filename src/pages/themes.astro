@@ -1,0 +1,264 @@
+---
+import Base from '../layouts/Base.astro';
+const site = 'https://toiletsnearme.pages.dev';
+---
+<Base
+  title="Theme manager — Toilets Near Me"
+  description="Internal design and tracking console."
+  canonical={site + '/themes/'}
+  noindex={true}
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="eyebrow">Internal · not indexed</p>
+      <h1>Theme manager</h1>
+      <p class="lead">
+        Adjust the site's design tokens, save them to this browser, and preview the result live.
+        Changes apply to every page on this device only.
+      </p>
+    </div>
+  </section>
+
+  <section class="wrap tm">
+    <div class="tm-controls">
+      <fieldset class="card">
+        <legend>Colour</legend>
+        <label>Primary<input type="color" data-token="--color-green" /></label>
+        <label>Primary dark<input type="color" data-token="--color-green-dark" /></label>
+        <label>Accent / mint<input type="color" data-token="--color-mint" /></label>
+        <label>Text<input type="color" data-token="--color-ink" /></label>
+        <label>Muted text<input type="color" data-token="--color-muted" /></label>
+        <label>Background<input type="color" data-token="--color-bg" /></label>
+        <label>Borders<input type="color" data-token="--color-line" /></label>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend>Typography</legend>
+        <label>Font family
+          <select data-token="--font-sans">
+            <option value='Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif'>Inter / system</option>
+            <option value='Georgia, "Times New Roman", serif'>Georgia (serif)</option>
+            <option value='ui-monospace, SFMono-Regular, Menlo, monospace'>Monospace</option>
+            <option value='"Trebuchet MS", system-ui, sans-serif'>Trebuchet</option>
+          </select>
+        </label>
+        <label>Body weight <output data-out="--body-weight">400</output>
+          <input type="range" min="300" max="700" step="50" data-token="--body-weight" />
+        </label>
+        <label>Heading weight <output data-out="--heading-weight">700</output>
+          <input type="range" min="400" max="900" step="100" data-token="--heading-weight" />
+        </label>
+        <label>Base size <output data-out="--font-size">16</output>px
+          <input type="range" min="14" max="20" step="1" data-token="--font-size" />
+        </label>
+        <label>Line height <output data-out="--line-height">1.6</output>
+          <input type="range" min="1.3" max="2" step="0.05" data-token="--line-height" />
+        </label>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend>Shape</legend>
+        <label>Card radius <output data-out="--radius-card">18</output>px
+          <input type="range" min="0" max="32" step="1" data-token="--radius-card" />
+        </label>
+        <label>Page width <output data-out="--wrap-width">1160</output>px
+          <input type="range" min="960" max="1440" step="20" data-token="--wrap-width" />
+        </label>
+      </fieldset>
+
+      <div class="tm-actions">
+        <button type="button" class="btn btn-primary" data-tm-save>Save to this browser</button>
+        <button type="button" class="btn btn-ghost" data-tm-reset>Reset to default</button>
+        <button type="button" class="btn btn-ghost" data-tm-export>Export JSON</button>
+        <label class="btn btn-ghost tm-import">Import JSON<input type="file" accept="application/json" data-tm-import hidden /></label>
+      </div>
+      <p class="tm-status" data-tm-status aria-live="polite"></p>
+    </div>
+
+    <aside class="tm-side">
+      <div class="card tm-preview">
+        <h2>Live preview</h2>
+        <p class="pv-muted">Muted body text at the current weight and size.</p>
+        <div class="pv-chips"><span>Free</span><span>Wheelchair</span><span>24 hours</span></div>
+        <a class="btn btn-primary" href="#preview">Primary button</a>
+        <a class="btn btn-ghost" href="#preview">Secondary</a>
+      </div>
+
+      <div class="card tm-panel">
+        <h2>Internal tracking</h2>
+        <p class="pv-muted">First-party, on this device only — no identifiers, no third-party calls.</p>
+        <dl class="tm-stats" data-tm-stats></dl>
+        <button type="button" class="btn btn-ghost" data-tm-clear>Clear tracking data</button>
+      </div>
+
+      <div class="card tm-panel">
+        <h2>Feedback saved here</h2>
+        <ul class="tm-feedback" data-tm-feedback></ul>
+        <button type="button" class="btn btn-ghost" data-tm-clear-fb>Clear feedback</button>
+      </div>
+    </aside>
+  </section>
+</Base>
+
+<script>
+  import { summarise, clearEvents } from '../scripts/tracking';
+
+  const KEY = 'tnm_theme_v1';
+  const root = document.documentElement;
+  const status = document.querySelector<HTMLElement>('[data-tm-status]');
+
+  const PX = new Set(['--radius-card', '--wrap-width', '--font-size']);
+  const NUM = new Set(['--body-weight', '--heading-weight', '--line-height', '--font-size']);
+
+  function cssValue(token: string, raw: string) {
+    if (token === '--wrap-width') return raw + 'px';
+    if (token === '--radius-card') return raw + 'px';
+    if (token === '--font-size') return raw + 'px';
+    return raw;
+  }
+
+  function apply(tokens: Record<string, string>) {
+    for (const [k, v] of Object.entries(tokens)) {
+      root.style.setProperty(k, v);
+    }
+  }
+
+  function readInputs() {
+    const out: Record<string, string> = {};
+    document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-token]').forEach((el) => {
+      out[el.dataset.token as string] = el.value;
+    });
+    return out;
+  }
+
+  function syncOutputs() {
+    document.querySelectorAll<HTMLOutputElement>('[data-out]').forEach((o) => {
+      const token = o.dataset.out as string;
+      const input = document.querySelector<HTMLInputElement>(`[data-token="${token}"]`);
+      if (input) o.textContent = input.value;
+    });
+  }
+
+  // load saved values into the inputs
+  let saved: Record<string, string> = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { saved = {}; }
+  document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-token]').forEach((el) => {
+    const v = saved[el.dataset.token as string];
+    if (v !== undefined) el.value = v;
+  });
+  syncOutputs();
+
+  document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-token]').forEach((el) => {
+    el.addEventListener('input', () => {
+      const token = el.dataset.token as string;
+      apply({ [token]: cssValue(token, el.value) });
+      syncOutputs();
+    });
+  });
+
+  document.querySelector('[data-tm-save]')?.addEventListener('click', () => {
+    const tokens = readInputs();
+    try {
+      localStorage.setItem(KEY, JSON.stringify(tokens));
+      apply(Object.fromEntries(Object.entries(tokens).map(([k, v]) => [k, cssValue(k, v)])));
+      if (status) status.textContent = 'Saved to this browser. Every page now uses these values on this device.';
+    } catch {
+      if (status) status.textContent = 'Storage is blocked in this browser — changes apply for this session only.';
+    }
+  });
+
+  document.querySelector('[data-tm-reset]')?.addEventListener('click', () => {
+    try { localStorage.removeItem(KEY); } catch { /* ignore */ }
+    location.reload();
+  });
+
+  document.querySelector('[data-tm-export]')?.addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(readInputs(), null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'toiletsnearme-theme.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  document.querySelector<HTMLInputElement>('[data-tm-import]')?.addEventListener('change', async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    try {
+      const tokens = JSON.parse(await file.text());
+      localStorage.setItem(KEY, JSON.stringify(tokens));
+      location.reload();
+    } catch {
+      if (status) status.textContent = 'That file could not be read as theme JSON.';
+    }
+  });
+
+  // tracking + feedback panels
+  const s = summarise();
+  const stats = document.querySelector<HTMLElement>('[data-tm-stats]');
+  if (stats) {
+    const typeRows = Object.entries(s.byType).map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+    const pathRows = Object.entries(s.byPath).slice(0, 6).map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+    stats.innerHTML = `<dt>Total events</dt><dd>${s.total}</dd>${typeRows}${pathRows ? `<dt class="sep">Top pages</dt><dd></dd>${pathRows}` : ''}`;
+  }
+  document.querySelector('[data-tm-clear]')?.addEventListener('click', () => {
+    clearEvents();
+    if (stats) stats.innerHTML = '<dt>Total events</dt><dd>0</dd>';
+  });
+
+  const fb = document.querySelector<HTMLElement>('[data-tm-feedback]');
+  function renderFeedback() {
+    if (!fb) return;
+    let rows: any[] = [];
+    try { rows = JSON.parse(localStorage.getItem('tnm_feedback_v1') || '[]'); } catch { rows = []; }
+    fb.innerHTML = rows.length
+      ? rows.slice(-10).reverse().map((r) => `<li><span>${r.path}</span><p>${String(r.text).replace(/[<>&]/g, '')}</p></li>`).join('')
+      : '<li class="empty">No feedback saved on this device yet.</li>';
+  }
+  renderFeedback();
+  document.querySelector('[data-tm-clear-fb]')?.addEventListener('click', () => {
+    try { localStorage.removeItem('tnm_feedback_v1'); } catch { /* ignore */ }
+    renderFeedback();
+  });
+
+  void PX; void NUM;
+</script>
+
+<style>
+  .page-hero { background: radial-gradient(700px 240px at 20% -20%, var(--color-mint) 0%, transparent 70%); border-bottom: 1px solid var(--color-line); padding: 30px 0 26px; }
+  .page-hero h1 { margin: 8px 0 0; font-size: clamp(26px, 4vw, 36px); }
+  .lead { margin: 10px 0 0; color: var(--color-muted); max-width: 62ch; font-size: 15px; }
+
+  .tm { display: grid; gap: 22px; padding-top: 28px; }
+  .tm-controls { display: grid; gap: 14px; }
+  fieldset { border: 1px solid var(--color-line); padding: 16px 18px; margin: 0; display: grid; gap: 12px; }
+  legend { padding: 0 6px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--color-muted); }
+  fieldset label { display: grid; gap: 6px; font-size: 13px; font-weight: 500; color: var(--color-ink); }
+  fieldset label:has(input[type="color"]) { grid-template-columns: 1fr 56px; align-items: center; }
+  input[type="color"] { width: 56px; height: 34px; padding: 2px; border: 1px solid var(--color-line); border-radius: 8px; background: #fff; }
+  input[type="range"] { accent-color: var(--color-green); }
+  select { padding: 9px 10px; border-radius: 10px; border: 1px solid var(--color-line); font: inherit; font-size: 13px; background: #fff; }
+  output { font-weight: 600; color: var(--color-green-dark); }
+
+  .tm-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tm-import { position: relative; }
+  .tm-status { margin: 0; font-size: 13px; color: var(--color-green-dark); min-height: 18px; }
+
+  .tm-side { display: grid; gap: 14px; align-content: start; }
+  .tm-preview, .tm-panel { padding: 18px; display: grid; gap: 10px; }
+  .tm-preview h2, .tm-panel h2 { font-size: 15px; }
+  .pv-muted { margin: 0; color: var(--color-muted); font-size: 14px; }
+  .pv-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pv-chips span { background: var(--color-mint-soft); border: 1px solid var(--color-mint); color: var(--color-green-deep); border-radius: 999px; padding: 3px 9px; font-size: 12px; font-weight: 600; }
+  .tm-stats { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; font-size: 13px; }
+  .tm-stats dt { color: var(--color-muted); }
+  .tm-stats dd { margin: 0; font-weight: 600; text-align: right; }
+  .tm-stats dt.sep { color: var(--color-ink); font-weight: 700; margin-top: 6px; }
+  .tm-feedback { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 13px; }
+  .tm-feedback li { border-left: 3px solid var(--color-mint); padding-left: 10px; }
+  .tm-feedback li span { color: var(--color-muted); font-size: 11.5px; }
+  .tm-feedback li p { margin: 2px 0 0; }
+  .tm-feedback .empty { color: var(--color-muted); border-left-color: var(--color-line); }
+
+  @media (min-width: 960px) { .tm { grid-template-columns: 1.5fr 1fr; } }
+</style>

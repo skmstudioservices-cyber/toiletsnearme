@@ -2,29 +2,38 @@
 import type { Facility } from '../../lib/cities';
 
 interface Props {
-  facilities: Facility[];
+  facilities?: Facility[];
   label: string;
+  cityName?: string;
+  slug?: string;
+  src?: string;
   height?: 'sm' | 'lg';
   showFilters?: boolean;
   showList?: boolean;
   id?: string;
 }
 const {
-  facilities,
+  facilities = [],
   label,
+  cityName = 'India',
+  slug = '',
+  src,
   height = 'lg',
   showFilters = true,
   showList = true,
-  id = 'city-map',
+  id = 'facility-map',
 } = Astro.props;
 
+const hasLocal = facilities.length > 0;
+const base = hasLocal ? facilities : [];
+
 const counts = {
-  free: facilities.filter((f) => f.fee === 'free').length,
-  paid: facilities.filter((f) => f.fee === 'paid').length,
-  open24: facilities.filter((f) => f.open24).length,
-  wheelchair: facilities.filter((f) => f.wheelchair).length,
-  women: facilities.filter((f) => f.women).length,
-  baby: facilities.filter((f) => f.baby).length,
+  free: base.filter((f) => f.fee === 'free').length,
+  paid: base.filter((f) => f.fee === 'paid').length,
+  open24: base.filter((f) => f.open24).length,
+  wheelchair: base.filter((f) => f.wheelchair).length,
+  women: base.filter((f) => f.women).length,
+  baby: base.filter((f) => f.baby).length,
 };
 
 const filters = [
@@ -36,7 +45,15 @@ const filters = [
   { key: 'baby', label: 'Baby changing', count: counts.baby },
 ];
 ---
-<div class="facility-map" data-facility-map id={id}>
+<div
+  class="facility-map"
+  data-facility-map
+  id={id}
+  data-map-city={cityName}
+  data-map-slug={slug}
+  data-map-src={src || undefined}
+  data-map-cities={!hasLocal ? '1' : undefined}
+>
   {
     showFilters && (
       <div class="map-toolbar">
@@ -45,7 +62,7 @@ const filters = [
             <label class="filter-chip">
               <input type="checkbox" data-filter={f.key} />
               <span>{f.label}</span>
-              <em>{f.count.toLocaleString('en-IN')}</em>
+              {hasLocal && <em>{f.count.toLocaleString('en-IN')}</em>}
             </label>
           ))}
         </div>
@@ -66,14 +83,15 @@ const filters = [
       <span><i class="dot dot-free"></i>Free</span>
       <span><i class="dot dot-paid"></i>Paid</span>
       <span><i class="dot dot-unknown"></i>Fee not recorded</span>
-      <span class="map-count"><strong data-map-count>{facilities.length.toLocaleString('en-IN')}</strong> facilities shown</span>
+      <span class="map-count"><strong data-map-count>{hasLocal ? base.length.toLocaleString('en-IN') : '—'}</strong> facilities shown</span>
     </p>
+    <p class="map-status" data-map-status hidden={hasLocal}>Loading facility data…</p>
     <p class="map-empty" data-map-empty hidden>No facilities match those filters — try turning one off.</p>
   </div>
 
   {showList && <ul class="facility-list" data-map-list aria-label={`Facilities in ${label}`}></ul>}
 
-  <script type="application/json" data-map-points set:html={JSON.stringify(facilities)} />
+  {hasLocal && <script type="application/json" data-map-points set:html={JSON.stringify(facilities)} />}
 </div>
 
 <script>

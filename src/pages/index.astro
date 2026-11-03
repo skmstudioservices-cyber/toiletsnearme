@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import CityCard from '../components/cards/CityCard.astro';
 import FeatureCard from '../components/cards/FeatureCard.astro';
+import FacilityMap from '../components/map/FacilityMap.astro';
 import { getAllCities } from '../lib/cities';
 
 const cities = getAllCities();
@@ -79,6 +80,21 @@ const jsonld = [
       {cities.map((c) => <CityCard slug={c.slug} name={c.name} count={c.count} free={c.free} lat={c.lat} lon={c.lon} />)}
     </div>
     <p class="no-results" data-no-results hidden>No city matches that search. Try a different spelling, or browse the full list.</p>
+  </section>
+
+  <section id="map" class="wrap section">
+    <div class="section-head">
+      <div>
+        <h2>Every mapped toilet, on one map</h2>
+        <p>Zoom into your area, filter for what you need, tap a pin for that facility's details.</p>
+      </div>
+    </div>
+    <FacilityMap
+      label="public toilets across India"
+      src="/data/all-points.json"
+      height="lg"
+      id="india-map"
+    />
   </section>
 
   <section id="how" class="section section-alt">

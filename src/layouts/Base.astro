@@ -2,9 +2,10 @@
 import '../styles/global.css';
 import SiteHeader from '../components/common/SiteHeader.astro';
 import SiteFooter from '../components/common/SiteFooter.astro';
+import FloatingActions from '../components/common/FloatingActions.astro';
 import { GOOGLE_ANALYTICS_ID, MONETAG_PUBLISHER_ID, MONETAG_ZONE_ID } from '../config/site-integrations';
-interface Props { title: string; description: string; canonical: string; jsonld?: object[] }
-const { title, description, canonical, jsonld = [] } = Astro.props;
+interface Props { title: string; description: string; canonical: string; jsonld?: object[]; noindex?: boolean }
+const { title, description, canonical, jsonld = [], noindex = false } = Astro.props;
 const site = 'https://toiletsnearme.pages.dev';
 ---
 <!DOCTYPE html>
@@ -16,7 +17,7 @@ const site = 'https://toiletsnearme.pages.dev';
   <title>{title}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:type" content="website" />
@@ -41,10 +42,24 @@ const site = 'https://toiletsnearme.pages.dev';
   <SiteHeader />
   <main><slot /></main>
   <SiteFooter />
+  <FloatingActions />
   <script>
+    // Apply a saved theme (set in /themes/) before first paint of the body.
+    try {
+      const t = JSON.parse(localStorage.getItem('tnm_theme_v1') || '{}');
+      const px = new Set(['--radius-card', '--wrap-width', '--font-size']);
+      for (const [k, v] of Object.entries(t)) {
+        document.documentElement.style.setProperty(k, px.has(k) ? v + 'px' : String(v));
+      }
+    } catch {}
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
     }
+  </script>
+  <script>
+    import { initTracking } from '../scripts/tracking';
+    initTracking();
   </script>
 </body>
 </html>
