@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import SiteHeader from '../components/common/SiteHeader.astro';
 import SiteFooter from '../components/common/SiteFooter.astro';
+import { GOOGLE_ANALYTICS_ID, MONETAG_PUBLISHER_ID, MONETAG_ZONE_ID } from '../config/site-integrations';
 interface Props { title: string; description: string; canonical: string; jsonld?: object[] }
 const { title, description, canonical, jsonld = [] } = Astro.props;
 const site = 'https://toiletsnearme.pages.dev';
@@ -23,16 +24,17 @@ const site = 'https://toiletsnearme.pages.dev';
   <meta property="og:image" content={`${site}/og-image.png`} />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content={`${site}/og-image.png`} />
-  <meta name="monetag" content="f32430058ca3608d8c333951e133229a" />
-  <script src="https://quge5.com/88/tag.min.js" data-zone="298480" async data-cfasync="false"></script>
+  <meta name="monetag" content={MONETAG_PUBLISHER_ID} />
+  <script src="https://quge5.com/88/tag.min.js" data-zone={MONETAG_ZONE_ID} async data-cfasync="false"></script>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="manifest" href="/manifest.webmanifest" />
   {jsonld.map((j) => (<script type="application/ld+json" set:html={JSON.stringify(j)} />))}
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D74LPRXWDW"></script>
-  <script is:inline>
+  <script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}></script>
+  <script is:inline data-ga-id={GOOGLE_ANALYTICS_ID}>
     window.dataLayer = window.dataLayer || [];
     function gtag(){window.dataLayer.push(arguments);}
-    gtag('js', new Date()); gtag('config', 'G-D74LPRXWDW');
+    gtag('js', new Date());
+    gtag('config', document.currentScript?.dataset.gaId);
   </script>
 </head>
 <body>
