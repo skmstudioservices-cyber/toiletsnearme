@@ -91,6 +91,16 @@ img { max-width: 100%; height: auto; }
 
 .map-filters { display: flex; flex-wrap: wrap; gap: 8px; }
 
+/* On phones the filter row scrolls horizontally instead of stacking, so the
+   map stays above the fold on first load. */
+@media (max-width: 640px) {
+  .map-toolbar { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+  .map-toolbar::-webkit-scrollbar { display: none; }
+  .map-filters { flex-wrap: nowrap; }
+  .filter-chip { flex: 0 0 auto; }
+  .map-locate { flex: 0 0 auto; }
+}
+
 .filter-chip {
   display: inline-flex;
   align-items: center;

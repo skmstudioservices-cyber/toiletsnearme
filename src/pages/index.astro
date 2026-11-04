@@ -295,6 +295,16 @@ const jsonld = [
   }
   .hero-search input::placeholder { color: var(--color-muted); }
   .hero-search:focus-within { border-color: var(--color-green); box-shadow: 0 0 0 4px rgba(13,148,136,.12); }
+  @media (max-width: 640px) {
+    .hero { padding: 18px 0 18px; }
+    .hero-inner { gap: 10px; }
+    .hero h1 { font-size: clamp(24px, 7vw, 30px); }
+    .hero-sub { font-size: 14px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .hero-search { padding: 6px; }
+    .hero-search input { min-height: 40px; font-size: 14px; }
+    .hero-map .map-sm [data-map] { height: 240px; }
+  }
+
   .hero-hint { margin: 0; min-height: 20px; font-size: 13px; color: var(--color-green-dark); font-weight: 500; }
 
   .stat-strip {
