@@ -24,6 +24,18 @@ const jsonld = [
     },
   },
   {
+    '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
+      { '@type': 'Question', name: 'How do I find a public toilet near me right now?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Open the map on this page, or filter by Free and 24 hours if it is late. Petrol pumps, metro stations and malls are the most dependable fallbacks.' } },
+      { '@type': 'Question', name: 'Are public toilets in India free?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Many are. Municipal community toilets, mall restrooms, hospital lobbies and petrol pumps are usually free. Pay-and-use complexes charge ₹5-10 and are attended.' } },
+      { '@type': 'Question', name: 'Where can I find a washroom near me at night?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Petrol pumps and hospitals stay open overnight; most standalone public toilets close in the evening.' } },
+      { '@type': 'Question', name: 'Are there wheelchair-accessible toilets near me?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Yes, where they are tagged. Use the Wheelchair filter; 555 facilities across the network are recorded as wheelchair-accessible.' } },
+    ],
+  },
+  {
     '@context': 'https://schema.org', '@type': 'Organization',
     name: 'Toilets Near Me', url: site + '/',
     parentOrganization: { '@type': 'Organization', name: 'SKM Studio Network' },
@@ -31,8 +43,8 @@ const jsonld = [
 ];
 ---
 <Base
-  title="Public Toilet Near Me — Live Map of 7,714 Toilets in 106 Cities"
-  description={`Nearest public toilet or washroom in two taps. ${total.toLocaleString('en-IN')} facilities in ${cities.length} Indian cities — free, 24-hour and wheelchair-accessible options, directions on the map. Updated November 2026.`}
+  title="Public Toilet & Washroom Near Me — Live Map of All Indian Cities"
+  description={`Find the nearest public toilet or washroom in seconds. ${total.toLocaleString('en-IN')} facilities mapped across ${cities.length} Indian cities — free, pay-and-use, 24-hour and wheelchair-accessible, with directions.`}
   canonical={site + '/'}
   jsonld={jsonld}
 >
@@ -95,6 +107,65 @@ const jsonld = [
       height="lg"
       id="india-map"
     />
+  </section>
+
+
+  <section class="wrap section">
+    <div class="prose-block">
+      <h2>Finding a public toilet near you in India</h2>
+      <p>
+        Searching for a <strong>public toilet near me</strong> in an Indian city usually returns three kinds of
+        facility: municipal community toilets, which are free or cost a token amount; pay-and-use complexes run by
+        Sulabh and similar operators, typically ₹5–₹10 with an attendant; and toilets inside malls, metro stations,
+        petrol pumps and hospitals, which are usually the cleanest option.
+      </p>
+      <p>
+        If you need a <strong>washroom near me</strong> right now, malls and metro stations are the most reliable
+        free option during the day. For <strong>nearby public toilets</strong> at night, petrol pumps and hospital
+        lobbies are the safest bet — most standalone municipal toilets close in the evening. Looking for a
+        <strong>free public toilet near me</strong>? Filter the map below by "Free" to see only no-cost facilities.
+      </p>
+      <p>
+        Every count on this site comes from OpenStreetMap tags. Where a feature is not recorded we say so rather
+        than guess: a missing tag means "not recorded yet", not "not available". Use the filters to narrow the map
+        to free, paid, 24-hour, wheelchair-accessible, women's-section or baby-changing facilities.
+      </p>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <h2>Popular searches</h2>
+    <p class="section-sub">Jump straight to the guide that matches what you need.</p>
+    <ul class="link-grid">
+      <li><a href="/washroom-near-me/">Washroom near me</a></li>
+      <li><a href="/toilet-near-me/">Toilet near me</a></li>
+      <li><a href="/24-hour-toilet-near-me/">24 hour toilet near me</a></li>
+      <li><a href="/free-public-toilets-near-me/">Free public toilets</a></li>
+      <li><a href="/pay-and-use-toilets-near-me/">Pay and use toilets</a></li>
+      <li><a href="/sulabh-toilets-near-me/">Sulabh toilets</a></li>
+      <li><a href="/public-toilets-at-malls/">Toilets at malls</a></li>
+      <li><a href="/toilets-at-petrol-pumps/">Toilets at petrol pumps</a></li>
+      <li><a href="/toilets-at-railway-stations/">Toilets at railway stations</a></li>
+      <li><a href="/wheelchair-accessible-toilets-near-me/">Wheelchair accessible toilets</a></li>
+      <li><a href="/public-toilets-near-me-open-now/">Toilets open now</a></li>
+      <li><a href="/highway-toilets-near-me/">Highway toilets</a></li>
+    </ul>
+  </section>
+
+  <section class="wrap section">
+    <h2>Public toilets in India — frequently asked questions</h2>
+    <div class="faq">
+      <details class="card"><summary>How do I find a public toilet near me right now?</summary>
+        <p>Open the map above, or filter by "Free" and "24 hours" if it is late. Petrol pumps, metro stations and malls are the most dependable fallbacks.</p></details>
+      <details class="card"><summary>Are public toilets in India free?</summary>
+        <p>Many are. Municipal community toilets, mall restrooms, hospital lobbies and petrol pumps are usually free. Pay-and-use complexes charge ₹5–₹10 and are attended.</p></details>
+      <details class="card"><summary>Where can I find a washroom near me at night?</summary>
+        <p>Petrol pumps and hospitals stay open overnight; most standalone public toilets close in the evening. Filter the map by "24 hours" to see what is tagged as open around the clock.</p></details>
+      <details class="card"><summary>Are there wheelchair-accessible toilets near me?</summary>
+        <p>Yes, where they are tagged. Use the "Wheelchair" filter — 555 facilities across the network are recorded as wheelchair-accessible.</p></details>
+      <details class="card"><summary>How many public toilets are mapped on this site?</summary>
+        <p>{total.toLocaleString('en-IN')} facilities across {cities.length} Indian cities, all from OpenStreetMap and refreshed from the source data.</p></details>
+    </div>
   </section>
 
   <section id="how" class="section section-alt">
@@ -260,10 +331,26 @@ const jsonld = [
   .info-list li { font-size: 14px; color: var(--color-muted); border-left: 3px solid var(--color-mint); padding-left: 12px; }
   .info-list strong { color: var(--color-ink); display: block; font-size: 14px; }
 
+  .prose-block { max-width: 74ch; }
+  .prose-block h2 { font-size: clamp(21px, 2.6vw, 27px); margin-bottom: 12px; }
+  .prose-block p { margin: 0 0 14px; font-size: 15.5px; line-height: 1.75; color: var(--color-muted); }
+  .prose-block strong { color: var(--color-ink); font-weight: 650; }
+  .link-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+  .link-grid a {
+    display: block; padding: 12px 14px; background: #fff; border: 1px solid var(--color-line);
+    border-radius: 12px; font-size: 14px; font-weight: 550; transition: border-color .15s, color .15s;
+  }
+  .link-grid a:hover { border-color: var(--color-green); color: var(--color-green-dark); }
+  .faq { display: grid; gap: 10px; margin-top: 16px; }
+  .faq details { padding: 16px 18px; }
+  .faq summary { cursor: pointer; font-weight: 600; font-size: 15px; }
+  .faq p { margin: 10px 0 0; font-size: 14px; color: var(--color-muted); }
+
   @media (min-width: 640px) {
     .stat-strip { grid-template-columns: repeat(4, 1fr); }
     .city-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
     .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .link-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
   }
   @media (min-width: 900px) {
     .city-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
