@@ -1,14 +1,17 @@
+# robots.txt — toiletsnearme.pages.dev
+# Format: every user-agent group is separated by a blank line; the Sitemap
+# directive sits at the end, outside all groups (it is a file-level directive).
+
 User-agent: *
 Allow: /
+Disallow: /themes/
 
-# Search engines always allowed
 User-agent: Googlebot
 Allow: /
 
 User-agent: Bingbot
 Allow: /
 
-# AI/LLM bots — Claude allowed for audit + citation (29 Oct 2026)
 User-agent: GPTBot
 Disallow: /
 
@@ -129,7 +132,6 @@ Disallow: /
 User-agent: VelenPublicWebCrawler
 Disallow: /
 
-# --- Heavy SEO/data crawlers blocked (quota burners) ---
 User-agent: AhrefsBot
 Disallow: /
 
@@ -162,5 +164,6 @@ Disallow: /
 
 User-agent: Scrapy
 Disallow: /
+
+# File-level directive — must not be inside a user-agent group
 Sitemap: https://toiletsnearme.pages.dev/sitemap.xml
-Disallow: /themes/
