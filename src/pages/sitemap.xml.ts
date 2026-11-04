@@ -34,7 +34,6 @@ export const GET: APIRoute = async () => {
     headers: {
       'content-type': 'application/xml; charset=utf-8',
       'cache-control': 'public, max-age=300',
-      'x-robots-tag': 'noindex',
     },
   });
 };
