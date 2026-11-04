@@ -43,6 +43,9 @@ jobs:
           sys.exit(1 if fails else 0)
           PY
 
+      - name: robots.txt + sitemap validity
+        run: python3 scripts/validate-robots-sitemap.py https://toiletsnearme.pages.dev
+
       - name: PWA assets
         run: |
           for u in /manifest.webmanifest /sw.js /favicon.svg /robots.txt; do
