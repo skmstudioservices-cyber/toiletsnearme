@@ -54,7 +54,7 @@ const rows = [
 
 const pct = (n: number) => (city.count ? Math.round((n / city.count) * 100) : 0);
 ---
-<Base title={title} description={description} canonical={url} jsonld={jsonld}>
+<Base title={title} description={description} canonical={url} jsonld={jsonld} ogImage={`/og/${city.slug}.png`}>
   <section class="city-hero">
     <div class="wrap">
       <nav class="crumbs" aria-label="Breadcrumb">
@@ -113,6 +113,25 @@ const pct = (n: number) => (city.count ? Math.round((n / city.count) * 100) : 0)
         </ul>
         <p class="side-cta"><a href="/#cities">Browse all cities →</a></p>
       </aside>
+    </div>
+  </section>
+
+
+  <section class="wrap section">
+    <div class="share">
+      <p class="share-label">Know someone in {city.name}? Send them this map.</p>
+      <div class="share-actions">
+        <a class="share-btn" rel="nofollow noopener" target="_blank"
+           href={`https://wa.me/?text=${encodeURIComponent(`Public toilets in ${city.name} — ${city.count} mapped, ${city.free} free. Live map: ${url}`)}`}
+           data-track="share:whatsapp">WhatsApp</a>
+        <a class="share-btn" rel="nofollow noopener" target="_blank"
+           href={`https://x.com/intent/tweet?text=${encodeURIComponent(`Public toilets in ${city.name} — ${city.count} mapped, ${city.free} free`)}&url=${encodeURIComponent(url)}`}
+           data-track="share:x">Post on X</a>
+        <a class="share-btn" rel="nofollow noopener" target="_blank"
+           href={`https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(`Public toilets in ${city.name} — ${city.count} mapped`)}`}
+           data-track="share:reddit">Reddit</a>
+        <button type="button" class="share-btn" data-copy-link={url} data-track="share:copy">Copy link</button>
+      </div>
     </div>
   </section>
 
@@ -176,6 +195,17 @@ const pct = (n: number) => (city.count ? Math.round((n / city.count) * 100) : 0)
   .faq summary { cursor: pointer; font-weight: 600; font-size: 15px; }
   .faq summary::marker { color: var(--color-green); }
   .faq p { margin: 10px 0 0; font-size: 14px; color: var(--color-muted); }
+
+  .share { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
+    background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 16px 18px; }
+  .share-label { margin: 0; font-size: 14px; font-weight: 600; }
+  .share-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .share-btn {
+    display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px;
+    border: 1px solid var(--color-line); border-radius: 10px; background: #fff;
+    font: inherit; font-size: 13px; font-weight: 600; color: var(--color-ink); cursor: pointer;
+  }
+  .share-btn:hover { border-color: var(--color-green); color: var(--color-green-dark); }
 
   @media (min-width: 900px) { .two-col { grid-template-columns: 1.7fr 1fr; } }
 </style>

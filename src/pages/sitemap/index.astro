@@ -1,0 +1,95 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getAllCities } from '../../lib/cities';
+
+// Human- and crawler-readable HTML sitemap. Discovery must never depend on a
+// single XML file that a search engine may not process.
+const cities = getAllCities();
+const site = 'https://toiletsnearme.pages.dev';
+
+const guides = [
+  ['/washroom-near-me/', 'Washroom near me'],
+  ['/toilet-near-me/', 'Toilet near me'],
+  ['/24-hour-toilet-near-me/', '24 hour toilet near me'],
+  ['/free-public-toilets-near-me/', 'Free public toilets'],
+  ['/pay-and-use-toilets-near-me/', 'Pay and use toilets'],
+  ['/public-toilets-at-malls/', 'Toilets at malls'],
+  ['/public-toilets-near-me-open-now/', 'Toilets open now'],
+  ['/sulabh-toilets-near-me/', 'Sulabh toilets'],
+  ['/toilets-at-petrol-pumps/', 'Toilets at petrol pumps'],
+  ['/toilets-at-railway-stations/', 'Toilets at railway stations'],
+  ['/wheelchair-accessible-toilets-near-me/', 'Wheelchair accessible toilets'],
+  ['/highway-toilets-near-me/', 'Highway toilets'],
+];
+
+const groups: Record<string, typeof cities> = {};
+for (const c of cities) {
+  const letter = c.name[0].toUpperCase();
+  (groups[letter] ||= []).push(c);
+}
+const letters = Object.keys(groups).sort();
+---
+<Base
+  title="Sitemap — every page on Toilets Near Me"
+  description={`All ${cities.length + guides.length + 3} pages on Toilets Near Me: ${cities.length} city maps, ${guides.length} guides, and site pages.`}
+  canonical={site + '/sitemap/'}
+  ogImage="/og/default.png"
+>
+  <section class="page-hero">
+    <div class="wrap">
+      <h1>Sitemap</h1>
+      <p class="lead">Every page on this site — {cities.length} city maps, {guides.length} guides, plus the site pages. Pick a city to open its live map.</p>
+    </div>
+  </section>
+
+  <section class="wrap body">
+    <nav aria-label="Jump to letter" class="letters">
+      {letters.map((l) => <a href={`#letter-${l}`}>{l}</a>)}
+    </nav>
+
+    <h2>Guides</h2>
+    <ul class="links">
+      {guides.map(([href, label]) => <li><a href={href}>{label}</a></li>)}
+    </ul>
+
+    <h2>Cities</h2>
+    {letters.map((l) => (
+      <section id={`letter-${l}`} class="letter-block">
+        <h3>{l}</h3>
+        <ul class="links">
+          {groups[l].map((c) => (
+            <li><a href={`/${c.slug}/`}>{c.name}</a> <span class="n">{c.count.toLocaleString('en-IN')}</span></li>
+          ))}
+        </ul>
+      </section>
+    ))}
+
+    <h2>Site</h2>
+    <ul class="links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/privacy/">Privacy</a></li>
+    </ul>
+
+    <p class="xml-note">Machine-readable version: <a href="/sitemap.xml">/sitemap.xml</a></p>
+  </section>
+</Base>
+
+<style>
+  .page-hero { background: radial-gradient(700px 240px at 20% -20%, var(--color-mint) 0%, transparent 70%); border-bottom: 1px solid var(--color-line); padding: 30px 0 26px; }
+  .page-hero h1 { margin: 0; font-size: clamp(26px, 4vw, 36px); }
+  .lead { margin: 10px 0 0; color: var(--color-muted); max-width: 62ch; font-size: 15px; }
+  .body { padding-top: 28px; max-width: 1000px; }
+  .body h2 { font-size: 20px; margin: 30px 0 12px; }
+  .letters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .letters a { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--color-line); border-radius: 8px; font-size: 13px; font-weight: 600; }
+  .letters a:hover { border-color: var(--color-green); color: var(--color-green-dark); }
+  .letter-block { margin-bottom: 18px; }
+  .letter-block h3 { font-size: 14px; color: var(--color-muted); margin: 0 0 8px; letter-spacing: .08em; text-transform: uppercase; }
+  .links { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px 18px; }
+  .links a { font-size: 14.5px; color: var(--color-ink); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--color-line); }
+  .links a:hover { color: var(--color-green-dark); text-decoration-color: currentColor; }
+  .links .n { font-size: 12px; color: var(--color-muted); }
+  .xml-note { margin-top: 26px; font-size: 13px; color: var(--color-muted); }
+  .xml-note a { text-decoration: underline; }
+</style>

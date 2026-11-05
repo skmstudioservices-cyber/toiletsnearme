@@ -7,7 +7,7 @@ import { getAllCities } from '../lib/cities';
 const SITE = 'https://toiletsnearme.pages.dev';
 
 const STATIC_PAGES = [
-  '/', '/about/', '/privacy/',
+  '/', '/about/', '/privacy/', '/sitemap/',
   '/washroom-near-me/', '/toilet-near-me/', '/24-hour-toilet-near-me/',
   '/free-public-toilets-near-me/', '/pay-and-use-toilets-near-me/',
   '/public-toilets-at-malls/', '/public-toilets-near-me-open-now/',

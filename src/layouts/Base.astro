@@ -4,8 +4,8 @@ import SiteHeader from '../components/common/SiteHeader.astro';
 import SiteFooter from '../components/common/SiteFooter.astro';
 import FloatingActions from '../components/common/FloatingActions.astro';
 import { GOOGLE_ANALYTICS_ID, MONETAG_PUBLISHER_ID, MONETAG_ZONE_ID } from '../config/site-integrations';
-interface Props { title: string; description: string; canonical: string; jsonld?: object[]; noindex?: boolean }
-const { title, description, canonical, jsonld = [], noindex = false } = Astro.props;
+interface Props { title: string; description: string; canonical: string; jsonld?: object[]; noindex?: boolean; ogImage?: string }
+const { title, description, canonical, jsonld = [], noindex = false, ogImage = '/og/default.png' } = Astro.props;
 const site = 'https://toiletsnearme.pages.dev';
 ---
 <!DOCTYPE html>
@@ -22,9 +22,13 @@ const site = 'https://toiletsnearme.pages.dev';
   <meta property="og:description" content={description} />
   <meta property="og:type" content="website" />
   <meta property="og:url" content={canonical} />
-  <meta property="og:image" content={`${site}/og-image.png`} />
+  <meta property="og:image" content={`${site}${ogImage}`} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content={title} />
+  <meta property="og:site_name" content="Toilets Near Me" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content={`${site}/og-image.png`} />
+  <meta name="twitter:image" content={`${site}${ogImage}`} />
   <meta name="monetag" content={MONETAG_PUBLISHER_ID} />
   <script src="https://quge5.com/88/tag.min.js" data-zone={MONETAG_ZONE_ID} async data-cfasync="false"></script>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -56,6 +60,18 @@ const site = 'https://toiletsnearme.pages.dev';
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
     }
+  </script>
+  <script>
+    document.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement)?.closest?.('[data-copy-link]') as HTMLElement | null;
+      if (!btn) return;
+      const url = btn.dataset.copyLink || location.href;
+      navigator.clipboard?.writeText(url).then(() => {
+        const prev = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(() => { btn.textContent = prev; }, 1600);
+      }).catch(() => {});
+    });
   </script>
   <script>
     import { initTracking } from '../scripts/tracking';
