@@ -25,6 +25,8 @@ jobs:
                   return getattr(e,'code',0), ""
           sm=get(BASE+"/sitemap.xml")[1]
           urls=[e.text for e in ET.fromstring(sm).findall(".//{http://www.sitemaps.org/schemas/sitemap/0.9}loc")]
+          # a sitemapindex points at child sitemaps; those are XML, not pages
+          urls=[u for u in urls if not u.endswith('.xml')]
           print(f"sitemap urls: {len(urls)}")
           fails=[]
           for u in urls:
