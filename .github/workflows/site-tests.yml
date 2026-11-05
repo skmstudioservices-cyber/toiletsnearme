@@ -24,9 +24,17 @@ jobs:
               except Exception as e:
                   return getattr(e,'code',0), ""
           sm=get(BASE+"/sitemap.xml")[1]
-          urls=[e.text for e in ET.fromstring(sm).findall(".//{http://www.sitemaps.org/schemas/sitemap/0.9}loc")]
-          # a sitemapindex points at child sitemaps; those are XML, not pages
-          urls=[u for u in urls if not u.endswith('.xml')]
+          root=ET.fromstring(sm)
+          locs=[e.text for e in root.findall(".//{http://www.sitemaps.org/schemas/sitemap/0.9}loc")]
+          # if the root is a sitemapindex, follow it to the child sitemaps
+          if root.tag.endswith('sitemapindex'):
+              urls=[]
+              for child in locs:
+                  st2,body2=get(child)
+                  if st2!=200: continue
+                  urls += [e.text for e in ET.fromstring(body2).findall(".//{http://www.sitemaps.org/schemas/sitemap/0.9}loc")]
+          else:
+              urls=locs
           print(f"sitemap urls: {len(urls)}")
           fails=[]
           for u in urls:
