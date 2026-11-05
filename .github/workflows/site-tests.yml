@@ -11,6 +11,22 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: '22' }
 
+      - name: Wait for Pages deploy to settle
+        run: |
+          # The push triggers a Cloudflare Pages build; deep pages 500 while it swaps.
+          # Poll until 5 sample pages answer 200, max ~7 min, so the audit tests the new build.
+          for i in $(seq 1 28); do
+            ok=0
+            for u in / /delhi/ /pune/ /about/ /washroom-near-me/; do
+              c=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "https://toiletsnearme.pages.dev$u")
+              [ "$c" = "200" ] && ok=$((ok+1))
+            done
+            echo "attempt $i: $ok/5 pages 200"
+            [ "$ok" = "5" ] && exit 0
+            sleep 15
+          done
+          echo "deploy did not settle in time"; exit 1
+
       - name: SEO / PWA / Monetag audit
         run: |
           python3 - <<'PY'
