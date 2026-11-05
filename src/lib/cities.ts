@@ -134,3 +134,25 @@ export function getCityFacilities(slug: string): Facility[] {
     .map((f, i) => toFacility(f, i))
     .filter((f): f is Facility => f !== null);
 }
+
+
+/** Nearest cities by centroid distance — real geography, not a hand-written list. */
+export function nearbyCities(slug: string, limit = 8) {
+  const all = getAllCities();
+  const me = all.find((c) => c.slug === slug);
+  if (!me) return [];
+  const R = 6371;
+  const rad = (d: number) => (d * Math.PI) / 180;
+  return all
+    .filter((c) => c.slug !== slug)
+    .map((c) => {
+      const dLat = rad(c.lat - me.lat);
+      const dLon = rad(c.lon - me.lon);
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(rad(me.lat)) * Math.cos(rad(c.lat)) * Math.sin(dLon / 2) ** 2;
+      return { city: c, km: Math.round(2 * R * Math.asin(Math.sqrt(a))) };
+    })
+    .sort((x, y) => x.km - y.km)
+    .slice(0, limit);
+}

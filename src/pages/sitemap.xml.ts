@@ -17,15 +17,14 @@ const STATIC_PAGES = [
 ];
 
 export const GET: APIRoute = async () => {
-  const today = new Date().toISOString().slice(0, 10);
   const cityPaths = getAllCities().map((c) => `/${c.slug}/`);
   const all = [...STATIC_PAGES, ...cityPaths];
 
+  // Google's sitemap documentation: priority and changefreq are ignored, and
+  // lastmod is only used when it is consistently and verifiably accurate.
+  // A build-date lastmod is always wrong, so it is omitted rather than faked.
   const urls = all
-    .map((p) => {
-      const priority = p === '/' ? '1.0' : p.split('/').filter(Boolean).length === 1 ? '0.8' : '0.6';
-      return `  <url>\n    <loc>${SITE}${p}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
-    })
+    .map((p) => `  <url>\n    <loc>${SITE}${p}</loc>\n  </url>`)
     .join('\n');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;

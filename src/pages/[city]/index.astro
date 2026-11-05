@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import FacilityMap from '../../components/map/FacilityMap.astro';
-import { getAllCities, getCityFacilities } from '../../lib/cities';
+import { getAllCities, getCityFacilities, nearbyCities } from '../../lib/cities';
 
 export function getStaticPaths() {
   return getAllCities().map((c) => ({ params: { city: c.slug }, props: { city: c } }));
@@ -9,6 +9,7 @@ export function getStaticPaths() {
 
 const { city } = Astro.props as any;
 const facilities = getCityFacilities(city.slug);
+const nearby = nearbyCities(city.slug, 8);
 
 const site = 'https://toiletsnearme.pages.dev';
 const url = `${site}/${city.slug}/`;
@@ -118,6 +119,19 @@ const pct = (n: number) => (city.count ? Math.round((n / city.count) * 100) : 0)
 
 
   <section class="wrap section">
+    <h2>Nearby cities</h2>
+    <p class="section-sub">The closest mapped cities to {city.name}, by distance — useful if you are travelling between them.</p>
+    <ul class="nearby">
+      {nearby.map(({ city: n, km }) => (
+        <li>
+          <a href={`/${n.slug}/`}>{n.name}</a>
+          <span class="nb-meta">{km.toLocaleString('en-IN')} km away · {n.count.toLocaleString('en-IN')} mapped · {n.free.toLocaleString('en-IN')} free</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="wrap section">
     <div class="share">
       <p class="share-label">Know someone in {city.name}? Send them this map.</p>
       <div class="share-actions">
@@ -195,6 +209,12 @@ const pct = (n: number) => (city.count ? Math.round((n / city.count) * 100) : 0)
   .faq summary { cursor: pointer; font-weight: 600; font-size: 15px; }
   .faq summary::marker { color: var(--color-green); }
   .faq p { margin: 10px 0 0; font-size: 14px; color: var(--color-muted); }
+
+  .nearby { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .nearby li { background: #fff; border: 1px solid var(--color-line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 2px; }
+  .nearby a { font-weight: 600; font-size: 15px; color: var(--color-ink); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: transparent; }
+  .nearby a:hover { color: var(--color-green-dark); text-decoration-color: currentColor; }
+  .nb-meta { font-size: 12.5px; color: var(--color-muted); }
 
   .share { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
     background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 16px 18px; }
