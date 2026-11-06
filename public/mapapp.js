@@ -13,8 +13,8 @@ if (!mapEl) return;
 
 /* ---------- cluster CSS ---------- */
 if (!document.getElementById("mc-css")) {
-  [["mc-css","https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"],
-   ["mc-css2","https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"]]
+  [["mc-css","/vendor/leaflet/MarkerCluster.css"],
+   ["mc-css2","/vendor/leaflet/MarkerCluster.Default.css"]]
   .forEach(function(p){
     var l=document.createElement("link"); l.id=p[0]; l.rel="stylesheet"; l.href=p[1];
     document.head.appendChild(l);
@@ -78,7 +78,7 @@ function ICONFN(c){
    Load it; if it fails, fall back to a plain layerGroup so pins ALWAYS render. */
 if(!(window.L&&window.L.markerClusterGroup)){
   (function(){var s=document.createElement("script");
-    s.src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js";s.async=true;
+    s.src="/vendor/leaflet/leaflet.markercluster.js";s.async=true;
     s.onload=function(){try{if(typeof render==="function"&&all.length)render();}catch(e){}};
     document.head.appendChild(s);})();
 }
