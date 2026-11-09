@@ -13,8 +13,33 @@ const nearby = nearbyCities(city.slug, 8);
 
 const site = 'https://toiletsnearme.pages.dev';
 const url = `${site}/${city.slug}/`;
-const title = `Public toilets in ${city.name} — All Locations, Live Map`;
-const description = `All mapped public toilets in ${city.name} — free vs paid, 24-hour and wheelchair-accessible, with directions. ${city.count.toLocaleString('en-IN')} facilities on a live map.`;
+// ── A/B test: three metadata + H1 patterns, split deterministically by slug ──
+// Deterministic so a crawler always sees the same variant for the same URL.
+// The variant is recorded in the page HTML (data-variant) so GSC/GA can segment it.
+const _h = [...city.slug].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+const variant = ['A', 'B', 'C'][_h % 3];
+
+const VARIANTS = {
+  A: {
+    title: `Public toilets near me in ${city.name} — Live Map`,
+    description: `Public toilets near me in ${city.name}: ${city.count.toLocaleString('en-IN')} mapped, ${city.free} free, ${city.open24} open 24 hours. Tap a pin for directions.`,
+    h1: `Public toilets near me in ${city.name}`,
+  },
+  B: {
+    title: `Public toilets in ${city.name} — All Locations, Live Map`,
+    description: `All mapped public toilets in ${city.name} — free vs paid, 24-hour and wheelchair-accessible, with directions. ${city.count.toLocaleString('en-IN')} facilities on a live map.`,
+    h1: `Public toilets in ${city.name}`,
+  },
+  C: {
+    title: `Where are the public toilets in ${city.name}? — Map`,
+    description: `Looking for a public toilet in ${city.name}? ${city.count.toLocaleString('en-IN')} mapped facilities, ${city.free} free to use, ${city.open24} open around the clock. Live map.`,
+    h1: `Where are the public toilets in ${city.name}?`,
+  },
+} as const;
+
+const v = VARIANTS[variant as keyof typeof VARIANTS];
+const title = v.title;
+const description = v.description;
 
 const jsonld = [
   {
@@ -55,7 +80,7 @@ const rows = [
 
 const pct = (n: number) => (city.count ? Math.round((n / city.count) * 100) : 0);
 ---
-<Base title={title} description={description} canonical={url} jsonld={jsonld} ogImage={`/og/${city.slug}.png`}>
+<Base title={title} description={description} canonical={url} jsonld={jsonld} ogImage={`/og/${city.slug}.png`} dataVariant={variant}>
   <section class="city-hero">
     <div class="wrap">
       <nav class="crumbs" aria-label="Breadcrumb">
@@ -63,7 +88,7 @@ const pct = (n: number) => (city.count ? Math.round((n / city.count) * 100) : 0)
         <span aria-hidden="true">/</span>
         <span aria-current="page">{city.name}</span>
       </nav>
-      <h1>Public toilets in {city.name}</h1>
+      <h1>{v.h1}</h1>
       <p class="city-sub">
         {city.count.toLocaleString('en-IN')} public toilets and washrooms mapped across {city.name}.
         Filter by what you need, tap a pin for details. Data © OpenStreetMap contributors.

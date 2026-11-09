@@ -4,12 +4,12 @@ import SiteHeader from '../components/common/SiteHeader.astro';
 import SiteFooter from '../components/common/SiteFooter.astro';
 import FloatingActions from '../components/common/FloatingActions.astro';
 import { GOOGLE_ANALYTICS_ID, MONETAG_PUBLISHER_ID, MONETAG_ZONE_ID } from '../config/site-integrations';
-interface Props { title: string; description: string; canonical: string; jsonld?: object[]; noindex?: boolean; ogImage?: string }
-const { title, description, canonical, jsonld = [], noindex = false, ogImage = '/og/default.png' } = Astro.props;
+interface Props { title: string; description: string; canonical: string; jsonld?: object[]; noindex?: boolean; ogImage?: string; dataVariant?: string }
+const { title, description, canonical, jsonld = [], noindex = false, ogImage = '/og/default.png', dataVariant } = Astro.props;
 const site = 'https://toiletsnearme.pages.dev';
 ---
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-variant={dataVariant}>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
