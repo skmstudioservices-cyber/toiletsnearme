@@ -58,6 +58,19 @@ function matches(f: Facility, active: Set<FilterKey>): boolean {
   return true;
 }
 
+function haversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
+}
+
+function formatDist(km: number): string {
+  return km < 1 ? `${Math.round(km * 1000)}m` : `${km.toFixed(1)}km`;
+}
+
 function popupHtml(f: Facility, cityName: string, slug: string): string {
   const title = displayName(f, cityName);
   const rows = tagsOf(f).map((t) => `<span>${esc(t)}</span>`).join('');
@@ -65,7 +78,7 @@ function popupHtml(f: Facility, cityName: string, slug: string): string {
   const desc = f.description ? `<div class="popup-desc">${esc(f.description)}</div>` : '';
   return `<div class="popup-card"><strong>${esc(title)}</strong>${op}${desc}
     ${rows ? `<div class="popup-tags">${rows}</div>` : ''}
-    <a class="popup-link" href="https://www.openstreetmap.org/?mlat=${f.lat}&mlon=${f.lon}#map=19/${f.lat}/${f.lon}" target="_blank" rel="noopener noreferrer">Open in OpenStreetMap →</a>
+    <button type="button" class="popup-link" data-route-to="${f.lat},${f.lon}">Distance from me</button><span class="popup-dist" data-route-out></span>
     <a class="popup-link" href="/${slug}/">More toilets in ${esc(cityName)} →</a></div>`;
 }
 
@@ -87,7 +100,7 @@ function cardHtml(f: Facility, cityName: string, slug: string, withCity: boolean
     ${op}
     <div class="fcard-tags">${tags || '<span class="fchip fchip-empty">No details recorded</span>'}</div>
     <div class="fcard-actions">
-      <a href="https://www.openstreetmap.org/?mlat=${f.lat}&mlon=${f.lon}#map=19/${f.lat}/${f.lon}" target="_blank" rel="noopener noreferrer">Directions</a>
+      <button type="button" class="fcard-zoom" data-route-to="${f.lat},${f.lon}">Distance from me</button><span class="fcard-dist" data-route-out></span>
       <button type="button" class="fcard-zoom" data-lat="${f.lat}" data-lon="${f.lon}">Show on map</button>
     </div>
   </li>`;
@@ -120,6 +133,42 @@ export function initFacilityMap(root: HTMLElement) {
   map.once('click', () => map.scrollWheelZoom.enable());
 
   const layer = L.layerGroup().addTo(map);
+
+  const routeLayer = L.layerGroup().addTo(map);
+  let userLoc: [number, number] | null = null;
+
+  function withLocation(cb: (loc: [number, number]) => void) {
+    if (userLoc) { cb(userLoc); return; }
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => { userLoc = [pos.coords.latitude, pos.coords.longitude]; cb(userLoc!); },
+      () => { /* denied — stay silent, no outbound fallback */ },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 },
+    );
+  }
+
+  // In-map distance: never sends the visitor to another website.
+  root.addEventListener('click', (ev) => {
+    const btn = (ev.target as HTMLElement)?.closest?.('[data-route-to]') as HTMLElement | null;
+    if (!btn) return;
+    ev.preventDefault();
+    const [latS, lonS] = (btn.dataset.routeTo || '').split(',');
+    const lat = Number(latS);
+    const lon = Number(lonS);
+    if (!isFinite(lat) || !isFinite(lon)) return;
+    withLocation((loc) => {
+      const km = haversine(loc[0], loc[1], lat, lon);
+      routeLayer.clearLayers();
+      L.polyline([loc, [lat, lon]], { color: '#087f5b', weight: 3, dashArray: '6 6', opacity: 0.85 }).addTo(routeLayer);
+      const mins = Math.max(1, Math.round((km / 4.8) * 60));
+      const label = `${formatDist(km)} away · about ${mins} min walk`;
+      const out = btn.parentElement?.querySelector('[data-route-out]');
+      if (out) out.textContent = label; else btn.textContent = label;
+      map.fitBounds(L.latLngBounds([loc, [lat, lon]]).pad(0.25), { maxZoom: 16 });
+    });
+  });
+
+
 
   function render() {
     layer.clearLayers();
