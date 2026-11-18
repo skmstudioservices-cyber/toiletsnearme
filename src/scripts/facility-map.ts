@@ -95,7 +95,7 @@ function cardHtml(f: Facility, cityName: string, slug: string, withCity: boolean
   const tags = tagsOf(f).slice(0, 6).map((t) => `<span class="fchip">${esc(t)}</span>`).join('');
   const op = f.operator && f.name ? `<span class="fcard-op">${esc(f.operator)}</span>` : `<span class="fcard-op">${esc(locator)}</span>`;
   const city = withCity ? `<a class="fcard-city" href="/${slug}/">${esc(cityName)}</a>` : '';
-  return `<li class="fcard">
+  return `<li class="fcard" data-card-href="/${slug}/" tabindex="0" role="link">
     <div class="fcard-head"><span class="fcard-name">${esc(title)}</span>${city}</div>
     ${op}
     <div class="fcard-tags">${tags || '<span class="fchip fchip-empty">No details recorded</span>'}</div>
@@ -146,6 +146,21 @@ export function initFacilityMap(root: HTMLElement) {
       { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 },
     );
   }
+
+  // Whole card is clickable (buttons inside keep their own behaviour).
+  root.addEventListener('click', (ev) => {
+    const t = ev.target as HTMLElement;
+    if (t?.closest?.('button, a')) return;
+    const card = t?.closest?.('[data-card-href]') as HTMLElement | null;
+    if (card?.dataset.cardHref) window.location.href = card.dataset.cardHref;
+  });
+  root.addEventListener('keydown', (ev) => {
+    const card = (ev.target as HTMLElement)?.closest?.('[data-card-href]') as HTMLElement | null;
+    if (card?.dataset.cardHref && (ev.key === 'Enter' || ev.key === ' ')) {
+      ev.preventDefault();
+      window.location.href = card.dataset.cardHref;
+    }
+  });
 
   // In-map distance: never sends the visitor to another website.
   root.addEventListener('click', (ev) => {
