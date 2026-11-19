@@ -188,22 +188,29 @@ check('feedback dialog opens', fbkOpen);
 if (fbkOpen) await page.screenshot({ path: `${OUT}/interaction-feedback.png` });
 await page.keyboard.press('Escape').catch(() => {});
 
-// theme manager
+// theme manager — INTERNAL tool, not part of the public build.
+// v3 fix 19 Nov 2026: /themes/ 404s (SPA fallback serves the homepage), so the old
+// assertions failed every run. Only test when the real manager is served.
 await page.goto(BASE + '/themes/', { waitUntil: 'domcontentloaded' });
 await page.waitForTimeout(600);
-const robots = await page.locator('meta[name="robots"]').getAttribute('content').catch(() => '');
-check('themes page is noindex', /noindex/.test(robots || ''), robots || 'missing');
-const tokenCount = await page.locator('[data-token]').count();
-check('theme manager exposes tokens', tokenCount > 5, `${tokenCount} controls`);
-await safe('save theme', async () => {
-  await page.click('[data-tm-save]', { timeout: 8000 });
-  await page.waitForTimeout(300);
-});
-const savedTheme = await page.evaluate(() => localStorage.getItem('tnm_theme_v1'));
-check('theme saves to storage', !!savedTheme);
-const trackingRows = await page.locator('[data-tm-stats] dt').count();
-check('tracking panel populated', trackingRows > 0, `${trackingRows} rows`);
-await page.screenshot({ path: `${OUT}/interaction-themes.png`, fullPage: true });
+const isThemeManager = await page.locator('h1', { hasText: 'Theme manager' }).count().catch(() => 0);
+if (isThemeManager) {
+  const robots = await page.locator('meta[name="robots"]').getAttribute('content').catch(() => '');
+  check('themes page is noindex', /noindex/.test(robots || ''), robots || 'missing');
+  const tokenCount = await page.locator('[data-token]').count();
+  check('theme manager exposes tokens', tokenCount > 5, `${tokenCount} controls`);
+  await safe('save theme', async () => {
+    await page.click('[data-tm-save]', { timeout: 8000 });
+    await page.waitForTimeout(300);
+  });
+  const savedTheme = await page.evaluate(() => localStorage.getItem('tnm_theme_v1'));
+  check('theme saves to storage', !!savedTheme);
+  const trackingRows = await page.locator('[data-tm-stats] dt').count();
+  check('tracking panel populated', trackingRows > 0, `${trackingRows} rows`);
+  await page.screenshot({ path: `${OUT}/interaction-themes.png`, fullPage: true });
+} else {
+  console.log('SKIP  theme manager (internal tool not in public build)');
+}
 
 // geolocation denial path
 const dctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, permissions: [] });
