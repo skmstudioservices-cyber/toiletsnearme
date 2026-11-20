@@ -9,6 +9,13 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
+      - name: Beacon + Ahrefs live check
+        run: |
+          H=$(curl -sS -m 30 "https://toiletsnearme.pages.dev/?cb=$RANDOM")
+          echo "beacon-script-tag: $(echo "$H" | grep -c '/beacon.js')"
+          echo "ahrefs-script-tag: $(echo "$H" | grep -c 'analytics.ahrefs.com')"
+          B=$(curl -sS -o /dev/null -w "%{http_code}|%{content_type}" -m 30 "https://toiletsnearme.pages.dev/beacon.js")
+          echo "beacon.js: $B"
       - name: Robots + sitemap as Googlebot across the network
         run: |
           GB="Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
