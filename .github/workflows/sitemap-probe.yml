@@ -1,0 +1,32 @@
+name: Sitemap Probe
+
+# Read-only diagnostic: fetches the sitemap URLs with several user agents and
+# prints status, content-type and the first bytes. Runs only on its own change.
+
+on:
+  push:
+    paths:
+      - '.github/workflows/sitemap-probe.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe
+        run: |
+          URLS="https://toiletsnearme.pages.dev/sitemap.xml https://toiletsnearme.pages.dev/sitemap/pages.xml https://toiletsnearme.pages.dev/sitemap/part-0.xml"
+          declare -A UAS=(
+            [googlebot]="Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+            [siteverify]="Mozilla/5.0 (compatible; Google-Site-Verification/1.0)"
+            [chrome]="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+            [curl]="curl/8.5.0"
+          )
+          for u in $URLS; do
+            for k in googlebot siteverify chrome curl; do
+              out=$(curl -sS -o /tmp/b -w "%{http_code}|%{content_type}" -m 30 -A "${UAS[$k]}" "$u")
+              echo "$u [$k] -> $out | $(head -c 60 /tmp/b | tr -d '\n')"
+            done
+            echo "---"
+          done
+          echo "=== robots.txt ==="
+          curl -sS -m 30 "https://toiletsnearme.pages.dev/robots.txt?cb=$RANDOM" | tail -20
