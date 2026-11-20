@@ -1,8 +1,5 @@
 name: Sitemap Probe
 
-# Read-only diagnostic: fetches the sitemap URLs with several user agents and
-# prints status, content-type and the first bytes. Runs only on its own change.
-
 on:
   push:
     paths:
@@ -12,21 +9,22 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: Probe
+      - name: Probe sitemaps + robots as Googlebot
         run: |
-          URLS="https://toiletsnearme.pages.dev/sitemap.xml https://toiletsnearme.pages.dev/sitemap/pages.xml https://toiletsnearme.pages.dev/sitemap/part-0.xml"
-          declare -A UAS=(
-            [googlebot]="Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
-            [siteverify]="Mozilla/5.0 (compatible; Google-Site-Verification/1.0)"
-            [chrome]="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
-            [curl]="curl/8.5.0"
-          )
-          for u in $URLS; do
-            for k in googlebot siteverify chrome curl; do
-              out=$(curl -sS -o /tmp/b -w "%{http_code}|%{content_type}" -m 30 -A "${UAS[$k]}" "$u")
-              echo "$u [$k] -> $out | $(head -c 60 /tmp/b | tr -d '\n')"
-            done
-            echo "---"
+          GB="Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+          SV="Mozilla/5.0 (compatible; Google-Site-Verification/1.0)"
+          BB="Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)"
+          for u in \
+            https://toiletsnearme.pages.dev/robots.txt \
+            https://toiletsnearme.pages.dev/sitemap.xml \
+            https://toiletsnearme.pages.dev/sitemap/pages.xml \
+            https://toiletsnearme.pages.dev/sitemap/part-0.xml \
+            https://toiletsnearme.pages.dev/delhi/ \
+            https://toiletsnearme.pages.dev/mumbai/ ; do
+            g=$(curl -sS -o /tmp/g -w "%{http_code}|%{content_type}" -m 30 -A "$GB" "$u")
+            s=$(curl -sS -o /dev/null -w "%{http_code}" -m 30 -A "$SV" "$u")
+            b=$(curl -sS -o /dev/null -w "%{http_code}" -m 30 -A "$BB" "$u")
+            echo "$u | googlebot=$g | siteverify=$s | bingbot=$b"
           done
-          echo "=== robots.txt ==="
-          curl -sS -m 30 "https://toiletsnearme.pages.dev/robots.txt?cb=$RANDOM" | tail -20
+          echo "=== robots.txt first 6 lines (googlebot) ==="
+          curl -sS -m 30 -A "$GB" https://toiletsnearme.pages.dev/robots.txt | head -6
