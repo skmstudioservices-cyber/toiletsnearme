@@ -9,22 +9,20 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: Probe sitemaps + robots as Googlebot
+      - name: Robots + sitemap as Googlebot across the network
         run: |
           GB="Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
-          SV="Mozilla/5.0 (compatible; Google-Site-Verification/1.0)"
-          BB="Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)"
-          for u in \
-            https://toiletsnearme.pages.dev/robots.txt \
-            https://toiletsnearme.pages.dev/sitemap.xml \
-            https://toiletsnearme.pages.dev/sitemap/pages.xml \
-            https://toiletsnearme.pages.dev/sitemap/part-0.xml \
-            https://toiletsnearme.pages.dev/delhi/ \
-            https://toiletsnearme.pages.dev/mumbai/ ; do
-            g=$(curl -sS -o /tmp/g -w "%{http_code}|%{content_type}" -m 30 -A "$GB" "$u")
-            s=$(curl -sS -o /dev/null -w "%{http_code}" -m 30 -A "$SV" "$u")
-            b=$(curl -sS -o /dev/null -w "%{http_code}" -m 30 -A "$BB" "$u")
-            echo "$u | googlebot=$g | siteverify=$s | bingbot=$b"
+          for host in \
+            toiletsnearme.pages.dev washroomsnearme.pages.dev restareanearme.pages.dev \
+            evchargersnearme.pages.dev petrolpumpsnearme.pages.dev cngpumpsnearme.pages.dev \
+            karvachauth.pages.dev banksnearme.pages.dev atmsnearme.pages.dev \
+            hospitalsnearme-9cp.pages.dev railwaystationnearme.pages.dev floodsnearme.pages.dev \
+            templesnearme.pages.dev churchesnearme.pages.dev skmtools.pages.dev \
+            mapsnearme.pages.dev demo-vmv.pages.dev ; do
+            r=$(curl -sS -o /tmp/r -w "%{http_code}" -m 25 -A "$GB" "https://$host/robots.txt")
+            s=$(curl -sS -o /tmp/s -w "%{http_code}|%{content_type}" -m 25 -A "$GB" "https://$host/sitemap.xml")
+            rb=$(grep -ciE "^User-agent:" /tmp/r 2>/dev/null || echo 0)
+            rm=$(grep -ciE "^Sitemap:" /tmp/r 2>/dev/null || echo 0)
+            sz=$(wc -c < /tmp/s 2>/dev/null || echo 0)
+            echo "$host | robots=$r (agents=$rb, sitemap-lines=$rm) | sitemap=$s bytes=$sz"
           done
-          echo "=== robots.txt first 6 lines (googlebot) ==="
-          curl -sS -m 30 -A "$GB" https://toiletsnearme.pages.dev/robots.txt | head -6

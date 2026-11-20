@@ -70,7 +70,7 @@ User-agent: Amazonbot
 Disallow: /
 
 User-agent: Applebot
-Disallow: /
+Allow: /
 
 User-agent: Applebot-Extended
 Disallow: /
@@ -151,16 +151,16 @@ User-agent: PetalBot
 Disallow: /
 
 User-agent: Baiduspider
-Disallow: /
+Allow: /
 
 User-agent: Sogou
-Disallow: /
+Allow: /
 
 User-agent: Yeti
-Disallow: /
+Allow: /
 
 User-agent: YandexBot
-Disallow: /
+Allow: /
 
 User-agent: Scrapy
 Disallow: /
