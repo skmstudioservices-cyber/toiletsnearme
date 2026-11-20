@@ -26,3 +26,4 @@ jobs:
             sz=$(wc -c < /tmp/s 2>/dev/null || echo 0)
             echo "$host | robots=$r (agents=$rb, sitemap-lines=$rm) | sitemap=$s bytes=$sz"
           done
+# rerun 2026-11-20T07:10:40Z
