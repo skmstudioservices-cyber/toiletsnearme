@@ -60,7 +60,7 @@ const site = 'https://toiletsnearme.pages.dev';
     } catch {}
 
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js?v=2').catch(() => {}));
     }
   </script>
   <script>
