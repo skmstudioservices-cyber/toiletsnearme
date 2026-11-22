@@ -1,0 +1,25 @@
+name: Sitemap Header Audit
+
+on:
+  push:
+    paths: ['.github/workflows/header-audit.yml']
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Full header + body audit
+        run: |
+          GB="Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+          GSM="Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/W.X.Y.Z Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+          INSP="Mozilla/5.0 (compatible; Google-InspectionTool/1.0)"
+          BR="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+          for u in /sitemap.xml /sitemap/pages.xml /sitemap/part-0.xml /robots.txt ; do
+            for ua in "$GB" "$GSM" "$INSP" "$BR" ; do
+              tag=$(echo "$ua" | grep -oiE "Googlebot|Google-InspectionTool" | head -1); [ -z "$tag" ] && tag="browser"
+              out=$(curl -sS -m 30 -A "$ua" -D /tmp/h -o /tmp/b -w "%{http_code}|%{content_type}|%{size_download}|%{num_redirects}|%{redirect_url}|%{time_total}" "https://toiletsnearme.pages.dev$u")
+              echo "URL=$u UA=$tag => $out"
+              echo "   hash=$(sha256sum /tmp/b | cut -c1-16) first=$(head -c 40 /tmp/b | tr -d '\n')"
+              echo "   $(grep -iE '^(cache-control|cf-ray|content-encoding|cf-cache-status|x-robots-tag):' /tmp/h | tr -d '\r' | tr '\n' ' ')"
+            done
+          done
