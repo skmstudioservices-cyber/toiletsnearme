@@ -9,8 +9,9 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview"
+    "build": "node scripts/validate-sitemaps.mjs && astro build",
+    "preview": "astro preview",
+    "validate:sitemaps": "node scripts/validate-sitemaps.mjs"
   },
   "dependencies": {
     "astro": "7.4.12",
