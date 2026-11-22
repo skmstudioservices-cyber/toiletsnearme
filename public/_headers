@@ -27,7 +27,7 @@
 
 # Child sitemaps had max-age=0, must-revalidate -> every request hit origin,
 # which is what produced the 204/504 flapping on sitemap fetches.
-/sitemap/*
+/sitemap/*.xml
   Content-Type: application/xml; charset=utf-8
   Cache-Control: public, max-age=3600, s-maxage=86400
 /robots.txt
