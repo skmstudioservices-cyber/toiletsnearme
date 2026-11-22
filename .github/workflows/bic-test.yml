@@ -1,0 +1,33 @@
+name: BIC vs Fallback Test
+
+on:
+  push:
+    paths: ['.github/workflows/bic-test.yml']
+
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Definitive BIC check
+        run: |
+          echo "=== 1. BARE CURL (no UA) - BIC challenges this first ==="
+          curl -sS -m 25 -D /tmp/h1 -o /tmp/b1 -w "status=%{http_code} type=%{content_type} size=%{size_download}\n" "https://toiletsnearme.pages.dev/sitemap.xml"
+          echo "--- ALL HEADERS ---"; cat /tmp/h1 | tr -d '\r'
+          echo "--- BODY FIRST 120 ---"; head -c 120 /tmp/b1; echo
+          echo "cf-mitigated present? -> $(grep -ci 'cf-mitigated' /tmp/h1)"
+          echo "error 1010 in body? -> $(grep -c '1010' /tmp/b1)"
+          echo
+          echo "=== 2. GOOGLEBOT UA ==="
+          curl -sS -m 25 -D /tmp/h2 -o /tmp/b2 -w "status=%{http_code} type=%{content_type} size=%{size_download}\n" -A "Googlebot/2.1 (+http://www.google.com/bot.html)" "https://toiletsnearme.pages.dev/sitemap.xml"
+          cat /tmp/h2 | tr -d '\r'
+          echo "cf-mitigated? -> $(grep -ci 'cf-mitigated' /tmp/h2)"
+          echo
+          echo "=== 3. HEAD vs GET on sitemap.xml ==="
+          curl -sS -m 25 -I -A "Googlebot/2.1 (+http://www.google.com/bot.html)" "https://toiletsnearme.pages.dev/sitemap.xml" | tr -d '\r' | head -20
+          echo
+          echo "=== 4. x-robots-tag anywhere? ==="
+          curl -sS -m 25 -D - -o /dev/null -A "Googlebot/2.1" "https://toiletsnearme.pages.dev/sitemap.xml" | grep -ci "x-robots-tag" || echo "0"
+          echo
+          echo "=== 5. HOME PAGE with bare curl (control) ==="
+          curl -sS -m 25 -o /tmp/b3 -w "status=%{http_code} type=%{content_type} size=%{size_download}\n" "https://toiletsnearme.pages.dev/"
+          head -c 80 /tmp/b3; echo
