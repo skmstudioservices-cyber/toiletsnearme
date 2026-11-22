@@ -14,6 +14,12 @@ jobs:
           GSM="Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/W.X.Y.Z Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
           INSP="Mozilla/5.0 (compatible; Google-InspectionTool/1.0)"
           BR="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+          echo "--- trailing slash variants ---"
+          for u in /sitemap.xml/ /sitemap/pages.xml/ /sitemap/ ; do
+            out=$(curl -sS -m 25 -D /tmp/h2 -o /tmp/b2 -w "%{http_code}|%{content_type}|%{num_redirects}|%{redirect_url}|%{size_download}" "https://toiletsnearme.pages.dev$u")
+            echo "TRAILING $u => $out"
+            echo "   first=$(head -c 40 /tmp/b2 | tr -d '\n')"
+          done
           for u in /sitemap.xml /sitemap/pages.xml /sitemap/part-0.xml /robots.txt ; do
             for ua in "$GB" "$GSM" "$INSP" "$BR" ; do
               tag=$(echo "$ua" | grep -oiE "Googlebot|Google-InspectionTool" | head -1); [ -z "$tag" ] && tag="browser"
