@@ -14,8 +14,8 @@
     "validate:sitemaps": "node scripts/validate-sitemaps.mjs"
   },
   "dependencies": {
-    "astro": "7.4.12",
-    "@astrojs/sitemap": "3.7.5",
+    "astro": "7.4.13",
+    "@astrojs/sitemap": "3.7.6",
     "tailwindcss": "4.3.5",
     "@tailwindcss/vite": "4.3.5",
     "leaflet": "1.9.4"
