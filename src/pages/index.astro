@@ -33,6 +33,12 @@ const jsonld = [
         acceptedAnswer: { '@type': 'Answer', text: 'Petrol pumps and hospitals stay open overnight; most standalone public toilets close in the evening.' } },
       { '@type': 'Question', name: 'Are there wheelchair-accessible toilets near me?',
         acceptedAnswer: { '@type': 'Answer', text: 'Yes, where they are tagged. Use the Wheelchair filter; 555 facilities across the network are recorded as wheelchair-accessible.' } },
+      { '@type': 'Question', name: 'Is there a free public toilet near me?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Yes. Free community and municipal toilets, mall restrooms, metro stations, hospital lobbies and petrol pumps are mapped on this site. Use the Free filter to see only no-cost facilities.' } },
+      { '@type': 'Question', name: 'How much does a Sulabh toilet cost?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Sulabh and other pay-and-use complexes typically charge about Rs 5 to Rs 10 per use and are attended, which is why they are usually cleaner than a free municipal toilet.' } },
+      { '@type': 'Question', name: 'Where can I find a washroom for ladies near me?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Use the women\'s section filter. Many community toilets have separate Mahila sections with female attendants, and malls, metro stations and hospitals almost always do.' } },
     ],
   },
   {
@@ -43,8 +49,8 @@ const jsonld = [
 ];
 ---
 <Base
-  title={`Washroom Near Me — Public Toilet Map, ${total.toLocaleString('en-IN')} in ${cities.length} Cities`}
-  description={`Washroom near me? ${total.toLocaleString('en-IN')} public toilets and washrooms mapped across ${cities.length} Indian cities — filter free, paid, 24x7 and wheelchair access, tap a pin for directions.`}
+  title={`Public Toilet Near Me — ${total.toLocaleString('en-IN')} Toilets in ${cities.length} Cities (Free & 24-Hour)`}
+  description={`Public toilet near me? ${total.toLocaleString('en-IN')} toilets mapped across ${cities.length} Indian cities — ${freeTotal.toLocaleString('en-IN')} free, ${open24.toLocaleString('en-IN')} open 24 hours, ${accessible.toLocaleString('en-IN')} wheelchair accessible. Filter, tap a pin, get directions.`}
   canonical={site + '/'}
   jsonld={jsonld}
   ogImage="/og/home.png"
@@ -56,6 +62,13 @@ const jsonld = [
       <p class="hero-sub">
         {total.toLocaleString('en-IN')} mapped public toilets and washrooms across {cities.length} Indian cities.
         Filter by free, paid, 24-hour, wheelchair access and women's sections — then tap a pin for directions.
+      </p>
+
+      <p class="hero-answer">
+        <strong>Quick answer:</strong> {total.toLocaleString('en-IN')} public toilets are mapped across {cities.length} Indian cities —
+        {freeTotal.toLocaleString('en-IN')} are free to use, {open24.toLocaleString('en-IN')} stay open 24 hours and
+        {accessible.toLocaleString('en-IN')} are wheelchair accessible. Most people are within a short walk of a mall,
+        metro station or petrol pump toilet, and those are free.
       </p>
 
       <div class="hero-search" role="search">
@@ -158,6 +171,12 @@ const jsonld = [
         <p>Petrol pumps and hospitals stay open overnight; most standalone public toilets close in the evening. Filter the map by "24 hours" to see what is tagged as open around the clock.</p></details>
       <details class="card"><summary>Are there wheelchair-accessible toilets near me?</summary>
         <p>Yes, where they are tagged. Use the "Wheelchair" filter — 555 facilities across the network are recorded as wheelchair-accessible.</p></details>
+      <details class="card"><summary>Is there a free public toilet near me?</summary>
+        <p>Yes. Free community and municipal toilets, mall restrooms, metro stations, hospital lobbies and petrol pumps are all mapped here. Use the "Free" filter to see only no-cost facilities.</p></details>
+      <details class="card"><summary>How much does a Sulabh toilet cost?</summary>
+        <p>Sulabh and other pay-and-use complexes typically charge about ₹5–₹10 per use and are attended — which is why they are usually cleaner than a free municipal toilet.</p></details>
+      <details class="card"><summary>Where can I find a washroom for ladies near me?</summary>
+        <p>Use the women's section filter. Many community toilets have separate Mahila sections with female attendants, and malls, metro stations and hospitals almost always do.</p></details>
       <details class="card"><summary>How many public toilets are mapped on this site?</summary>
         <p>{total.toLocaleString('en-IN')} facilities across {cities.length} Indian cities, all from OpenStreetMap and refreshed from the source data.</p></details>
     </div>
@@ -284,6 +303,7 @@ const jsonld = [
   .hero-map .facility-list .fcard:nth-child(n+7) { display: none; }
   .hero h1 { font-size: clamp(26px, 4.4vw, 42px); max-width: 22ch; }
   .hero-sub { margin: 0; max-width: 70ch; color: var(--color-muted); font-size: clamp(15px, 1.6vw, 17px); }
+  .hero-answer { margin: 14px 0 0; max-width: 74ch; padding: 12px 16px; border-left: 3px solid var(--color-accent, #0a7); background: var(--color-surface-alt, #f6f8f7); border-radius: 0 8px 8px 0; font-size: clamp(14px, 1.5vw, 16px); line-height: 1.6; }
   .hero-search {
     display: flex; gap: 10px; width: min(660px, 100%);
     background: #fff; border: 1px solid var(--color-line);
