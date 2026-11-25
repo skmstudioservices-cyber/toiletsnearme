@@ -13,12 +13,12 @@ jobs:
           set +e
           probe () {
             U="$1"
-            OUT=$(curl -s -L --max-time 30 -A "Mozilla/5.0 (compatible; SKM-Gate/1.0)" -w "@@HTTP@@%{http_code}" "$U" 2>/dev/null)
-            CODE=$(printf '%s' "$OUT" | sed -n 's/.*@@HTTP@@//p' | tail -1)
-            BODY=$(printf '%s' "$OUT" | sed 's/@@HTTP@@[0-9]*$//')
-            ROOT=$(printf '%s' "$BODY" | grep -oE '<(urlset|sitemapindex)' | head -1 | tr -d '<')
-            LOCS=$(printf '%s' "$BODY" | grep -o '<loc>' | wc -l | tr -d ' ')
-            echo "ROW|$CODE|${ROOT:-none}|$LOCS|$U"
+            CODE=$(curl -s -L --max-time 30 -A "Mozilla/5.0 (compatible; SKM-Gate/1.0)" -o /tmp/body.xml -w "%{http_code}" "$U")
+            RC=$?
+            ROOT=$(grep -oE '<(urlset|sitemapindex)' /tmp/body.xml 2>/dev/null | head -1 | tr -d '<')
+            LOCS=$(grep -o '<loc>' /tmp/body.xml 2>/dev/null | wc -l | tr -d ' ')
+            echo "ROW|rc=$RC|$CODE|${ROOT:-none}|$LOCS|$U"
+            rm -f /tmp/body.xml
           }
             probe 'https://sitemaps.india-in.workers.dev/'
             probe 'https://sitemaps.india-in.workers.dev/sitemap.xml'
@@ -155,4 +155,4 @@ jobs:
             probe 'https://skmtools.pages.dev/sitemap.xml'
             probe 'https://digipincode.pages.dev/sitemap.xml'
           echo "PROBE-COUNT 134"
-# rerun trigger 2026-11-26T02:35Z
+# rerun trigger 2026-11-26T02:40Z
