@@ -1,5 +1,6 @@
 name: Sitemap Watch Probe
 on:
+  workflow_dispatch:
   push:
     paths:
       - '.github/workflows/sitemap-watch.yml'
