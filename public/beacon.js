@@ -31,6 +31,36 @@
   }
 
   var queue = { pageviews: [], events: [], heatmap: [], areas: [] };
+
+  /* Facility clicks — which toilet someone actually opened, and in what state
+     of the UI (zoom, active filters, search term). Answers "is the map doing
+     anything" instead of "did anyone move a mouse". */
+  window.addEventListener('skm:facility', function (ev) {
+    var d = ev.detail || {};
+    if (queue.events.length < 100) {
+      queue.events.push({ type: 'facility_click', path: location.pathname, at: new Date().toISOString(), facility: d });
+    }
+  });
+
+  /* UI layout snapshot — geometry of the key blocks at the moment of load.
+     When a design change moves a block, the top/height here changes, so any
+     drop in engagement or click volume can be tied to a real layout shift
+     instead of guessed at. */
+  function layoutSnapshot() {
+    var out = [];
+    var sel = ['header', 'main > section', '.facility-map', '#india-map', 'form', 'footer', '.stat-strip', '.faq'];
+    sel.forEach(function (s) {
+      var els = document.querySelectorAll(s);
+      for (var i = 0; i < els.length && i < 6; i++) {
+        var r = els[i].getBoundingClientRect();
+        out.push({ sel: s, i: i, top: Math.round(r.top + window.scrollY), h: Math.round(r.height), w: Math.round(r.width), visible: r.height > 0 });
+      }
+    });
+    return out;
+  }
+  var layout = [];
+  function takeLayout() { try { layout = layoutSnapshot(); } catch (e) { layout = []; } }
+  if (document.readyState === 'complete') takeLayout(); else window.addEventListener('load', takeLayout);
   var entered = Date.now(), maxScroll = 0, areas = {};
 
   function areaName(el) {
@@ -71,7 +101,9 @@
     var payload = {
       site: SITE,
       session: { id: sid, started_at: new Date(entered).toISOString(), landing_path: location.pathname, referrer: document.referrer || null, geohash: geohash, geo_source: geohash ? 'browser' : 'edge', device: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop' },
-      pageviews: queue.pageviews, events: queue.events, heatmap: queue.heatmap, areas: queue.areas
+      pageviews: queue.pageviews, events: queue.events, heatmap: queue.heatmap, areas: queue.areas,
+      layout: layout,
+      viewport: { w: window.innerWidth, h: window.innerHeight, dpr: window.devicePixelRatio || 1 }
     };
     try {
       var blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });

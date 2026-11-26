@@ -138,6 +138,22 @@ function render(){
     var m=L_.circleMarker([lat,lon],{radius:7,weight:1.5,color:"#0f172a",
       fillColor:p.fee==="no"?"#34d399":(p.fee==="yes"?"#f59e0b":ac),fillOpacity:.95});
     m.bindPopup(pp(f),{maxWidth:300});
+    m.on('click',function(){
+      try{
+        window.dispatchEvent(new CustomEvent('skm:facility',{detail:{
+          id:p['@id']||p.id||null,
+          name:p.name||p['name:en']||null,
+          amenity:p.amenity||null,
+          fee:p.fee||null,
+          wheelchair:p.wheelchair||null,
+          opening:p.opening_hours||null,
+          lat:+lat.toFixed(4),lon:+lon.toFixed(4),
+          zoom:map.getZoom(),
+          filters:Object.keys(flts).filter(function(k){return flts[k];}),
+          query:q||null
+        }}));
+      }catch(e){}
+    });
     cluster.addLayer(m);
   });
   map.addLayer(cluster);
