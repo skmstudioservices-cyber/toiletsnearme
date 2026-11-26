@@ -3,12 +3,17 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "30 18 1 * *"
+  # The agent can push but cannot dispatch a workflow, so a push to the city
+  # list is the trigger for an on-demand refresh.
+  push:
+    paths:
+      - 'scripts/fetch_data.py'
 permissions:
   contents: write
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - run: python3 scripts/fetch_data.py
