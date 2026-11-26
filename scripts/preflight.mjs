@@ -70,7 +70,13 @@ if (home) {
   else ok(`description ${dLen} chars`);
 
   // ---------- 6. no unresolved template placeholders leaking to the page ----------
-  if (/\$\{[^}]+\}/.test(home)) bad('unrendered ${...} placeholder found in dist/index.html');
+  // Strip <script>/<style> first: client-side JS legitimately contains ${...}
+  // template literals, and flagging those blocked a good build on 26 Nov 2026.
+  const markupOnly = home
+    .replace(/<script\b[\s\S]*?<\/script>/gi, '')
+    .replace(/<style\b[\s\S]*?<\/style>/gi, '');
+  const leftover = markupOnly.match(/\$\{[^}]+\}/);
+  if (leftover) bad('unrendered placeholder found in dist/index.html: ' + leftover[0]);
 }
 
 // ---------- 7. sitemap ----------
@@ -104,7 +110,21 @@ if (!robots) {
 } else {
   if (/^\s*Sitemap:\s*https?:\/\/\S+/im.test(robots)) ok('robots.txt declares a Sitemap');
   else bad('robots.txt has no Sitemap: line');
-  if (/^\s*Disallow:\s*\/\s*$/im.test(robots)) bad('robots.txt disallows the whole site');
+  // Only the `User-agent: *` group matters here. Bot-specific `Disallow: /`
+  // lines (GPTBot, CCBot, AhrefsBot, ...) are deliberate and must not fail the
+  // build — the 26 Nov 2026 run was blocked by exactly that false positive.
+  const starGroup = (() => {
+    const lines = robots.split(/\r?\n/);
+    let inStar = false, out = [];
+    for (const line of lines) {
+      const m = line.match(/^\s*User-agent:\s*(.+?)\s*$/i);
+      if (m) { inStar = m[1] === '*'; continue; }
+      if (!line.trim()) { inStar = false; continue; }
+      if (inStar) out.push(line);
+    }
+    return out.join('\n');
+  })();
+  if (/^\s*Disallow:\s*\/\s*$/im.test(starGroup)) bad('robots.txt disallows the whole site for User-agent: *');
 }
 
 // ---------- report ----------
