@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[85.907034,26.153391]},"properties":{"access":"yes","fee":"yes"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[85.906949,26.155674]},"properties":{}},{"type":"Feature","geometry":{"type":"Point","coordinates":[85.906034,26.152391]},"properties":{"access":"yes"}}]}
