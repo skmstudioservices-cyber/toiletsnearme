@@ -18,6 +18,9 @@ const site = 'https://toiletsnearme.pages.dev';
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
   <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
+  <!-- GSC ownership token. Must be on the HOMEPAGE; the Astro cutover (de4178e)
+       dropped it and Google revoked ownership on 26 Nov 2026. Do not remove. -->
+  <meta name="google-site-verification" content="GlkDu5ZL-CyyKjwPSj9d9X3Y2qsHUj_qAwRwxiLr7nI" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:type" content="website" />
