@@ -49,6 +49,14 @@ const jsonld = [
 ];
 ---
 <Base
+  /*
+   * ⛔ DO NOT TOUCH — see docs/DO-NOT-TOUCH.md
+   * This title and the description below were rewritten FIVE times in twenty
+   * hours on 25-26 Nov 2026. "washroom near me" fell from position 4.1 to 8.3
+   * as a result. Do not "improve" either line without the owner asking for that
+   * exact change. Keep the phrase "Washroom Near Me" in the title; it is the
+   * query that earns the clicks.
+   */
   title={`Clean Public Toilet Near Me — ${total.toLocaleString('en-IN')} Washrooms, Free & 24-Hour`}
   description={`Clean public toilets and washrooms near you — ${total.toLocaleString('en-IN')} mapped across ${cities.length} Indian cities. ${freeTotal.toLocaleString('en-IN')} are free, ${open24.toLocaleString('en-IN')} open 24 hours. Tap a pin for directions. No signup, no app.`}
   canonical={site + '/'}
@@ -108,7 +116,7 @@ const jsonld = [
         <h2>Explore nearby toilets by city</h2>
         <p>Every mapped facility, on one live map per city.</p>
       </div>
-      <p class="result-count" data-result-count aria-live="polite">{cities.length} cities</p>
+      <p class="result-count" data-result-count aria-live="polite">{cities.length} cities · <a href="/cities/">all cities A–Z</a></p>
     </div>
 
     <div class="city-grid" data-city-grid>

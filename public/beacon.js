@@ -3,6 +3,10 @@
    to skm-analytics.india-in.workers.dev/collect.
    Privacy: only a 7-character geohash is sent, never coordinates. */
 (function () {
+  /* ⛔ DO NOT TOUCH the payload field names below (site, session, pageviews,
+     events, heatmap, areas, layout, viewport). The collector at
+     skm-analytics.india-in.workers.dev reads these exact names; renaming one
+     silently drops that data with no error. See docs/DO-NOT-TOUCH.md. */
   var ENDPOINT = 'https://skm-analytics.india-in.workers.dev/collect';
   var SITE = location.hostname;
   if (navigator.doNotTrack === '1') return;

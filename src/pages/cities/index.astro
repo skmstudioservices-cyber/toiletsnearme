@@ -1,0 +1,188 @@
+---
+/**
+ * /cities/ — the full A–Z city index.
+ *
+ * WHY THIS PAGE EXISTS
+ * The homepage grid now holds 100+ cities. Listing them all in one block pushes
+ * the map and the answer block too far down, and nobody scrolls 100 cards.
+ * This page is the browse surface: alphabet at the top, paginated list at the
+ * bottom, so the homepage stays short.
+ *
+ * ⛔ DO NOT TOUCH without reading docs/DO-NOT-TOUCH.md
+ *   - The <title> and description below are deliberately different from the
+ *     homepage. Do not "align" them.
+ *   - Pagination size is 24 on purpose: it divides into 4 rows of 6 on desktop
+ *     and stays one thumb-swipe on a phone.
+ *   - Do not move this page to /cities.html or add a trailing-slash redirect.
+ *     It is linked from the homepage and from every city page breadcrumb.
+ */
+import Base from '../../layouts/Base.astro';
+import CityCard from '../../components/cards/CityCard.astro';
+import { getAllCities } from '../../lib/cities';
+
+const cities = getAllCities().sort((a, b) => a.name.localeCompare(b.name));
+const site = 'https://toiletsnearme.pages.dev';
+
+const letters = [...new Set(cities.map((c) => c.name[0].toUpperCase()))].sort();
+
+const jsonld = [{
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'All cities — public toilets in India',
+  url: site + '/cities/',
+  numberOfItems: cities.length,
+}];
+---
+<Base
+  title={`All ${cities.length} Cities — Public Toilets A to Z`}
+  description={`Every Indian city we map, A to Z — ${cities.length} cities with public toilets and washrooms, free and paid, on a live map. Jump to a letter or page through the list.`}
+  canonical={site + '/cities/'}
+  jsonld={jsonld}
+  ogImage="/og/home.png"
+>
+  <section class="wrap section">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Toilets Near Me</a> <span aria-hidden="true">›</span> <span>All cities</span>
+    </nav>
+    <h1>All cities — public toilets A to Z</h1>
+    <p class="lede">
+      {cities.length} cities mapped. Pick a letter to jump, or page through the list below.
+      Every city opens a live map with directions.
+    </p>
+
+    <!-- Alphabet index. Built from the city list, so it can never drift out of date. -->
+    <nav class="az" data-az aria-label="Jump to a letter">
+      <button type="button" class="az-all is-active" data-letter="all">All</button>
+      {letters.map((l) => <button type="button" class="az-btn" data-letter={l}>{l}</button>)}
+    </nav>
+
+    <p class="count" data-az-count aria-live="polite">{cities.length} cities</p>
+
+    <div class="city-grid" data-az-grid>
+      {cities.map((c) => <CityCard slug={c.slug} name={c.name} count={c.count} free={c.free} lat={c.lat} lon={c.lon} />)}
+    </div>
+
+    <!-- Pagination. Rendered by the script below so the page stays static for crawlers. -->
+    <nav class="pager" data-pager aria-label="City pages"></nav>
+  </section>
+</Base>
+
+<script>
+  /*
+   * Alphabet filter + pagination for the city list.
+   *
+   * ⛔ DO NOT TOUCH without reading docs/DO-NOT-TOUCH.md
+   *   - PAGE_SIZE 24 is deliberate (4×6 desktop, one thumb-swipe mobile).
+   *   - Filtering uses the `hidden` attribute only. Do not switch to display:none,
+   *     because the search box on the homepage relies on `hidden`.
+   *   - Always reset to page 1 when the letter changes, or the user lands on an
+   *     empty page 4 of a 1-page letter.
+   */
+  const PAGE_SIZE = 24;
+  const grid = document.querySelector('[data-az-grid]');
+  const pager = document.querySelector('[data-pager]');
+  const countEl = document.querySelector('[data-az-count]');
+  const azBar = document.querySelector('[data-az]');
+
+  if (grid && pager) {
+    const cards = Array.from(grid.querySelectorAll('[data-city]'));
+    let letter = 'all';
+    let page = 1;
+
+    function matching() {
+      return letter === 'all'
+        ? cards
+        : cards.filter((c) => (c.getAttribute('data-name') || '').toUpperCase().startsWith(letter));
+    }
+
+    function render() {
+      const list = matching();
+      const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+      if (page > pages) page = pages;
+
+      cards.forEach((c) => c.setAttribute('hidden', ''));
+      const slice = list.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+      slice.forEach((c) => c.removeAttribute('hidden'));
+
+      if (countEl) {
+        countEl.textContent = list.length === 1 ? '1 city' : list.length + ' cities';
+      }
+
+      pager.innerHTML = '';
+      if (pages < 2) return;
+
+      const prev = document.createElement('button');
+      prev.type = 'button';
+      prev.className = 'pg-btn';
+      prev.textContent = '‹ Prev';
+      prev.disabled = page === 1;
+      prev.addEventListener('click', () => { page--; render(); scrollTop(); });
+      pager.appendChild(prev);
+
+      for (let i = 1; i <= pages; i++) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'pg-btn' + (i === page ? ' is-active' : '');
+        b.textContent = String(i);
+        b.setAttribute('aria-label', 'Page ' + i);
+        if (i === page) b.setAttribute('aria-current', 'page');
+        b.addEventListener('click', () => { page = i; render(); scrollTop(); });
+        pager.appendChild(b);
+      }
+
+      const next = document.createElement('button');
+      next.type = 'button';
+      next.className = 'pg-btn';
+      next.textContent = 'Next ›';
+      next.disabled = page === pages;
+      next.addEventListener('click', () => { page++; render(); scrollTop(); });
+      pager.appendChild(next);
+    }
+
+    function scrollTop() {
+      const y = grid.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+
+    if (azBar) {
+      azBar.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-letter]');
+        if (!btn) return;
+        letter = btn.getAttribute('data-letter');
+        page = 1;
+        azBar.querySelectorAll('button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        render();
+      });
+    }
+
+    render();
+  }
+</script>
+
+<style>
+  .crumbs { font-size: 0.84rem; color: var(--color-muted); margin-bottom: 0.5rem; }
+  .crumbs a { color: inherit; }
+  .lede { max-width: 70ch; color: var(--color-muted); margin: 0 0 1rem; }
+  .az { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.6rem 0 0.2rem; }
+  .az button {
+    min-width: 34px; min-height: 34px; padding: 0 0.5rem;
+    border: 1px solid var(--color-border, #e3e8f0); border-radius: 8px;
+    background: var(--color-surface, #fff); color: var(--color-text, #12263f);
+    font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  }
+  .az button.is-active { background: var(--color-accent, #087f5b); border-color: var(--color-accent, #087f5b); color: #fff; }
+  .count { font-size: 0.85rem; color: var(--color-muted); margin: 0.5rem 0 1rem; }
+  .pager { display: flex; flex-wrap: wrap; gap: 0.35rem; justify-content: center; margin: 1.6rem 0 0.5rem; }
+  .pg-btn {
+    min-width: 38px; min-height: 38px; padding: 0 0.6rem;
+    border: 1px solid var(--color-border, #e3e8f0); border-radius: 8px;
+    background: var(--color-surface, #fff); color: var(--color-text, #12263f);
+    font-size: 0.88rem; cursor: pointer;
+  }
+  .pg-btn.is-active { background: var(--color-accent, #087f5b); border-color: var(--color-accent, #087f5b); color: #fff; font-weight: 700; }
+  .pg-btn:disabled { opacity: 0.4; cursor: default; }
+  @media (max-width: 600px) {
+    .az button, .pg-btn { min-width: 44px; min-height: 44px; }
+  }
+</style>
